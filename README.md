@@ -137,8 +137,9 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
   with no wallet prompt and no seed phrase.
 - **USDC arrives from other chains as gas.** The Bridge page brings USDC to Arc with CCTP, and
   on Arc that USDC is what pays for transactions. See [Circle tools](#circle-tools).
-- **Fast finality fits signed prices.** Each trade carries a signed price that is valid for 60
-  seconds. On Arc a trade is final well inside that window.
+- **Fast finality fits signed prices.** Each trade carries a signed price that is valid for only
+  10 seconds, which leaves little room to choose a stale one. That is workable because a trade on
+  Arc is final in about a second.
 - **Standard EVM tooling.** Plain Solidity 0.8.24 built and deployed with Hardhat; viem in the
   app, ethers in the keeper.
 
@@ -246,8 +247,14 @@ USDC.
    is bounded by the profit cap, the capacity limit and the tick-bounded leverage, and priced by
    the borrow fee, but it is not eliminated. Holding 1× on both sides through resolution loses the
    fee (tested).
-5. *Latency.* A trader who sees the reference move before the oracle does has an edge of at most
-   the price's validity window. Worse-of fills remove most of it.
+5. *Latency and price choice.* A trader may submit any signed price from the last 10 seconds that
+   is newer than the one on-chain, so they can pick the best of those. Worse-of fills delay that
+   gain on entry; on exit it is immediate. The window was cut from 60 seconds to 10 and the keeper
+   posts any 5 bp move on-chain, which bounds it without removing it.
+
+A review raised five specific objections (the averaging formula, the liquidation price, the
+validity window, LP solvency, and the cost to informed traders). Each is answered in
+[Objections and answers](docs/whitepaper/12-objections.md).
 
 **Honest cost to traders.** In a trending market the mid and the slow price differ, and every fill
 takes the worse one. At 100× a 3 bp gap costs about 3% of margin on entry; at 1000× it would be

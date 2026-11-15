@@ -55,7 +55,19 @@ For a long with no charges accrued, that is a fall of `0.8 / leverage` from the 
 
 Anyone can liquidate an eligible position. The liquidator receives 5% of the margin. **Whatever equity is left after that goes back to the trader.** A liquidation does not forfeit the whole margin.
 
-Liquidation is judged at the mid rather than at the worse-of price, so a position is not liquidated by the gap between the two prices.
+### Which price triggers it
+
+Liquidation is judged at the mid, and settled at the mid. There were three choices.
+
+| Trigger price | What goes wrong |
+|---|---|
+| The worse-of price | Positions are liquidated early, by the gap between the two prices, exactly when the market is moving. |
+| The slow price | In a real fast move, positions that are already under water stay open for up to a minute, and the vault pays for losses beyond their margin. |
+| **The mid** (chosen) | A short spike in the reference mid can liquidate a high-leverage position that would otherwise have survived. |
+
+We chose the mid because the alternative that protects traders from spikes leaves the vault holding bad debt, and the vault is what pays every winner.
+
+The cost is real at very high leverage. Three things limit it. A liquidated trader gets back the equity that is left, so a spike does not take the whole margin. Nobody can profit much by causing liquidations: the liquidator's reward is 5% of margin, and the capacity limit bounds the margin within reach. With $10M of capacity on a side, the positions a 0.12% move can liquidate hold at most about $15,000 of margin between them, a reward of $750 against a cost of tens of thousands of dollars to move the price. And the trader chooses the leverage: at 100× the same spike does nothing.
 
 ## The profit cap
 

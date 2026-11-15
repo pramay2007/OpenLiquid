@@ -55,3 +55,9 @@ No. OpenLiquid runs on Arc testnet with test funds. It is an unaudited prototype
 ## How is this different from Papertrade?
 
 See [What we changed from Papertrade](07-what-we-changed.md).
+
+## What are the weak points?
+
+See [Risks and assumptions](09-risks.md) and [Objections and answers](12-objections.md).
+
+Next: [Objections and answers](12-objections.md)

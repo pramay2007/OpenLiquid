@@ -42,10 +42,10 @@ Take ETH at $3,000 with a 60 second averaging time. Someone pushes the reference
 |---|---|---|---|
 | Before the push | 3,000.00 | 3,000.00 | 3,000.00 |
 | The instant after | 3,003.60 | 3,000.00 | 3,000.00 |
-| Push held for 60 s | 3,003.60 | about 3,002.30 | about 3,002.30 |
+| Push held for 60 s | 3,003.60 | 3,001.80 to 3,002.28 | 3,001.80 to 3,002.28 |
 | Push released | 3,000.00 | above 3,000 and falling | 3,000.00 |
 
-A trader who opened a long before the push and closes into it gets the slow price, which has not moved. To be paid for the push, they have to keep the reference price there. After a full averaging time, `slow` has covered about 63% of the gap. Holding a price on a real venue for a minute means trading against everyone who sees it is wrong, which costs far more than touching it once.
+A trader who opened a long before the push and closes into it gets the slow price, which has not moved. To be paid for the push, they have to keep the reference price there. After a full averaging time, `slow` has covered between 50% and 63% of the gap: 50% if the oracle was updated once in that minute, 63% if it was updated every second. Anyone can deliver a signed price, so the faster path is the one to plan for, and it is the one our tests use. [Objections and answers](12-objections.md) explains the range. Holding a price on a real venue for a minute means trading against everyone who sees it is wrong, which costs far more than touching it once.
 
 The other direction fails the same way. Shorting the pushed price is a sell, so it fills at `min(mid, slow)`, which is the old price. When the push is released there is nothing to collect.
 
@@ -67,10 +67,14 @@ Worse-of fills are not free. In a market that is trending, `slow` lags `mid`, an
 | 100× | 3% |
 | 1000× | 30%, and the entry guard refuses the order |
 
+The same rule applies on the way out. A trader who is right about a sudden move and closes the instant it happens is paid at the slow price, which has not caught up yet. Waiting one averaging time collects about 63% of the move, and three collect about 95%. The engine cannot tell a real move from a pushed one in the first seconds, so it treats them alike.
+
 So "no slippage" is true when the market is calm and is not true when it is moving fast. In practice the highest leverage is available in quiet markets and falls away in fast ones. We think that is the right way round.
 
 ## Price freshness
 
-A signed price is usable for 60 seconds on Arc. Every trade carries its own freshly signed price in the same transaction, so a trade never depends on someone else having updated the oracle first. A price stamped in the future or older than the last one is ignored.
+A signed price is usable for 10 seconds on Arc. Every trade carries its own freshly signed price in the same transaction, so a trade never depends on someone else having updated the oracle first. A price stamped in the future or older than the last one on-chain is ignored.
+
+The window is short on purpose. The keeper signs a new price every second, and a trader may submit any of them that is still inside the window and newer than the one on-chain. The window is therefore the most a trader can gain by choosing which price to use. It was 60 seconds in the first deployment and was cut to 10 after review.
 
 Next: [Capacity and the vault](03-capacity-and-vault.md)

@@ -32,7 +32,9 @@ async function main() {
   // Localhost always uses Hardhat's test account #1, whatever .env holds for the real network.
   const keeper = isLocal ? localKeeper.address : process.env.KEEPER_ADDRESS;
   if (!keeper) throw new Error("Set KEEPER_ADDRESS in .env");
-  const maxAge = isLocal ? 30 : 60;
+  // How long a signed price stays usable. A trader can choose among the prices signed inside
+  // this window, so it is kept short (scripts/set-max-age.js changes it on a live deployment).
+  const maxAge = isLocal ? 30 : 10;
 
   const file = JSON.parse(fs.readFileSync(path.join(__dirname, "../../markets.json"), "utf8"));
   const markets = [...file.markets, ...file.events];

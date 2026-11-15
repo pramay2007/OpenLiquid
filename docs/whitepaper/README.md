@@ -13,3 +13,4 @@ How OpenLiquid works, and what it does differently. The same pages are readable 
 9. [Risks and assumptions](09-risks.md)
 10. [Parameters and contracts](10-parameters-and-contracts.md): every number and address
 11. [Questions and answers](11-faq.md)
+12. [Objections and answers](12-objections.md): five criticisms of the design, and where each stands

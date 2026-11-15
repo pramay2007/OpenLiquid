@@ -32,7 +32,7 @@ What it is not allowed to do:
 - It marks a prediction market resolved only when Gemini reports the contract settled.
 - Its key has no administrative role and holds no user funds.
 
-What the contracts stop it doing regardless: signatures are checked, timestamps cannot go backwards, prices expire after 60 seconds, and resolved markets are closed to updates.
+What the contracts stop it doing regardless: signatures are checked, timestamps cannot go backwards, prices expire after 10 seconds, and resolved markets are closed to updates.
 
 The limit of this design is stated plainly in [Risks and assumptions](09-risks.md): one signer is one point of trust.
 
@@ -42,7 +42,7 @@ The limit of this design is stated plainly in [Risks and assumptions](09-risks.m
 
 **Small, predictable fees.** Opening or closing a position costs about 0.006 USDC in gas, measured on testnet. Deploying the whole protocol, with its 15 markets, cost about 0.3 USDC.
 
-**Fast finality.** A signed price is valid for 60 seconds. A trade on Arc is final well inside that.
+**Fast finality.** A signed price is valid for 10 seconds, to leave little room for choosing a stale one. That is only workable on a chain where a trade is final in about a second.
 
 **No wallet needed to try it.** The demo account is a key created in the browser. The keeper sends it 0.1 USDC once, which is enough gas for about fifteen transactions.
 

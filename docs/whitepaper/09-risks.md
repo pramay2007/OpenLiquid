@@ -12,7 +12,7 @@ The slow price forces a pushed price to be held for about the averaging time bef
 
 One key signs every price in this build.
 
-**If it fails.** A dishonest or compromised signer can misprice every market, and the vault would pay for it. A stalled signer stops trading, because prices expire after 60 seconds; it does not let anyone trade on a stale price. A production version needs several independent signers and a median, and a second reference venue for each market.
+**If it fails.** A dishonest or compromised signer can misprice every market, and the vault would pay for it. A stalled signer stops trading, because prices expire after 10 seconds; it does not let anyone trade on a stale price. A production version needs several independent signers and a median, and a second reference venue for each market.
 
 ## 3. Prices move continuously enough to liquidate
 
@@ -30,11 +30,15 @@ A prediction market can go straight to 0 or 1 on news while leverage is still hi
 
 ## 5. Latency
 
-A trader who sees the reference venue move before the oracle does has an edge of at most the price's validity window. Worse-of fills remove most of it, because a fresh move is exactly when the two prices differ.
+The keeper signs a price every second, and a trader may submit any signed price that is inside the 10 second validity window and newer than the one on-chain. A trader can therefore pick the best price of the last few seconds. On the way in, worse-of fills delay the gain but do not remove it. On the way out it is immediate: after a move against them, a trader can close at a price from just before it, if no newer price has reached the chain.
+
+**What bounds it.** The window, which was cut from 60 seconds to 10. The keeper posting a new price on-chain whenever one has moved 5 basis points, which closes the window early. At 1000× a single basis point is 10% of margin, so what is left still matters. A shorter window, posting every price, and several signers are the next steps.
 
 ## 6. Liquidity providers are short the traders
 
-If traders as a group win, providers lose. Funding leans against one-sided positioning and the capacity limits bound it. Neither makes the vault market-neutral. Hedging the vault's net exposure on the reference venues is future work.
+If traders as a group win, providers lose. That includes the plain case where traders are right about a real move.
+
+Two things should be kept apart. Whether winners get paid is settled by construction: every position's maximum payout is locked before it opens, so the vault cannot owe more than it holds. Whether providers make money is not settled at all. Their worst case at any moment is the total reserve, a number anyone can read from the vault contract. The profit cap, the depth-backed capacity (which moves with the real book on every price update) and funding bound how large and how one-sided that gets. Nothing hedges it. Hedging the vault's net exposure on the reference venues is future work, and whether fees, funding and trader losses pay providers enough for this risk is something only live trading can show.
 
 ## 7. Administration
 
@@ -52,5 +56,7 @@ The contracts are unaudited. They have 30 tests, including the replay of the lau
 | Prediction markets | 7 |
 | Price oracle | 3 |
 | Replay of the launch-day trade | 6 |
+
+A review of the design raised five specific objections. They are answered one by one in [Objections and answers](12-objections.md).
 
 Next: [Parameters and contracts](10-parameters-and-contracts.md)
