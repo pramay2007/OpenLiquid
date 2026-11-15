@@ -6,11 +6,14 @@ interface PricesFrame {
   prices: { marketId: number; mid: number; depthUsd: number; update: LivePrice["update"]; sig: `0x${string}` }[];
 }
 
+let lastFrameAt = 0;
+
 function apply(frame: PricesFrame) {
   const live: Record<number, LivePrice> = {};
   for (const p of frame.prices) {
     live[p.marketId] = { mid: p.mid, depthUsd: p.depthUsd, update: p.update, sig: p.sig };
   }
+  lastFrameAt = Date.now();
   useStore.setState({ live, keeperOnline: true });
 }
 
@@ -28,9 +31,27 @@ let started = false;
 export function startKeeperStream() {
   if (started) return;
   started = true;
+  // Prices arrive as a server-sent event stream. EventSource reconnects by itself.
   const es = new EventSource(`${KEEPER_URL}/stream`);
   es.onmessage = (ev) => apply(JSON.parse(ev.data));
-  es.onerror = () => useStore.setState({ keeperOnline: false }); // EventSource retries by itself
+
+  // Some hosts and proxies buffer or drop event streams. Whenever the stream has been quiet for
+  // a few seconds, prices are fetched directly instead, once a second, until it speaks again.
+  let polling = false;
+  setInterval(async () => {
+    if (polling || Date.now() - lastFrameAt < 3500) return;
+    polling = true;
+    try {
+      const res = await fetch(`${KEEPER_URL}/prices`);
+      if (!res.ok) throw new Error(`prices ${res.status}`);
+      apply(await res.json());
+    } catch {
+      useStore.setState({ keeperOnline: false });
+    } finally {
+      polling = false;
+    }
+  }, 1000);
+
   refreshSummary();
   setInterval(refreshSummary, 30_000);
 }

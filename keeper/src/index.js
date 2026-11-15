@@ -200,7 +200,9 @@ async function signAll() {
 
 /** Someone is watching prices or has a position open, so on-chain prices should track closely. */
 let openPositions = 0;
-const active = () => LOCAL || sseClients.size > 0 || openPositions > 0;
+/** When a client last fetched prices directly; apps behind a proxy that drops streams do this. */
+let lastPollAt = 0;
+const active = () => LOCAL || sseClients.size > 0 || openPositions > 0 || Date.now() - lastPollAt < 15_000;
 
 function dueForRelay(id, entry) {
   const last = relayed.get(id);
@@ -411,6 +413,7 @@ createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   try {
     if (url.pathname === "/prices") {
+      lastPollAt = Date.now();
       res.setHeader("Content-Type", "application/json");
       res.end(json(pricesPayload()));
     } else if (url.pathname === "/stream") {
