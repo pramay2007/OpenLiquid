@@ -1,2 +1,328 @@
 # OpenLiquid
-OpenLiquid - 1000x leverage perpetual platform
+
+**Up to 1000× perpetuals on crypto, stocks and commodities, plus leveraged perpetuals on live
+prediction markets, in one venue on Arc.** One price, no order book, losses capped at margin,
+built so that the trade which drained the last venue of this kind does not work.
+
+![Trading BTC on OpenLiquid](docs/trade.png)
+
+| | |
+|---|---|
+| **Hackathon** | University Blockchain Conference 2026 |
+| **Main track** | DeFi and Onchain Applications |
+| **Chain award** | Best use of Arc |
+| **Bounty** | Gemini Prediction Markets |
+| **Status** | Live on Arc testnet ([addresses](#live-on-arc-testnet)). Testnet prototype, unaudited, test USDC only. |
+
+**Contents:** [What it is](#what-it-is) · [The replay](#the-replay) ·
+[Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) ·
+[Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets) ·
+[Economic design and risks](#economic-design-and-risk-assumptions) · [Keeper](#keeper-decision-loop-and-limits) ·
+[Run it](#run-it-locally) · [Where each requirement is met](#where-each-requirement-is-met)
+
+## What it is
+
+In October 2026 a venue launched offering 1000× leverage with every trade filled at a reference
+venue's mid price, at any size, with no slippage. Within hours a trader spent about $52k moving
+that reference price 0.12% and withdrew about $1.28M. Its pool started empty, so winners queued
+for payment, and its token was minted to losing traders, so stakers were paid out of losses.
+
+OpenLiquid keeps what people liked (one price, no order book, capped losses, very high leverage) and
+changes the rules underneath:
+
+| Problem in the "any size at the mid" design | OpenLiquid |
+|---|---|
+| A briefly pushed reference price can be traded against | **Worse-of fills.** Buys fill at `max(mid, slow)`, sells at `min(mid, slow)`, where `slow` is a time-weighted price that only moves as a price is held. Calm market: the two are equal, zero slippage. |
+| Size is unlimited relative to the real book | **Depth-backed capacity.** Open interest per side ≤ κ × USD resting near the mid on the reference venue, as reported with every price. |
+| Pool starts empty; winners wait in a queue | **Reserved payouts.** A pre-funded vault locks each position's maximum profit when it opens. LPs cannot withdraw locked funds. Winners are paid at close. |
+| No funding; pool carries one-way risk | **Skew funding.** The crowded side pays, scaled by skew relative to capacity. |
+| A 1000× order can open already near liquidation in a fast market | **Entry guard.** An open is refused if its fill would start more than 30% of margin under water, which lowers usable leverage while the price is moving. |
+| Token minted on losses; stakers earn trader losses; wash-farmable | **Fee-minted token.** OLQ is minted only against fees paid, on a decaying curve with a hard cap. Stakers earn a share of fees. Trader losses belong to the LPs who underwrite trader wins. |
+| Liquidation forfeits the whole margin | Liquidation happens at 20% of margin left; what remains after the liquidator's reward is returned to the trader. |
+
+### Prediction-market perpetuals
+
+Listing a binary market on a perp engine unchanged does not work: prices tick in 1¢ steps, books
+are thin, and the price jumps to 0 or 1 at resolution. Event markets here use their own rules:
+
+- **A short is a long on NO.** PnL for a short is measured on `1 − price`, so a 1× position on
+  either side is fully collateralised and can never lose more than it put in.
+- **Tick-bounded leverage.** Maximum leverage keeps the zero-equity price at least two ticks from
+  entry: `price / 0.02` for Yes, `(1 − price) / 0.02` for No. At 50¢ that is 25×, not 1000×.
+- **Leverage compression.** The cap decays linearly to 1× over the last 24 hours before the
+  outcome starts being decided (kickoff for a match, expiry otherwise). Positions above the cap
+  can be force-closed by anyone at the normal close price, with no penalty.
+- **Settlement.** When Gemini reports the contract settled, the keeper signs the final price and
+  anyone can settle any position.
+- Longer averaging (5 minutes), a wider profit fee (10%) and a borrow fee on the leveraged part.
+
+![A Gemini prediction market as a leveraged perpetual](docs/event.png)
+
+## The replay
+
+`contracts/test/exploit.test.js` replays the reported attack against the engine configured both
+ways. The oracle reports the manipulated mid faithfully in both cases.
+
+| Engine | Size the attacker could open | Attacker P&L, one leg | Cost of the move |
+|---|---|---|---|
+| Any size at the mid | $297.0M | **+$349,272** | ~$52,000 |
+| OpenLiquid | $9.9M | **+$185** | ~$52,000 |
+| OpenLiquid, push held for 60 s | $9.9M | +$7,135 | more than $52,000 |
+
+The same figures are animated on the app's Mechanics page.
+
+![The exploit replay on the Mechanics page](docs/mechanics.png)
+
+## Architecture
+
+```
+ Hyperliquid (bbo websocket, l2Book)      Gemini Prediction Markets (events, book, candles)
+              \                                   /
+               +----------- keeper/ -------------+        signs PriceUpdate (EIP-712):
+               |  sign · serve · relay · upkeep  |        { marketId, price, depthUsd, timestamp, resolved }
+               +---------------------------------+
+                  | HTTP /prices /stream             | oracle.push, liquidate, forceClose, close
+                  v                                  v
+              web/ (React + viem)  ---- open / close (carries a fresh signed price) ---->  Arc
+                                                                                            |
+        PriceOracle  ->  PerpEngine  ->  Vault (ERC-4626, USDC)                             |
+                              |-> OpenLiquidToken (OLQ, minted on fees)                       |
+                              '-> Staking (OLQ -> USDC fee share)  <-----------------------+
+```
+
+| Path | What it is |
+|---|---|
+| `contracts/src/PriceOracle.sol` | Verifies signed updates, keeps `mid` and the `slow` price per market. Anyone can relay. |
+| `contracts/src/PerpEngine.sol` | Positions, fills, caps, funding, liquidation, event-market rules, settlement. |
+| `contracts/src/Vault.sol` | ERC-4626 USDC vault. Holds trader margin and the reserve for every open position; LP share price marks open positions at the oracle. |
+| `contracts/src/OpenLiquidToken.sol`, `Staking.sol` | Fee-minted token and USDC fee distribution. |
+| `keeper/` | Price signer, relayer, liquidation and settlement bot, small HTTP API for the frontend. |
+| `web/` | Trading interface. |
+| `markets.json` | Listed markets. `npm run pick-events` fills in live Gemini contracts. |
+
+### Live on Arc testnet
+
+Chain ID `5042002`, RPC `https://rpc.testnet.arc.io`. Deployed 2026-11-15 with Hardhat.
+
+| Contract | Address |
+|---|---|
+| PerpEngine | [`0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8`](https://explorer.testnet.arc.io/address/0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8) |
+| Vault (ERC-4626) | [`0x2b32560890De4070A66b47fD4242F2b817FBEF58`](https://explorer.testnet.arc.io/address/0x2b32560890De4070A66b47fD4242F2b817FBEF58) |
+| PriceOracle | [`0xbF48c715F8816649D7D56AC01e5ae19850Ae517a`](https://explorer.testnet.arc.io/address/0xbF48c715F8816649D7D56AC01e5ae19850Ae517a) |
+| OpenLiquidToken (OLQ) | [`0x0C1221ee07A921B078391512acb8fD1dCE72E6C3`](https://explorer.testnet.arc.io/address/0x0C1221ee07A921B078391512acb8fD1dCE72E6C3) |
+| Staking | [`0xb0FaFD344dE5d451638B7711206e6A3Df0902f06`](https://explorer.testnet.arc.io/address/0xb0FaFD344dE5d451638B7711206e6A3Df0902f06) |
+| Test USDC (collateral, open faucet) | [`0xE4475D526B1f625C87b3B0C56C7548016d20BB72`](https://explorer.testnet.arc.io/address/0xE4475D526B1f625C87b3B0C56C7548016d20BB72) |
+| Price signer and keeper | [`0xe386ABa1C3197D166130ec45566208b0A658F6d2`](https://explorer.testnet.arc.io/address/0xe386ABa1C3197D166130ec45566208b0A658F6d2) |
+
+Also used: Arc's native USDC (`0x3600000000000000000000000000000000000000`) as the gas token, and
+Multicall3 (`0xcA11bde05977b3631167028862bE2a173976CA11`) to batch the app's reads.
+The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.json`.
+
+### How it uses Arc
+
+- **Everything is in dollars.** USDC is the collateral, the unit every position is quoted and
+  settled in, the LP asset, the fee asset stakers receive, and on Arc also the gas token. A
+  trader never holds a second token to pay fees.
+- **Fees are small and predictable.** Opening or closing a position costs under one cent of
+  USDC in gas (about 0.006 USDC measured). The whole deployment (six contracts, 15 markets,
+  vault seeding) cost about 0.3 USDC.
+- **One-click trading without a wallet.** The demo account is a key held in the browser. The
+  keeper sends it 0.25 USDC once, enough gas for about 40 transactions, so a new user trades
+  with no wallet prompt and no seed phrase.
+- **Fast finality fits signed prices.** Each trade carries a signed price that is valid for 60
+  seconds. On Arc a trade is final well inside that window.
+- **Standard EVM tooling.** Plain Solidity 0.8.24 built and deployed with Hardhat; viem in the
+  app, ethers in the keeper.
+
+The collateral in this deployment is a faucet test token with USDC's six decimals, so anyone can
+get 10,000 to try the app without waiting on Circle's faucet. Setting `USDC_ADDRESS` before
+deploying uses Arc's own USDC as collateral instead; the contracts are the same.
+
+### How it uses Gemini Prediction Markets
+
+Gemini's prediction-market odds and order-book depth are brought on-chain: for each listed
+contract the keeper signs the mid and the nearby depth and posts them to Arc, where they set the
+price, the capacity and the settlement of a leveraged market. The app charts how each contract's
+odds have moved and shows what moving them further would do to a position. All public
+market-data endpoints, no API key:
+
+- `GET /v1/prediction-markets/events` to discover active contracts and choose which to list
+  (`keeper/src/pick-events.js`: resolves ≥ 6 days out, priced 20–80¢, spread ≤ 2 ticks, ranked by
+  resting depth).
+- `GET /v1/book/{instrumentSymbol}` every 4 s for the mid and the USD depth within five ticks,
+  which sets each event market's price and capacity on-chain.
+- `GET /v2/candles/{instrumentSymbol}/1hr` for chart history.
+- `GET /v1/prediction-markets/events/{ticker}` to detect settlement (`resolutionSide`) and settle
+  positions at 0 or 1.
+
+## Economic design and risk assumptions
+
+**Who is on the other side.** The vault. Traders' net PnL is the vault's, with the sign flipped.
+LPs earn trader losses, funding from the crowded side, borrow fees and 70% of profit fees; they
+pay trader wins. Stakers earn 30% of profit fees and carry no trading risk.
+
+**Fees.** Nothing to open or close. 5% of profit on crypto, stocks and commodities, 10% on event
+markets. Skew funding. A borrow fee on the leveraged part of event positions.
+
+**Token (OLQ).** Minted only to a trader who pays a profit fee, at
+`rate(F) = R0 · (H / (H + F))²` OLQ per dollar of fee, where `F` is all fees paid so far,
+`R0 = 100` and `H = $1M`. The rate starts at 100 per dollar and decays; total supply can never
+exceed `R0 · H` = 100M. Losing a trade mints nothing, so two wallets trading against each other
+get no more OLQ per dollar of cost than anyone else. Staked OLQ receives 30% of profit fees in
+USDC.
+
+![The Earn page: liquidity vault and OLQ staking](docs/earn.png)
+
+**Parameters in this build** (`contracts/scripts/deploy.js`):
+
+| | Crypto | Stocks / commodities | Event markets |
+|---|---|---|---|
+| Max leverage | 1000× | 1000× | 50× before the tick and time limits |
+| Slow-price averaging | 60 s | 120 s | 300 s |
+| Capacity κ (× reference depth) | 0.5 | 0.5 | 2.0 |
+| Depth band | ±10 bps on Hyperliquid | ±10 bps on Hyperliquid | ±5 ticks on Gemini |
+| Opens paused when mid−slow gap exceeds | 20 bps | 25 bps | 5 points |
+| Profit cap | 10× margin | 10× margin | 10× margin, or the contract's natural maximum |
+| Liquidation | 20% of margin left | same | same |
+
+**Assumptions these rest on, and what breaks if they fail:**
+
+1. *Moving the reference price and holding it there costs more than it pays.* The slow price
+   forces a push to be held for about the averaging time; the capacity limit bounds the size it
+   can be held against. If a reference book is far thinner than the reported depth, or κ is set
+   too high, this fails. κ = 2 on event markets is a demo setting for books with only a few
+   hundred dollars near the mid; the 5-minute slow price is the main defence there.
+2. *The keeper's price is honest and fresh.* One signer in this build. A dishonest or compromised
+   signer can misprice every market. Production needs several independent signers and a median.
+3. *Prices move continuously enough to liquidate.* Losses are capped at margin, so a gap through
+   the liquidation price is a loss the vault does not collect. The profit cap bounds the matching
+   win.
+4. *Binary jumps.* An event market can jump to 0 or 1 on news before leverage has compressed. A
+   leveraged Yes plus a leveraged No held through such a jump profits at the vault's expense. This
+   is bounded by the profit cap, the capacity limit and the tick-bounded leverage, and priced by
+   the borrow fee, but it is not eliminated. Holding 1× on both sides through resolution loses the
+   fee (tested).
+5. *Latency.* A trader who sees the reference move before the oracle does has an edge of at most
+   the price's validity window. Worse-of fills remove most of it.
+
+**Honest cost to traders.** In a trending market the mid and the slow price differ, and every fill
+takes the worse one. At 100× a 3 bp gap costs about 3% of margin on entry; at 1000× it would be
+30%, which is where the entry guard starts refusing. "No slippage" is true when the market is calm
+and is not true when it is moving fast.
+
+## Keeper: decision loop and limits
+
+Every second (`keeper/src/index.js`):
+
+1. Read reference prices: Hyperliquid best bid/offer by websocket, Gemini books by REST.
+2. Sign one `PriceUpdate` per market with the mid and the nearby depth.
+3. Serve the signed updates over HTTP, so a trade can carry its own fresh price.
+4. Relay on-chain when a market's heartbeat is due or its price has moved enough. Locally that
+   is every 3 s or 2 bps. On Arc each relay costs gas, so relays are batched into at most one
+   transaction every 10 s, on a 5 bps move or a 120 s heartbeat, while someone has the app open
+   or a position is live; otherwise at most one a minute, on a 15 bps move or a 30 minute
+   heartbeat.
+5. Scan open positions against the live price; liquidate, force-close or settle what is due. Each
+   of those calls carries its own fresh signed price, so upkeep does not wait for a relay.
+
+Limits on the keeper:
+
+- Its key signs prices and sends permissionless calls. It has no admin role and holds no user funds.
+- It never signs a price whose source is older than 15 s.
+- It marks an event resolved only when Gemini reports the contract settled.
+- It stops relaying if its gas balance falls below a floor.
+- On test networks it drips a fixed amount of gas to new demo accounts: once per address, capped
+  per hour.
+
+On-chain limits it cannot override: signatures are checked against the signer set, timestamps
+cannot be in the future or go backwards, prices expire, and a resolved market accepts no further
+updates.
+
+## Run it locally
+
+Requires Node 20+.
+
+```bash
+npm run setup          # install contracts, keeper and web dependencies
+npm test               # 30 contract tests, including the exploit replay
+```
+
+Then, each in its own terminal:
+
+```bash
+npm run chain          # local Hardhat chain
+```
+
+```bash
+npm run deploy:local   # deploy, register markets, seed the vault with test USDC
+```
+
+```bash
+npm run keeper         # live prices from Hyperliquid and Gemini
+```
+
+```bash
+npm run web            # http://localhost:5173
+```
+
+Click **Demo account**: the app creates a throwaway key in the browser, gets gas from the keeper
+and 10,000 test USDC from the faucet, and trades with one click and no wallet prompts.
+
+To refresh the listed prediction markets before deploying: `npm run pick-events`.
+
+To watch the keeper liquidate, with the chain and keeper running:
+`npm --prefix contracts exec -- hardhat run scripts/smoke-liquidation.js --network localhost`
+opens a 1000× long and short on BTC and waits for the keeper to liquidate whichever the market
+moves against.
+
+## Deploy to Arc testnet
+
+1. Copy `.env.example` to `.env` and set `DEPLOYER_PRIVATE_KEY`, `KEEPER_PRIVATE_KEY` and
+   `KEEPER_ADDRESS`. Fund both addresses with testnet USDC from the
+   [Circle faucet](https://faucet.circle.com/) (USDC is the gas token).
+2. `npm run deploy:arc`
+3. `NETWORK=arcTestnet npm run keeper`
+4. `VITE_NETWORK=arcTestnet npm run web`
+
+Leave `USDC_ADDRESS` unset to deploy a faucet test token as collateral (anyone can try the app
+without waiting on the faucet), or set it to Arc's USDC to use the real testnet asset.
+
+The app also takes deep links: `#m/101` opens market 101, `#earn` and `#mechanics` open those
+pages.
+
+## Tests
+
+```
+PerpEngine: crypto / equity / commodity markets   14 passing
+PriceOracle                                         3 passing
+PerpEngine: event (prediction) markets              7 passing
+Replay: the Papertrade reference-price exploit      6 passing
+```
+
+## Where each requirement is met
+
+| Requirement | Where |
+|---|---|
+| DeFi track: interacts with smart contracts | `contracts/src/`, deployed on Arc testnet |
+| DeFi track: economic design and risk assumptions | [Economic design and risk assumptions](#economic-design-and-risk-assumptions) |
+| DeFi track: contract addresses | [Live on Arc testnet](#live-on-arc-testnet) |
+| Arc: core on-chain functionality on Arc | All positions, the vault, the oracle and the token live on Arc testnet |
+| Arc: addresses and how the project uses Arc | [Live on Arc testnet](#live-on-arc-testnet), [How it uses Arc](#how-it-uses-arc) |
+| Gemini bounty: uses the Prediction Markets API | [How it uses Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets), `keeper/src/sources/gemini.js`, `keeper/src/pick-events.js` |
+| Architecture overview | [Architecture](#architecture) |
+| Setup instructions | [Run it locally](#run-it-locally), [Deploy to Arc testnet](#deploy-to-arc-testnet) |
+
+## What we would build next
+
+- Several independent price signers with a median, and a second reference venue per market.
+- Deposits from other chains with CCTP, and Arc's own USDC as the only collateral.
+- Leverage that compresses outside the underlying's trading hours for stocks and commodities,
+  when reference books are thinnest.
+- Hedging the vault's net exposure on the reference venues (Hyperliquid, Gemini's trading API).
+- Jump-aware margin for event markets, so the borrow fee tracks how close resolution is.
+- Partial closes, limit and stop orders, an audit.
+
+## Credits
+
+Charts: [Lightweight Charts](https://www.tradingview.com/lightweight-charts/) by TradingView.
+Reference prices: Hyperliquid and Gemini public APIs. Contracts use OpenZeppelin.

@@ -1,0 +1,154 @@
+{
+  "network": "arcTestnet",
+  "chainId": 5042002,
+  "rpcUrl": "https://rpc.testnet.arc.io",
+  "deployedAt": "2026-11-15T09:33:53.981Z",
+  "keeper": "0xe386ABa1C3197D166130ec45566208b0A658F6d2",
+  "faucet": true,
+  "contracts": {
+    "USDC": "0xE4475D526B1f625C87b3B0C56C7548016d20BB72",
+    "PriceOracle": "0xbF48c715F8816649D7D56AC01e5ae19850Ae517a",
+    "Vault": "0x2b32560890De4070A66b47fD4242F2b817FBEF58",
+    "OpenLiquidToken": "0x0C1221ee07A921B078391512acb8fD1dCE72E6C3",
+    "Staking": "0xb0FaFD344dE5d451638B7711206e6A3Df0902f06",
+    "PerpEngine": "0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8"
+  },
+  "markets": [
+    {
+      "id": 1,
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "kind": "crypto",
+      "source": "hyperliquid",
+      "ref": "BTC"
+    },
+    {
+      "id": 2,
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "kind": "crypto",
+      "source": "hyperliquid",
+      "ref": "ETH"
+    },
+    {
+      "id": 3,
+      "symbol": "SOL",
+      "name": "Solana",
+      "kind": "crypto",
+      "source": "hyperliquid",
+      "ref": "SOL"
+    },
+    {
+      "id": 4,
+      "symbol": "HYPE",
+      "name": "Hyperliquid",
+      "kind": "crypto",
+      "source": "hyperliquid",
+      "ref": "HYPE"
+    },
+    {
+      "id": 20,
+      "symbol": "NDX",
+      "name": "Nasdaq-100",
+      "kind": "equity",
+      "source": "hyperliquid",
+      "ref": "xyz:XYZ100"
+    },
+    {
+      "id": 21,
+      "symbol": "NVDA",
+      "name": "Nvidia",
+      "kind": "equity",
+      "source": "hyperliquid",
+      "ref": "xyz:NVDA"
+    },
+    {
+      "id": 22,
+      "symbol": "TSLA",
+      "name": "Tesla",
+      "kind": "equity",
+      "source": "hyperliquid",
+      "ref": "xyz:TSLA"
+    },
+    {
+      "id": 23,
+      "symbol": "AAPL",
+      "name": "Apple",
+      "kind": "equity",
+      "source": "hyperliquid",
+      "ref": "xyz:AAPL"
+    },
+    {
+      "id": 40,
+      "symbol": "GOLD",
+      "name": "Gold",
+      "kind": "commodity",
+      "source": "hyperliquid",
+      "ref": "xyz:GOLD"
+    },
+    {
+      "id": 41,
+      "symbol": "SILVER",
+      "name": "Silver",
+      "kind": "commodity",
+      "source": "hyperliquid",
+      "ref": "xyz:SILVER"
+    },
+    {
+      "id": 42,
+      "symbol": "OIL",
+      "name": "Crude Oil (WTI)",
+      "kind": "commodity",
+      "source": "hyperliquid",
+      "ref": "xyz:CL"
+    },
+    {
+      "id": 101,
+      "symbol": "UCL-2611242000-BVB-ARS-M-ARS",
+      "name": "Dortmund vs Arsenal",
+      "outcome": "Arsenal",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-UCL-2611242000-BVB-ARS-M-ARS",
+      "eventTicker": "UCL-2611242000-BVB-ARS-M",
+      "expiry": 1795550400
+    },
+    {
+      "id": 102,
+      "symbol": "NCAAF-2611211930-IOW-ILL-M-IOW",
+      "name": "Iowa vs Illinois",
+      "outcome": "Iowa",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-NCAAF-2611211930-IOW-ILL-M-IOW",
+      "eventTicker": "NCAAF-2611211930-IOW-ILL-M",
+      "expiry": 1795289400
+    },
+    {
+      "id": 103,
+      "symbol": "BTC2611302200-HI60000",
+      "name": "BTC price on November 30",
+      "outcome": "$60,000 or above",
+      "category": "Crypto",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-BTC2611302200-HI60000",
+      "eventTicker": "BTC2611302200",
+      "expiry": 1796076000
+    },
+    {
+      "id": 104,
+      "symbol": "ZEC2611302200-HI1040",
+      "name": "ZEC price on November 30",
+      "outcome": "$1,040 or above",
+      "category": "Crypto",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-ZEC2611302200-HI1040",
+      "eventTicker": "ZEC2611302200",
+      "expiry": 1796076000
+    }
+  ]
+}

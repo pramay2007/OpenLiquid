@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+contracts/cache/
+contracts/artifacts/
+contracts/typechain-types/
+web/dist/
+.DS_Store
+*.log
+.claude/
+deployments/localhost.json
+web/src/chain/deployment.localhost.json

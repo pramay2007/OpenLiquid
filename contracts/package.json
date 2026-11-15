@@ -1,0 +1,26 @@
+{
+  "name": "openliquid-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "hardhat test",
+    "chain": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:arc": "hardhat run scripts/deploy.js --network arcTestnet",
+    "status": "hardhat run scripts/status.js --network localhost"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^18.0.10",
+    "hardhat": "^2.29.2"
+  },
+  "private": "true"
+}
