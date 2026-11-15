@@ -13,9 +13,20 @@ built so that the trade which drained the last venue of this kind does not work.
 | **Chain award** | Best use of Arc |
 | **Bounty** | Gemini Prediction Markets |
 | **Circle tools** | CCTP V2 with the Forwarding Service, for USDC in and out of Arc ([details](#circle-tools)) |
-| **Live app** | [pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/) |
+| **Live app** | **[pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/)**: open it, click **Demo account**, and trade. No wallet needed. |
 | **Whitepaper** | [docs/whitepaper](docs/whitepaper/README.md), including [what we changed from Papertrade](docs/whitepaper/07-what-we-changed.md) |
-| **Status** | Live on Arc testnet ([addresses](#live-on-arc-testnet)). Testnet prototype, unaudited, test USDC only. |
+| **Status** | Live and tradeable on Arc testnet ([addresses](#live-on-arc-testnet)). The price keeper is hosted on Render. Testnet prototype, unaudited, test USDC only. |
+
+### Try it in a minute
+
+1. Open [pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/).
+2. Click **Demo account**. The app creates a key in your browser, the keeper sends it gas, and
+   10,000 test USDC arrives from the faucet.
+3. Pick a market, choose a side and a leverage, and open a position.
+
+The keeper runs on a free Render instance that sleeps when nobody is using the site. If prices
+show as offline, wait up to a minute for it to wake. Its status is at
+[openliquid-keeper.onrender.com/health](https://openliquid-keeper.onrender.com/health).
 
 **Contents:** [What it is](#what-it-is) · [The replay](#the-replay) ·
 [Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) · [Circle tools](#circle-tools) ·
@@ -358,7 +369,10 @@ open those pages; `#docs/what-we-changed` opens a whitepaper page.
 
 ## Host it
 
-The public deployment is two pieces.
+The public deployment is two pieces, and both are live: the app at
+[pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/) and the keeper at
+`https://openliquid-keeper.onrender.com`. Trading on the public site was verified on 2026-11-15
+with a fresh demo account: account setup, then two positions opened and closed.
 
 **Web app, on GitHub Pages.** `npm run publish:web` builds the app against the Arc testnet
 deployment and pushes it to the `gh-pages` branch. Set `VITE_KEEPER_URL` first if the keeper is
