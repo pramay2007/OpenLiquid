@@ -25,6 +25,9 @@ const FAUCET_AMOUNT = 10_000;
 
 let wallet: WalletClient | null = null;
 
+/** The connected account's signer on Arc, for flows outside this file (the bridge). */
+export const activeWallet = () => wallet;
+
 // ---- connecting -----------------------------------------------------------------------------
 
 /** A throwaway key kept in this browser. Test networks only: it signs without prompts. */

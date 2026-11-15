@@ -10,6 +10,7 @@
     "deploy:arc": "npm --prefix contracts run deploy:arc",
     "pick-events": "npm --prefix keeper run pick-events",
     "keeper": "npm --prefix keeper start",
-    "web": "npm --prefix web run dev"
+    "web": "npm --prefix web run dev",
+    "publish:web": "sh scripts/publish-web.sh"
   }
 }

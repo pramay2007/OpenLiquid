@@ -3,8 +3,11 @@ import { startChainPolling } from "./data/chain";
 import { startKeeperStream } from "./data/keeper";
 import { restoreSession } from "./data/wallet";
 import { useStore } from "./state/store";
+import { BridgePage } from "./components/BridgePage";
+import { DocsPage } from "./components/DocsPage";
 import { EarnPage } from "./components/EarnPage";
 import { Header } from "./components/Header";
+import { LandingPage } from "./components/LandingPage";
 import { MarketHeader } from "./components/MarketHeader";
 import { MarketRail } from "./components/MarketRail";
 import { MechanicsPage } from "./components/MechanicsPage";
@@ -53,8 +56,11 @@ export default function App() {
           <OrderTicket />
         </main>
       )}
+      {page === "home" && <LandingPage />}
       {page === "earn" && <EarnPage />}
+      {page === "bridge" && <BridgePage />}
       {page === "mechanics" && <MechanicsPage />}
+      {page === "docs" && <DocsPage />}
       <Toasts />
     </div>
   );

@@ -103,11 +103,13 @@ export interface Toast {
   body?: string;
 }
 
-export type Page = "trade" | "earn" | "mechanics";
+export type Page = "home" | "trade" | "earn" | "bridge" | "mechanics" | "docs";
 
 interface Store {
   page: Page;
   selected: number;
+  /** Whitepaper page being read, by slug; empty means the first page. */
+  doc: string;
   live: Record<number, LivePrice>;
   markets: Record<number, MarketState>;
   summary: Record<number, { prevDay: number }>;
@@ -124,22 +126,37 @@ interface Store {
   toasts: Toast[];
   setPage: (page: Page) => void;
   select: (id: number) => void;
+  openDoc: (slug: string) => void;
   toast: (t: Omit<Toast, "id">) => void;
   dismiss: (id: number) => void;
 }
 
 let toastId = 1;
 
-// Deep links: #earn, #mechanics, or #m/<marketId> for a market on the trade page.
-function fromHash(): { page: Page; selected: number } {
+// Deep links: #earn, #bridge, #mechanics, #docs/<page>, or #m/<marketId> for a market on the
+// trade page. No hash is the opening page.
+function fromHash(): { page: Page; selected: number; doc: string } {
   const first = deployment.markets[0]?.id ?? 1;
   const hash = typeof location === "undefined" ? "" : location.hash.slice(1);
-  if (hash === "earn" || hash === "mechanics") return { page: hash, selected: first };
+  if (!hash) return { page: "home", selected: first, doc: "" };
+  if (hash === "earn" || hash === "mechanics" || hash === "bridge") return { page: hash, selected: first, doc: "" };
+  const doc = /^docs(?:\/([\w-]+))?$/.exec(hash);
+  if (doc) return { page: "docs", selected: first, doc: doc[1] ?? "" };
   const id = Number(/^m\/(\d+)$/.exec(hash)?.[1]);
-  return { page: "trade", selected: deployment.markets.some((m) => m.id === id) ? id : first };
+  return { page: "trade", selected: deployment.markets.some((m) => m.id === id) ? id : first, doc: "" };
 }
-const toHash = (page: Page, selected: number) =>
-  history.replaceState(null, "", page === "trade" ? `#m/${selected}` : `#${page}`);
+const toHash = (page: Page, selected: number, doc = "") =>
+  history.replaceState(
+    null,
+    "",
+    page === "home"
+      ? location.pathname + location.search
+      : page === "trade"
+        ? `#m/${selected}`
+        : page === "docs" && doc
+          ? `#docs/${doc}`
+          : `#${page}`
+  );
 
 export const useStore = create<Store>((set, get) => ({
   ...fromHash(),
@@ -158,8 +175,12 @@ export const useStore = create<Store>((set, get) => ({
   params: { maintFraction: 0.2, liqFeeFraction: 0.05, stakerShare: 0.3, minMargin: 1 },
   toasts: [],
   setPage: (page) => {
-    toHash(page, get().selected);
+    toHash(page, get().selected, get().doc);
     set({ page });
+  },
+  openDoc: (doc) => {
+    toHash("docs", get().selected, doc);
+    set({ page: "docs", doc });
   },
   select: (selected) => {
     toHash("trade", selected);
@@ -172,6 +193,11 @@ export const useStore = create<Store>((set, get) => ({
   },
   dismiss: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),
 }));
+
+// A link typed, pasted or reached with the back button changes the page without a reload.
+if (typeof window !== "undefined") {
+  window.addEventListener("hashchange", () => useStore.setState(fromHash()));
+}
 
 /** The feed the UI trades against: live keeper mid where available, on-chain slow price. */
 export function feedOf(state: Pick<Store, "live" | "markets">, id: number): { mid: number; slow: number } | null {

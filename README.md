@@ -4,7 +4,7 @@
 prediction markets, in one venue on Arc.** One price, no order book, losses capped at margin,
 built so that the trade which drained the last venue of this kind does not work.
 
-![Trading BTC on OpenLiquid](docs/trade.png)
+![OpenLiquid opening page](docs/home.png)
 
 | | |
 |---|---|
@@ -12,13 +12,16 @@ built so that the trade which drained the last venue of this kind does not work.
 | **Main track** | DeFi and Onchain Applications |
 | **Chain award** | Best use of Arc |
 | **Bounty** | Gemini Prediction Markets |
+| **Circle tools** | CCTP V2 with the Forwarding Service, for USDC in and out of Arc ([details](#circle-tools)) |
+| **Live app** | [pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/) |
+| **Whitepaper** | [docs/whitepaper](docs/whitepaper/README.md), including [what we changed from Papertrade](docs/whitepaper/07-what-we-changed.md) |
 | **Status** | Live on Arc testnet ([addresses](#live-on-arc-testnet)). Testnet prototype, unaudited, test USDC only. |
 
 **Contents:** [What it is](#what-it-is) · [The replay](#the-replay) ·
-[Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) ·
+[Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) · [Circle tools](#circle-tools) ·
 [Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets) ·
 [Economic design and risks](#economic-design-and-risk-assumptions) · [Keeper](#keeper-decision-loop-and-limits) ·
-[Run it](#run-it-locally) · [Where each requirement is met](#where-each-requirement-is-met)
+[Run it](#run-it-locally) · [Host it](#host-it) · [Where each requirement is met](#where-each-requirement-is-met)
 
 ## What it is
 
@@ -29,6 +32,8 @@ for payment, and its token was minted to losing traders, so stakers were paid ou
 
 OpenLiquid keeps what people liked (one price, no order book, capped losses, very high leverage) and
 changes the rules underneath:
+
+![Trading BTC on OpenLiquid](docs/trade.png)
 
 | Problem in the "any size at the mid" design | OpenLiquid |
 |---|---|
@@ -97,7 +102,8 @@ The same figures are animated on the app's Mechanics page.
 | `contracts/src/Vault.sol` | ERC-4626 USDC vault. Holds trader margin and the reserve for every open position; LP share price marks open positions at the oracle. |
 | `contracts/src/OpenLiquidToken.sol`, `Staking.sol` | Fee-minted token and USDC fee distribution. |
 | `keeper/` | Price signer, relayer, liquidation and settlement bot, small HTTP API for the frontend. |
-| `web/` | Trading interface. |
+| `web/` | Opening page, trading interface, Earn, Bridge (CCTP), Mechanics and the whitepaper reader. |
+| `docs/whitepaper/` | The whitepaper, as Markdown. The app renders the same files. |
 | `markets.json` | Listed markets. `npm run pick-events` fills in live Gemini contracts. |
 
 ### Live on Arc testnet
@@ -127,8 +133,10 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
   USDC in gas (about 0.006 USDC measured). The whole deployment (six contracts, 15 markets,
   vault seeding) cost about 0.3 USDC.
 - **One-click trading without a wallet.** The demo account is a key held in the browser. The
-  keeper sends it 0.25 USDC once, enough gas for about 40 transactions, so a new user trades
+  keeper sends it 0.1 USDC once, enough gas for about 15 transactions, so a new user trades
   with no wallet prompt and no seed phrase.
+- **USDC arrives from other chains as gas.** The Bridge page brings USDC to Arc with CCTP, and
+  on Arc that USDC is what pays for transactions. See [Circle tools](#circle-tools).
 - **Fast finality fits signed prices.** Each trade carries a signed price that is valid for 60
   seconds. On Arc a trade is final well inside that window.
 - **Standard EVM tooling.** Plain Solidity 0.8.24 built and deployed with Hardhat; viem in the
@@ -137,6 +145,42 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
 The collateral in this deployment is a faucet test token with USDC's six decimals, so anyone can
 get 10,000 to try the app without waiting on Circle's faucet. Setting `USDC_ADDRESS` before
 deploying uses Arc's own USDC as collateral instead; the contracts are the same.
+
+### Circle tools
+
+**CCTP V2 with the Forwarding Service** is built into the app's Bridge page
+(`web/src/data/bridge.ts`). It moves USDC between Arc and Base, Ethereum, Arbitrum, OP and
+Avalanche testnets in one transaction:
+
+1. The sender calls `depositForBurnWithHook` on Circle's `TokenMessengerV2` on the source chain,
+   with the forwarding hook attached.
+2. Circle attests the burn.
+3. Circle's forwarding service submits the mint on the destination. The sender signs nothing
+   there and needs no gas token there.
+
+Fees are read live from Circle's API and shown before signing. No API key is involved. A transfer
+out of Arc signs with the app's own account, including the wallet-less demo account; a transfer
+into Arc is signed by a browser wallet on the source chain and can be sent to any Arc address.
+
+![The Bridge page](docs/bridge.png)
+
+Verified on testnet on 2026-11-15, from the demo account in the app: 0.10101 USDC burned on Arc
+([transaction](https://explorer.testnet.arc.io/tx/0x18e24b6b14481b6a71dd2e4d0a9a09c518750da3f34fb0c34ec15db4ea5b25c9))
+and minted on Base Sepolia by Circle about ten seconds later
+([transaction](https://sepolia.basescan.org/tx/0x383e0f64bdec02e9667a14ec285d2587c26bf7a130cdb485fa672e32c1212a4f)).
+The Arc-to-other-chain direction is the one tested end to end; the other direction uses the same
+call with the chains swapped and has not been run with funds.
+
+What is not integrated, and why:
+
+- **Circle Wallets and Gas Station.** Both support Arc testnet, and both need a Circle Developer
+  Console key. Passkey smart accounts with sponsored gas are the natural replacement for the demo
+  account and the keeper's gas drip, and are next on the list.
+- **Circle Paymaster.** It is not deployed on Arc. Gas there is already paid in USDC.
+
+On this testnet deployment the trading collateral is a faucet token, so USDC bridged to Arc pays
+an account's gas. With `USDC_ADDRESS` set at deployment the collateral is Arc's USDC and the same
+transfer is the deposit.
 
 ### How it uses Gemini Prediction Markets
 
@@ -231,8 +275,8 @@ Limits on the keeper:
 - It never signs a price whose source is older than 15 s.
 - It marks an event resolved only when Gemini reports the contract settled.
 - It stops relaying if its gas balance falls below a floor.
-- On test networks it drips a fixed amount of gas to new demo accounts: once per address, capped
-  per hour.
+- On test networks it drips a fixed amount of gas to new demo accounts: 0.1 USDC, once per
+  address, at most 15 an hour.
 
 On-chain limits it cannot override: signatures are checked against the signer set, timestamps
 cannot be in the future or go backwards, prices expire, and a resolved market accepts no further
@@ -287,8 +331,23 @@ moves against.
 Leave `USDC_ADDRESS` unset to deploy a faucet test token as collateral (anyone can try the app
 without waiting on the faucet), or set it to Arc's USDC to use the real testnet asset.
 
-The app also takes deep links: `#m/101` opens market 101, `#earn` and `#mechanics` open those
-pages.
+The app also takes deep links: `#m/101` opens market 101; `#earn`, `#bridge` and `#mechanics`
+open those pages; `#docs/what-we-changed` opens a whitepaper page.
+
+## Host it
+
+The public deployment is two pieces.
+
+**Web app, on GitHub Pages.** `npm run publish:web` builds the app against the Arc testnet
+deployment and pushes it to the `gh-pages` branch. Set `VITE_KEEPER_URL` first if the keeper is
+not at the default address.
+
+**Keeper, on any Node host.** `render.yaml` is a Render blueprint for it: create the service from
+this repository, and enter `KEEPER_PRIVATE_KEY` when asked. It needs nothing else, because the
+deployment file and the ABIs it reads are in the repository. The key signs prices and pays the
+keeper's gas, so its address needs testnet USDC from the [Circle faucet](https://faucet.circle.com/).
+On a free instance the keeper sleeps when nobody has the app open; positions are not liquidated
+while it sleeps, which is acceptable on a testnet and not anywhere else.
 
 ## Tests
 
@@ -308,6 +367,9 @@ Replay: the Papertrade reference-price exploit      6 passing
 | DeFi track: contract addresses | [Live on Arc testnet](#live-on-arc-testnet) |
 | Arc: core on-chain functionality on Arc | All positions, the vault, the oracle and the token live on Arc testnet |
 | Arc: addresses and how the project uses Arc | [Live on Arc testnet](#live-on-arc-testnet), [How it uses Arc](#how-it-uses-arc) |
+| Arc: Circle tools | [Circle tools](#circle-tools): CCTP V2 and the Forwarding Service, `web/src/data/bridge.ts` |
+| Working demo | [pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/), [Host it](#host-it) |
+| Mechanics, in full | [Whitepaper](docs/whitepaper/README.md) |
 | Gemini bounty: uses the Prediction Markets API | [How it uses Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets), `keeper/src/sources/gemini.js`, `keeper/src/pick-events.js` |
 | Architecture overview | [Architecture](#architecture) |
 | Setup instructions | [Run it locally](#run-it-locally), [Deploy to Arc testnet](#deploy-to-arc-testnet) |
@@ -315,7 +377,8 @@ Replay: the Papertrade reference-price exploit      6 passing
 ## What we would build next
 
 - Several independent price signers with a median, and a second reference venue per market.
-- Deposits from other chains with CCTP, and Arc's own USDC as the only collateral.
+- Arc's own USDC as the only collateral, so a CCTP transfer is a deposit.
+- Circle Wallets passkey accounts with Gas Station in place of the demo key and the gas drip.
 - Leverage that compresses outside the underlying's trading hours for stocks and commodities,
   when reference books are thinnest.
 - Hedging the vault's net exposure on the reference venues (Hyperliquid, Gemini's trading API).

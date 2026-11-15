@@ -1,0 +1,21 @@
+# Render blueprint for the keeper: price signer, relayer, liquidation bot and the small HTTP API
+# the web app reads. Create it from https://render.com/deploy?repo=<this repo>, then paste the
+# keeper's private key when asked. Nothing else is needed: the deployment file and the ABIs the
+# keeper reads are in the repository.
+services:
+  - type: web
+    name: openliquid-keeper
+    runtime: node
+    plan: free
+    buildCommand: npm --prefix keeper ci
+    startCommand: node keeper/src/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NETWORK
+        value: arcTestnet
+      # The key that signs prices and pays the keeper's gas on Arc. Entered in Render's
+      # dashboard, never committed.
+      - key: KEEPER_PRIVATE_KEY
+        sync: false

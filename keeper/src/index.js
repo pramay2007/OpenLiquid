@@ -29,8 +29,9 @@ dotenv.config({ path: root(".env"), quiet: true });
 const NETWORK = process.env.NETWORK ?? "localhost";
 const LOCAL = NETWORK === "localhost";
 const deployment = JSON.parse(await readFile(root(`deployments/${NETWORK}.json`), "utf8"));
-const abi = async (name) =>
-  JSON.parse(await readFile(root(`contracts/artifacts/src/${name}.sol/${name}.json`), "utf8")).abi;
+// ABIs come from the copies the deploy script commits for the frontend, so the keeper runs
+// from a clean clone without compiling the contracts.
+const abi = async (name) => JSON.parse(await readFile(root(`web/src/chain/${name}.abi.json`), "utf8"));
 
 const TICK_MS = Number(process.env.TICK_MS ?? 1000);
 // On a real network every relay costs gas, so prices go on-chain less often there. Trades and
@@ -53,7 +54,9 @@ const LOCAL_TEST_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f460
 const KEY = LOCAL ? LOCAL_TEST_KEY : process.env.KEEPER_PRIVATE_KEY;
 if (!KEY) throw new Error("Set KEEPER_PRIVATE_KEY in .env to run the keeper off localhost");
 
-const provider = new ethers.JsonRpcProvider(deployment.rpcUrl, deployment.chainId, { staticNetwork: true });
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL ?? deployment.rpcUrl, deployment.chainId, {
+  staticNetwork: true,
+});
 const wallet = new ethers.NonceManager(new ethers.Wallet(KEY, provider));
 const keeperAddress = await wallet.getAddress();
 const oracle = new ethers.Contract(deployment.contracts.PriceOracle, await abi("PriceOracle"), wallet);
@@ -316,8 +319,9 @@ function pricesPayload() {
 
 // ---- test-network gas drip ----------------------------------------------------------------
 
-const DRIP_AMOUNT = ethers.parseEther(process.env.DRIP_AMOUNT ?? (LOCAL ? "1" : "0.25"));
-const DRIP_MAX_PER_HOUR = Number(process.env.DRIP_MAX_PER_HOUR ?? (LOCAL ? 600 : 20));
+// Sized for a public demo: about fifteen transactions per account, and a bounded hourly spend.
+const DRIP_AMOUNT = ethers.parseEther(process.env.DRIP_AMOUNT ?? (LOCAL ? "1" : "0.1"));
+const DRIP_MAX_PER_HOUR = Number(process.env.DRIP_MAX_PER_HOUR ?? (LOCAL ? 600 : 15));
 const dripped = new Set();
 let dripTimes = [];
 

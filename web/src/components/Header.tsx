@@ -8,7 +8,9 @@ import { Mark, Num, Spinner } from "./primitives";
 const PAGES: { id: Page; label: string }[] = [
   { id: "trade", label: "Trade" },
   { id: "earn", label: "Earn" },
+  { id: "bridge", label: "Bridge" },
   { id: "mechanics", label: "Mechanics" },
+  { id: "docs", label: "Whitepaper" },
 ];
 
 export function Header() {
@@ -22,10 +24,10 @@ export function Header() {
 
   return (
     <header className="header">
-      <div className="brand">
+      <button className="brand" onClick={() => setPage("home")} aria-label="OpenLiquid home">
         <Mark />
         OpenLiquid
-      </div>
+      </button>
       <nav className="nav" aria-label="Sections">
         {PAGES.map((p) => (
           <button key={p.id} aria-current={page === p.id ? "page" : undefined} onClick={() => setPage(p.id)}>
