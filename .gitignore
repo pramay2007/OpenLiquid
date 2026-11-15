@@ -11,3 +11,4 @@ web/dist/
 .claude/
 deployments/localhost.json
 web/src/chain/deployment.localhost.json
+devpost-additional-info.md
