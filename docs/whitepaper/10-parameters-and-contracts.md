@@ -27,7 +27,7 @@ These are the values in the Arc testnet deployment. They are set per market by t
 | Entry guard | Fill may start at most 30% of margin under water |
 | Staker share of profit fees | 30% |
 | Minimum margin | $1 |
-| Price validity | 10 seconds |
+| Price validity | 20 seconds |
 | Event markets: minimum distance to zero equity | 2 ticks |
 
 ## Token parameters

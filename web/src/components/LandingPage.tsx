@@ -383,7 +383,7 @@ export function LandingPage() {
               <dd>to open a position</dd>
             </div>
             <div>
-              <dt>&lt;1¢</dt>
+              <dt>~1¢</dt>
               <dd>gas per trade, in USDC</dd>
             </div>
           </dl>

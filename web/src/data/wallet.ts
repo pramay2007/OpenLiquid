@@ -4,6 +4,7 @@ import {
   UserRejectedRequestError,
   createWalletClient,
   custom,
+  decodeErrorResult,
   encodeAbiParameters,
   http,
   maxUint256,
@@ -13,7 +14,7 @@ import {
   type TransactionReceipt,
   type WalletClient,
 } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { generatePrivateKey, nonceManager, privateKeyToAccount } from "viem/accounts";
 import { abis, addresses, chain, deployment, marketMeta } from "../chain/config";
 import { useStore } from "../state/store";
 import { publicClient, refreshAll } from "./chain";
@@ -41,7 +42,9 @@ export async function connectDemo(fresh = false) {
       key = generatePrivateKey();
       localStorage.setItem(DEMO_KEY, key);
     }
-    const account = privateKeyToAccount(key);
+    // Nonces are counted here, not read back for every transaction: the public RPC is
+    // load-balanced, and a node that is a block behind reports a nonce that is already used.
+    const account = privateKeyToAccount(key, { nonceManager });
     wallet = createWalletClient({ account, chain, transport: http() });
     useStore.setState({ account: { address: account.address, kind: "demo" } });
     await requestDrip(account.address);
@@ -104,18 +107,79 @@ export function restoreSession() {
 
 // ---- transactions ---------------------------------------------------------------------------
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Gas limit for a transaction, from the network's estimate. The estimate is not left as it is:
+ * it comes with about 1% to spare, and a node that has not yet seen the previous transaction
+ * estimates against the old state (an order sent right after a close was quoted about 420k
+ * where it needs 500k, and ran out of gas). Unused gas is not charged.
+ */
+export const withHeadroom = (estimate: bigint) => (estimate * 3n) / 2n + 60_000n;
+let lastSentAt = 0;
+
+const revertOf = (err: unknown) => {
+  const revert = err instanceof BaseError ? err.walk((e) => e instanceof ContractFunctionRevertedError) : null;
+  return revert instanceof ContractFunctionRevertedError ? revert : null;
+};
+const rejected = (err: unknown) => err instanceof BaseError && !!err.walk((e) => e instanceof UserRejectedRequestError);
+const textOf = (err: unknown) =>
+  err instanceof BaseError ? `${err.shortMessage} ${err.details ?? ""}` : err instanceof Error ? err.message : String(err);
+
+/**
+ * A failed dry run that is worth repeating. The public RPC is load-balanced, so a node can be a
+ * block behind the one that took the last transaction: it then fails a call without a reason,
+ * or reports an allowance or balance from before that transaction.
+ */
+function staleRead(err: unknown): boolean {
+  if (rejected(err)) return false;
+  const revert = revertOf(err);
+  if (!revert) return /rate limit|429|timed? ?out|fetch failed|internal error|http request failed/i.test(textOf(err));
+  const name = revert.data?.errorName ?? revert.reason;
+  return !name || (Date.now() - lastSentAt < 8000 && /^ERC20Insufficient/.test(name));
+}
+
+/** The node refused the transaction over its nonce, so nothing was broadcast and it is safe to resend. */
+const nonceRefused = (err: unknown) => !rejected(err) && /nonce (too low|has already been used)|nonce is too low/i.test(textOf(err));
+
 async function send(address: `0x${string}`, abi: Abi, functionName: string, args: unknown[]): Promise<TransactionReceipt> {
   if (!wallet?.account) throw new Error("Connect an account first");
-  const { request } = await publicClient.simulateContract({ address, abi, functionName, args, account: wallet.account });
-  const hash = await wallet.writeContract(request);
-  return publicClient.waitForTransactionReceipt({ hash });
+  let hash: `0x${string}`;
+  for (let attempt = 0; ; attempt++) {
+    let request;
+    let gas: bigint;
+    try {
+      const call = { address, abi, functionName, args, account: wallet.account };
+      ({ request } = await publicClient.simulateContract(call));
+      gas = withHeadroom(await publicClient.estimateContractGas(call));
+    } catch (err) {
+      if (attempt >= 2 || !staleRead(err)) throw err;
+      await sleep(700 * (attempt + 1));
+      continue;
+    }
+    try {
+      hash = await wallet.writeContract({ ...request, gas });
+      break;
+    } catch (err) {
+      // Once a signature exists only a nonce refusal is retried: anything else may have been sent.
+      if (attempt >= 2 || !nonceRefused(err)) throw err;
+      await sleep(700 * (attempt + 1));
+    }
+  }
+  lastSentAt = Date.now();
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  if (receipt.status !== "success") {
+    throw new Error("The transaction was included but failed. Only gas was spent. Try again.");
+  }
+  return receipt;
 }
 
 const REASONS: Record<string, string> = {
   SideCapExceeded: "That side is at its depth-backed capacity. Try a smaller size.",
   PriceDislocated: "Opens are paused while the price is moving fast. Try again in a moment.",
   EntryTooFarFromMid: "The price is moving fast. Lower the leverage or try again in a moment.",
-  StalePrice: "No fresh price for this market yet.",
+  StalePrice: "No fresh price for this market right now. Try again in a moment.",
+  FutureTimestamp: "The price is ahead of the network's clock. Try again in a moment.",
   BadLeverage: "Leverage is above this market's current limit.",
   BadMargin: "Margin is below the minimum.",
   PositionTooLarge: "Position is above the per-position limit.",
@@ -131,14 +195,33 @@ const REASONS: Record<string, string> = {
   ERC4626ExceededMaxRedeem: "More than can be withdrawn right now: part of the vault is locked against open positions.",
 };
 
+/**
+ * The contract error behind a failure that viem left undecoded. A wallet's own gas estimate can
+ * fail with the error only as raw bytes, somewhere down the chain of causes.
+ */
+function rawErrorName(err: unknown): string | undefined {
+  for (let e = err as { data?: unknown; cause?: unknown } | undefined; e; e = e.cause as typeof e) {
+    const data = typeof e.data === "string" ? e.data : (e.data as { data?: unknown } | undefined)?.data;
+    if (typeof data !== "string" || !/^0x[0-9a-f]{8}/i.test(data)) continue;
+    try {
+      return decodeErrorResult({ abi: abis.engine, data: data as `0x${string}` }).errorName;
+    } catch {
+      /* not one of ours */
+    }
+  }
+  return undefined;
+}
+
 export function explain(err: unknown): string {
   if (err instanceof BaseError) {
     if (err.walk((e) => e instanceof UserRejectedRequestError)) return "Cancelled in the wallet.";
-    const revert = err.walk((e) => e instanceof ContractFunctionRevertedError);
-    if (revert instanceof ContractFunctionRevertedError) {
-      const name = revert.data?.errorName ?? revert.reason ?? "";
-      return REASONS[name] ?? (name || "The transaction would revert.");
+    const revert = revertOf(err);
+    if (revert) {
+      const name = revert.data?.errorName ?? revert.reason ?? rawErrorName(err) ?? "";
+      // With no decoded reason, pass on what the node said: it is usually a network fault.
+      return REASONS[name] ?? (name || `The network did not accept the call (${err.details || "no reason given"}). Try again.`);
     }
+    if (nonceRefused(err)) return "The network was out of step with this account. Try again.";
     return err.shortMessage;
   }
   return err instanceof Error ? err.message : String(err);

@@ -99,7 +99,7 @@ The replay is a model of the reported trade and not a reconstruction of Papertra
 
 These changes are not free, and Papertrade does some things better.
 
-- **A trusted price signer, and a validity window.** Papertrade reads Hyperliquid's book directly on-chain, with nobody in between and no delay. Arc cannot do that, so OpenLiquid relies on a keeper that signs prices, each usable for 10 seconds. In this build that is one key. A dishonest signer could misprice every market, and a trader can choose among the last few seconds of prices.
+- **A trusted price signer, and a validity window.** Papertrade reads Hyperliquid's book directly on-chain, with nobody in between and no delay. Arc cannot do that, so OpenLiquid relies on a keeper that signs prices, each usable for 20 seconds. In this build that is one key. A dishonest signer could misprice every market, and a trader can choose among the last few seconds of prices.
 - **Slippage in fast markets.** Papertrade fills at the mid always. OpenLiquid fills at the mid only when the market is calm. A trader who is right about a sudden real move has to wait about a minute to collect most of it.
 - **Less leverage when it is most tempting.** The entry guard refuses very high leverage while the price is moving.
 - **Capital up front.** Papertrade needed no liquidity providers. OpenLiquid needs a funded vault before the first trade, and its size limits what can be traded.

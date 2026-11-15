@@ -32,7 +32,7 @@ What it is not allowed to do:
 - It marks a prediction market resolved only when Gemini reports the contract settled.
 - Its key has no administrative role and holds no user funds.
 
-What the contracts stop it doing regardless: signatures are checked, timestamps cannot go backwards, prices expire after 10 seconds, and resolved markets are closed to updates.
+What the contracts stop it doing regardless: signatures are checked, timestamps cannot go backwards, prices expire after 20 seconds, and resolved markets are closed to updates.
 
 The limit of this design is stated plainly in [Risks and assumptions](09-risks.md): one signer is one point of trust.
 
@@ -40,11 +40,11 @@ The limit of this design is stated plainly in [Risks and assumptions](09-risks.m
 
 **One unit of account.** Margin, profit, fees, the vault and staking rewards are in USDC. On Arc gas is in USDC as well, because USDC is the chain's native token. A trader holds one asset.
 
-**Small, predictable fees.** Opening or closing a position costs about 0.006 USDC in gas, measured on testnet. Deploying the whole protocol, with its 15 markets, cost about 0.3 USDC.
+**Small, predictable fees.** Opening a position costs about 1.3 cents of USDC in gas and closing one about half a cent, measured on testnet. Deploying the whole protocol, with its 15 markets, cost about 0.3 USDC.
 
-**Fast finality.** A signed price is valid for 10 seconds, to leave little room for choosing a stale one. That is only workable on a chain where a trade is final in about a second.
+**Fast finality.** A signed price is valid for 20 seconds, to leave little room for choosing a stale one. That is only workable on a chain where a trade is final in about a second.
 
-**No wallet needed to try it.** The demo account is a key created in the browser. The keeper sends it 0.1 USDC once, which is enough gas for about fifteen transactions.
+**No wallet needed to try it.** The demo account is a key created in the browser. The keeper sends it 0.2 USDC once, which is enough gas for about ten round trips.
 
 ## USDC from other chains, with CCTP
 

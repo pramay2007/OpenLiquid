@@ -283,7 +283,11 @@ async function sweep() {
         const marketId = Number(p.position.marketId);
         try {
           // Gas estimation runs the call first, so a position that is not actually due costs nothing.
-          const tx = await engine[action](p.id, priceDataFor(marketId));
+          // The estimate gets headroom: it has almost none of its own, and a node that is a block
+          // behind estimates against old state.
+          const data = priceDataFor(marketId);
+          const gas = await engine[action].estimateGas(p.id, data);
+          const tx = await engine[action](p.id, data, { gasLimit: (gas * 3n) / 2n + 60_000n });
           await tx.wait();
           log(`${action} #${p.id} (market ${marketId})`);
         } catch (err) {
@@ -319,9 +323,10 @@ function pricesPayload() {
 
 // ---- test-network gas drip ----------------------------------------------------------------
 
-// Sized for a public demo: about fifteen transactions per account, and a bounded hourly spend.
-const DRIP_AMOUNT = ethers.parseEther(process.env.DRIP_AMOUNT ?? (LOCAL ? "1" : "0.1"));
-const DRIP_MAX_PER_HOUR = Number(process.env.DRIP_MAX_PER_HOUR ?? (LOCAL ? 600 : 15));
+// Sized for a public demo: about ten round trips per account (an open costs roughly 0.013
+// USDC in gas, a close 0.005), and a bounded hourly spend.
+const DRIP_AMOUNT = ethers.parseEther(process.env.DRIP_AMOUNT ?? (LOCAL ? "1" : "0.2"));
+const DRIP_MAX_PER_HOUR = Number(process.env.DRIP_MAX_PER_HOUR ?? (LOCAL ? 600 : 10));
 const dripped = new Set();
 let dripTimes = [];
 

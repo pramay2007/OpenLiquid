@@ -73,8 +73,8 @@ So "no slippage" is true when the market is calm and is not true when it is movi
 
 ## Price freshness
 
-A signed price is usable for 10 seconds on Arc. Every trade carries its own freshly signed price in the same transaction, so a trade never depends on someone else having updated the oracle first. A price stamped in the future or older than the last one on-chain is ignored.
+A signed price is usable for 20 seconds on Arc. Every trade carries its own freshly signed price in the same transaction, so a trade never depends on someone else having updated the oracle first. A price stamped in the future or older than the last one on-chain is ignored.
 
-The window is short on purpose. The keeper signs a new price every second, and a trader may submit any of them that is still inside the window and newer than the one on-chain. The window is therefore the most a trader can gain by choosing which price to use. It was 60 seconds in the first deployment and was cut to 10 after review.
+The window is short on purpose. The keeper signs a new price every second, and a trader may submit any of them that is still inside the window and newer than the one on-chain. The window is therefore the most a trader can gain by choosing which price to use. It was 60 seconds in the first deployment and was cut to 20 after review. It cannot usefully go below about 15: Arc's nodes estimate a transaction's gas against a block stamped 12 seconds ahead, so a shorter window makes a perfectly fresh price look expired before the order is sent. We tried 10 and orders failed for exactly that reason.
 
 Next: [Capacity and the vault](03-capacity-and-vault.md)

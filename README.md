@@ -129,16 +129,16 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
 - **Everything is in dollars.** USDC is the collateral, the unit every position is quoted and
   settled in, the LP asset, the fee asset stakers receive, and on Arc also the gas token. A
   trader never holds a second token to pay fees.
-- **Fees are small and predictable.** Opening or closing a position costs under one cent of
-  USDC in gas (about 0.006 USDC measured). The whole deployment (six contracts, 15 markets,
+- **Fees are small and predictable.** Opening a position costs about 1.3 cents of USDC in gas and
+  closing one about half a cent (measured on testnet at 25 gwei). The whole deployment (six contracts, 15 markets,
   vault seeding) cost about 0.3 USDC.
 - **One-click trading without a wallet.** The demo account is a key held in the browser. The
-  keeper sends it 0.1 USDC once, enough gas for about 15 transactions, so a new user trades
+  keeper sends it 0.2 USDC once, enough gas for about ten round trips, so a new user trades
   with no wallet prompt and no seed phrase.
 - **USDC arrives from other chains as gas.** The Bridge page brings USDC to Arc with CCTP, and
   on Arc that USDC is what pays for transactions. See [Circle tools](#circle-tools).
 - **Fast finality fits signed prices.** Each trade carries a signed price that is valid for only
-  10 seconds, which leaves little room to choose a stale one. That is workable because a trade on
+  20 seconds, which leaves little room to choose a stale one. That is workable because a trade on
   Arc is final in about a second.
 - **Standard EVM tooling.** Plain Solidity 0.8.24 built and deployed with Hardhat; viem in the
   app, ethers in the keeper.
@@ -146,6 +146,21 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
 The collateral in this deployment is a faucet test token with USDC's six decimals, so anyone can
 get 10,000 to try the app without waiting on Circle's faucet. Setting `USDC_ADDRESS` before
 deploying uses Arc's own USDC as collateral instead; the contracts are the same.
+
+### What Arc's public RPC taught us
+
+Three behaviours of the load-balanced public endpoint broke transactions until the app handled
+them. All three are handled in `web/src/data/wallet.ts`.
+
+- **Stale nonces.** A node that is a block behind reports a nonce that has already been used, so
+  the second of two quick transactions is refused. The demo account counts its own nonces, and a
+  refusal over a nonce is retried.
+- **Tight gas estimates.** An estimate comes with about 1% to spare, and a lagging node estimates
+  against old state: an order sent right after a close was quoted 420k gas where it needs 500k,
+  and ran out. Every transaction is sent with 1.5 times the estimate plus 60k.
+- **Pending-block time.** Gas for a new transaction is estimated against a pending block stamped
+  12 seconds after the latest one. A signed price valid for 10 seconds therefore looked expired
+  before the order was sent. The validity window is 20 seconds.
 
 ### Circle tools
 
@@ -247,9 +262,9 @@ USDC.
    is bounded by the profit cap, the capacity limit and the tick-bounded leverage, and priced by
    the borrow fee, but it is not eliminated. Holding 1× on both sides through resolution loses the
    fee (tested).
-5. *Latency and price choice.* A trader may submit any signed price from the last 10 seconds that
+5. *Latency and price choice.* A trader may submit any signed price from the last 20 seconds that
    is newer than the one on-chain, so they can pick the best of those. Worse-of fills delay that
-   gain on entry; on exit it is immediate. The window was cut from 60 seconds to 10 and the keeper
+   gain on entry; on exit it is immediate. The window was cut from 60 seconds to 20 and the keeper
    posts any 5 bp move on-chain, which bounds it without removing it.
 
 A review raised five specific objections (the averaging formula, the liquidation price, the
@@ -282,8 +297,8 @@ Limits on the keeper:
 - It never signs a price whose source is older than 15 s.
 - It marks an event resolved only when Gemini reports the contract settled.
 - It stops relaying if its gas balance falls below a floor.
-- On test networks it drips a fixed amount of gas to new demo accounts: 0.1 USDC, once per
-  address, at most 15 an hour.
+- On test networks it drips a fixed amount of gas to new demo accounts: 0.2 USDC, once per
+  address, at most 10 an hour.
 
 On-chain limits it cannot override: signatures are checked against the signer set, timestamps
 cannot be in the future or go backwards, prices expire, and a resolved market accepts no further

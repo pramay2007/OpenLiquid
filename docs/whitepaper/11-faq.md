@@ -26,7 +26,7 @@ The position is closed at the mid once its equity falls to 20% of margin. The li
 
 ## What does it cost?
 
-Nothing to open. Nothing to close at a loss. 5% of profit when you close a winner, or 10% on a prediction market. Funding if you are on the crowded side. On Arc, gas of under one cent per trade, paid in USDC.
+Nothing to open. Nothing to close at a loss. 5% of profit when you close a winner, or 10% on a prediction market. Funding if you are on the crowded side. On Arc, gas of about one cent to open and half a cent to close, paid in USDC.
 
 ## How do prediction markets work here?
 

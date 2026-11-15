@@ -12,7 +12,7 @@ The slow price forces a pushed price to be held for about the averaging time bef
 
 One key signs every price in this build.
 
-**If it fails.** A dishonest or compromised signer can misprice every market, and the vault would pay for it. A stalled signer stops trading, because prices expire after 10 seconds; it does not let anyone trade on a stale price. A production version needs several independent signers and a median, and a second reference venue for each market.
+**If it fails.** A dishonest or compromised signer can misprice every market, and the vault would pay for it. A stalled signer stops trading, because prices expire after 20 seconds; it does not let anyone trade on a stale price. A production version needs several independent signers and a median, and a second reference venue for each market.
 
 ## 3. Prices move continuously enough to liquidate
 
@@ -30,9 +30,9 @@ A prediction market can go straight to 0 or 1 on news while leverage is still hi
 
 ## 5. Latency
 
-The keeper signs a price every second, and a trader may submit any signed price that is inside the 10 second validity window and newer than the one on-chain. A trader can therefore pick the best price of the last few seconds. On the way in, worse-of fills delay the gain but do not remove it. On the way out it is immediate: after a move against them, a trader can close at a price from just before it, if no newer price has reached the chain.
+The keeper signs a price every second, and a trader may submit any signed price that is inside the 20 second validity window and newer than the one on-chain. A trader can therefore pick the best price of the last few seconds. On the way in, worse-of fills delay the gain but do not remove it. On the way out it is immediate: after a move against them, a trader can close at a price from just before it, if no newer price has reached the chain.
 
-**What bounds it.** The window, which was cut from 60 seconds to 10. The keeper posting a new price on-chain whenever one has moved 5 basis points, which closes the window early. At 1000× a single basis point is 10% of margin, so what is left still matters. A shorter window, posting every price, and several signers are the next steps.
+**What bounds it.** The window, which was cut from 60 seconds to 20. The keeper posting a new price on-chain whenever one has moved 5 basis points, which closes the window early. At 1000× a single basis point is 10% of margin, so what is left still matters. A shorter window, posting every price, and several signers are the next steps.
 
 ## 6. Liquidity providers are short the traders
 

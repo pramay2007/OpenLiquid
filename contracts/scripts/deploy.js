@@ -34,7 +34,9 @@ async function main() {
   if (!keeper) throw new Error("Set KEEPER_ADDRESS in .env");
   // How long a signed price stays usable. A trader can choose among the prices signed inside
   // this window, so it is kept short (scripts/set-max-age.js changes it on a live deployment).
-  const maxAge = isLocal ? 30 : 10;
+  // Not below about 15 on Arc: nodes estimate gas against a pending block stamped 12 s ahead, so a
+  // shorter window makes a fresh price look expired before the transaction is sent.
+  const maxAge = isLocal ? 30 : 20;
 
   const file = JSON.parse(fs.readFileSync(path.join(__dirname, "../../markets.json"), "utf8"));
   const markets = [...file.markets, ...file.events];

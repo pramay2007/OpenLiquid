@@ -6,7 +6,7 @@ A review of this design raised five objections. All five are fair. This page tak
 |---|---|
 | 1. The slow price depends on how often the oracle is updated | Correct. Bounded and documented; the exact fix needs a new oracle contract. |
 | 2. It is unclear which price triggers liquidation | Answered: the mid. The trade-off is stated below. |
-| 3. A 60 second validity window lets a trader choose a stale price | Correct. The window was cut to 10 seconds on the live deployment. Not eliminated. |
+| 3. A 60 second validity window lets a trader choose a stale price | Correct. The window was cut to 20 seconds on the live deployment. Not eliminated. |
 | 4. It does not solve liquidity-provider solvency | Paying winners is solved. Provider profit is not, and is not claimed. |
 | 5. It penalises traders who are right about a real move | Correct, and deliberate. |
 
@@ -61,11 +61,13 @@ The keeper signs a new price every second. The contracts accept any signed price
 
 With the original 60 second window that was a real edge. At 1000×, one basis point is 10% of margin.
 
-What was changed: the validity window is now **10 seconds** on every market of the live deployment. It is a per-market setting, so this needed no new contracts.
+What was changed: the validity window is now **20 seconds** on every market of the live deployment. It is a per-market setting, so this needed no new contracts.
+
+We first set it to 10 seconds, and orders began to fail. Arc's nodes estimate a transaction's gas against a pending block stamped 12 seconds after the latest one, so a price valid for 10 seconds looked expired before the order was sent. Twenty seconds is the shortest window that leaves room for that and for a person confirming in a wallet.
 
 What already bounded it: the keeper posts a price on-chain whenever a market has moved 5 basis points, at most every 10 seconds while anyone is trading, and every trade posts the price it carries. Each of those closes the window for everyone.
 
-What is left: up to 10 seconds of choice, and whatever the price moves in that time. Papertrade does not have this problem, because it reads the reference book directly with no signer and no window. Closing it further means a window of two or three seconds, posting every price on-chain, and several independent signers.
+What is left: up to 20 seconds of choice, and whatever the price moves in that time. Papertrade does not have this problem, because it reads the reference book directly with no signer and no window. Closing it further means posting every price on-chain, so that the newest price always supersedes the older ones, and several independent signers. Shortening the window alone runs into the limit above.
 
 ## 4. Liquidity-provider solvency
 

@@ -25,7 +25,7 @@ import { arbitrumSepolia, avalancheFuji, baseSepolia, optimismSepolia, sepolia }
 import { EXPLORER_URL, chain as arc } from "../chain/config";
 import { publicClient as arcClient } from "./chain";
 import { useStore } from "../state/store";
-import { activeWallet } from "./wallet";
+import { activeWallet, withHeadroom } from "./wallet";
 
 const IRIS = "https://iris-api-sandbox.circle.com";
 const TOKEN_MESSENGER = "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA" as const;
@@ -250,7 +250,8 @@ export async function bridge(
         args: [TOKEN_MESSENGER, value],
         account: wallet.account!, // the signer itself, so a local key signs locally
       });
-      await reader.waitForTransactionReceipt({ hash: await wallet.writeContract(request) });
+      const gas = withHeadroom(await reader.estimateContractGas({ ...request, account: wallet.account! }));
+      await reader.waitForTransactionReceipt({ hash: await wallet.writeContract({ ...request, gas }) });
     }
 
     onProgress({ stage: "burn" });
@@ -262,7 +263,8 @@ export async function bridge(
       args: [value, to.domain, pad(recipient), from.usdc, zeroHash, maxFee, threshold, FORWARD_HOOK],
       account: wallet.account!,
     });
-    const burnTx = await wallet.writeContract(request);
+    const gas = withHeadroom(await reader.estimateContractGas({ ...request, account: wallet.account! }));
+    const burnTx = await wallet.writeContract({ ...request, gas });
     await reader.waitForTransactionReceipt({ hash: burnTx });
 
     onProgress({ stage: "attest", burnTx });
