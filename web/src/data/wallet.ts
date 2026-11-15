@@ -81,6 +81,16 @@ export async function connectInjected() {
   try {
     const client = createWalletClient({ chain, transport: custom(eth) });
     const [address] = await client.requestAddresses();
+    // The keeper sends a transaction from its own account every few seconds. A person trading
+    // from that same account loses the race for each nonce and every order is refused.
+    if (address.toLowerCase() === deployment.keeper.toLowerCase()) {
+      store.toast({
+        kind: "error",
+        title: "This is the keeper's account",
+        body: "It posts prices every few seconds, so orders sent from it collide. Switch to another account in your wallet, or use the demo account.",
+      });
+      return;
+    }
     try {
       await client.switchChain({ id: chain.id });
     } catch {
