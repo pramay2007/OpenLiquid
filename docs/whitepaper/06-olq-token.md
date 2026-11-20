@@ -24,9 +24,9 @@ rate(F)  =  R0 × ( H / (H + F) )²        OLQ per $1 of fee
 
 The rate falls smoothly as fees accumulate. There are no epochs and no schedule to game.
 
-## Emissions follow the vault
+## Emissions rise as the vault is drawn down
 
-OLQ is minted on the fee a winner pays, and a winner is paid by the vault. So the two move together. In a stretch where traders are winning and the vault is paying out, more fees are paid and more OLQ is minted. In a stretch where traders are losing, the vault is filling up and almost nothing is minted.
+OLQ is minted on the fee a winner pays, and a winner is paid by the vault. So the two move together. In a stretch where traders are winning and the vault is being drawn down, more fees are paid and more OLQ is minted. In a stretch where traders are losing, the vault is filling up and almost nothing is minted.
 
 The losses themselves go straight to the vault. That is what refills it after it has paid winners. Nobody is paid in tokens for losing, and no winner waits for the refill: every position's payout was locked before it opened.
 

@@ -300,10 +300,10 @@ exceed `R0 · H` = 100M. Losing a trade mints nothing, so two wallets trading ag
 get no more OLQ per dollar of cost than anyone else. Staked OLQ receives 30% of profit fees in
 USDC.
 
-Emissions follow the vault. OLQ is minted on the fee a winner pays, and a winner is paid by the
-vault, so the more the vault pays out, the more OLQ is minted. When traders are losing, the vault
-is filling up and almost nothing is minted. The losses themselves go straight to the vault, which
-is what refills it after it has paid winners.
+Emissions rise as the vault is drawn down. OLQ is minted on the fee a winner pays, and a winner is
+paid by the vault, so the more the vault is paying out, the more OLQ is minted. When traders are
+losing, the vault is filling up and almost nothing is minted. The losses themselves go straight to
+the vault, which is what refills it after it has paid winners.
 
 ![The Earn page: liquidity vault and OLQ staking](docs/earn.png)
 
