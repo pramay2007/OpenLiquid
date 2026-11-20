@@ -21,7 +21,7 @@ const RULES = [
   },
   {
     title: "Leverage that zooms the odds",
-    body: "On a prediction market a leveraged bet wins what the same stake would win outright, and never more than the stake itself. Leverage brings that win closer. The win line is never further from entry than the stop line, which is what keeps a jump across both from paying the trader. Boost keeps the leveraged win for a daily premium. Markets stop trading when their result starts being decided.",
+    body: "On a prediction market a leveraged bet wins what the same stake would win outright, and never more than the stake itself. Leverage brings that win closer. The win line is never further from entry than the stop line, which is what keeps a jump across both from paying the trader. Boost keeps the leveraged win for a daily premium.",
   },
   {
     title: "Fees mint the token",

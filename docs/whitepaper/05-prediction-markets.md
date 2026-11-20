@@ -114,21 +114,11 @@ The clock runs to the market's **next scheduled information event**, which is no
 
 A position whose leverage is well above the current limit can be closed by anyone, at the normal closing price and with no penalty. The limit is taken at the position's own entry price, so a move in its favour never makes it closable. Only the passing of time does.
 
-## When a market stops trading
-
-Each market has an expiry. For a match it is five minutes before kickoff. For a dated market it is the moment the result is fixed.
-
-After expiry nothing opens, closes or is collected at a price. Positions wait for the result.
-
-The reason is simple. During a match the odds jump on every score, and a signed price is always a few seconds old. An agent showed that a holder who can sell at the price from before a goal costs the house 7 to 33 cents per dollar staked, even with no leverage at all. So there is no trading in play.
-
-A 1× position is settled at the result like any bet. A position that is still leveraged at expiry had until then to close. From then on it can lose but it cannot win, so there is nothing to gain by staying open.
-
 ## Different kinds of market
 
 **Dated markets on a traded price**, such as "BTC above $60,000 on 30 November". These move with the underlying price, in small steps. Up to 10×, Boost offered, no crowding fee. On this kind of market the stress test found no strategy without information that makes money.
 
-**Sports.** Odds move little before a match and in jumps once it starts. Up to 5×, lines at least ten points away, no Boost, no crowding fee, and no trading from five minutes before kickoff. Leverage on a match means trading the odds before it starts.
+**Sports.** Odds move little before a match and in jumps once it starts. Up to 5×, lines at least ten points away, no Boost and no crowding fee. Leverage on a match means trading the odds before it starts. A bet held into the match is an ordinary 1× bet on the result.
 
 **News-driven "will it happen by a date" markets.** None is listed today. On these one side wins slowly by nothing happening and loses all at once. A leveraged position on that side collects the drift and risks only its stake. This is what the crowding fee is for on prediction markets:
 

@@ -50,8 +50,6 @@ What they found changed the design:
 - **A jump that stops part of the way paid the cheap side up to +$1.30 per dollar staked.** A
   leveraged win is now capped at the stake as well as the outright payoff. The agent's best strategy
   against the new cap returns −$0.01 where it returned +$0.55.
-- **Selling at the price from before a goal cost the house up to 33 cents per dollar, even at 1×.**
-  A market now stops trading five minutes before kickoff.
 - **One deposit, one relayed price and one redemption, in a single block, took LP money.** Vault
   shares now unlock ten minutes after a deposit, and the share price bounds each side of each market.
 
@@ -118,8 +116,6 @@ stake would win outright, and never more than the stake. It reaches that payout 
 - **Three leverage limits.** A ceiling per market (10× on dated markets, 5× on sports). Both lines a
   minimum distance from entry (5 ticks, or 10 on sports). And a limit that falls with the square
   root of the time to the market's next scheduled information event, to 1× at the event.
-- **No trading in play.** A market stops trading at its expiry, five minutes before kickoff for a
-  match. Positions wait for the result. A position still leveraged then can lose but cannot win.
 - **Settlement.** When Gemini reports the contract settled, the keeper signs the final price and
   anyone can settle any position.
 
@@ -304,6 +300,11 @@ exceed `R0 · H` = 100M. Losing a trade mints nothing, so two wallets trading ag
 get no more OLQ per dollar of cost than anyone else. Staked OLQ receives 30% of profit fees in
 USDC.
 
+Emissions follow the vault. OLQ is minted on the fee a winner pays, and a winner is paid by the
+vault, so the more the vault pays out, the more OLQ is minted. When traders are losing, the vault
+is filling up and almost nothing is minted. The losses themselves go straight to the vault, which
+is what refills it after it has paid winners.
+
 ![The Earn page: liquidity vault and OLQ staking](docs/earn.png)
 
 **Parameters in this build** (`contracts/scripts/deploy.js`):
@@ -320,7 +321,6 @@ USDC.
 | Crowding fee | 0.05% of size per day at full imbalance | same | off | off |
 | Boost | n/a | n/a | scale 2.5 | off |
 | Profit cap | 10× margin or a 100% move | same | min(stake, outright payoff); outright at 1× | same |
-| Stops trading | never | never | at the result time | 5 minutes before kickoff |
 
 Liquidation at 20% of margin left, liquidator reward 5% of margin, signed price valid for 20
 seconds, LP shares unlock 10 minutes after a deposit.
@@ -481,8 +481,7 @@ The suite covers:
   depth-backed capacity, reserved payouts, the crowding fee, liquidation and the profit cap.
 - **The oracle.** Signatures, the exact time average, and depth that has to persist.
 - **Prediction markets.** The win and stop lines, the cap on a leveraged win, 1× positions,
-  Boost, the leverage limits, the event clock, forced closes, the close of trading at expiry
-  and settlement.
+  Boost, the leverage limits, the event clock, forced closes and settlement.
 - **The vault and staking.** The share price bounds, the withdrawal delay, fee distribution.
 - **The replay.** The reference-price push attack against the engine configured both ways.
 - **Capacity.** Prediction-market capacity sized in shares, and its ceiling.

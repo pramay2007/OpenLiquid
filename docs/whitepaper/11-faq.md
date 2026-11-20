@@ -46,7 +46,7 @@ An option on some prediction markets to keep the leveraged win, up to ten times 
 
 ## Can I hold a leveraged bet through a match?
 
-No. Leverage falls as the event nears and is 1× by kickoff. A position above the limit is closed at the normal price, with no penalty. The market stops trading five minutes before kickoff. A 1× bet stays open to the result and is never liquidated.
+No. Leverage falls as the event nears and is 1× by kickoff. A position above the limit is closed at the normal price, with no penalty. A 1× bet stays open to the result and is never liquidated.
 
 ## Where do prices come from?
 

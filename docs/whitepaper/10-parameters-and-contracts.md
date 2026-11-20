@@ -22,7 +22,6 @@ These are the values in the Arc testnet deployment. They are set per market by t
 | Maximum leverage | 10× | 5× |
 | Minimum distance to each line | 5 ticks | 10 ticks |
 | Reaction time in the time limit | 120 s, three standard deviations | 120 s, three standard deviations |
-| Expiry | The result time | Five minutes before kickoff |
 | Boost | Yes, scale 2.5 | No |
 | Crowding fee scale | 0 | 0 |
 | Leveraged win, free mode | The smaller of the stake and the outright payoff | The same |

@@ -62,7 +62,7 @@ Liquidation is judged at the live mid. On a thin book the mid can jump when one 
 
 - **Boost through news.** A boosted Yes and No pair through an anticipated jump took $1.44 to $3.40 per dollar under the draft rules. Scheduled news now forces 1×, and the premium is 2.5 times the base rate. An unscheduled jump a little larger than the stop distance still favours the pair.
 - **The cost to an honest trader.** 15% to 27% of the stake per position at maximum leverage under the draft rules, 7% to 16% with lines five ticks away.
-- **The kickoff hand-over.** From expiry on, a leveraged position cannot win. If the keeper is late, one that was losing can still get back to its stake.
+- **The hand-over at the event.** Leverage is 1× by the time an event starts, and the keeper closes anything above that. If the keeper is late, a leveraged position that was losing can still get back to its stake.
 
 ## What does not change
 

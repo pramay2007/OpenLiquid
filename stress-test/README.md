@@ -54,7 +54,7 @@ Yes and No held together through one jump to the result, partial jumps, and repe
 | Boost: a Yes and No pair through an anticipated jump | House −1.44 (10 points) to −3.40 (20 points) per $1 of pair margin | **Reduced.** Scheduled news now forces 1× through the event clock, and the Boost premium is 2.5 times the base rate. An unscheduled jump a little larger than the stop distance still favours the pair. |
 | Crowding fee does not cover partial crashes, and low-leverage positions on the other side switch it off | House −0.22 over 5 days at full fee; −0.62 when it is switched off | **Open.** |
 | Winners near the time limit are force-closed at the lagging price | House +0.50 per $1, taken from winners | **Fixed.** The limit is now taken at the position's own entry price, so only time triggers it, with 25% slack. Before expiry a forced close needs the two prices within one cent. |
-| Two jobs paid the caller nothing: the kickoff close and liquidating through the stop | A late keeper turns a +0.28 pair into −0.14 | **Fixed.** The liquidator's reward now comes from the margin the vault keeps. From expiry on a leveraged position can lose but cannot win. |
+| Two jobs paid the caller nothing: the kickoff close and liquidating through the stop | A late keeper turns a +0.28 pair into −0.14 | **Fixed.** The liquidator's reward now comes from the margin the vault keeps, and a position still leveraged when the event starts can lose but cannot win. |
 | A two-tick flicker in the mid liquidates one leg of every pair at maximum leverage | House +0.50 per spike, taken from traders | **Open.** With a 5-tick distance it now takes a four-tick flicker. |
 | A 1× position is liquidated | 53% to 55% of matches | **Fixed.** |
 | A balanced pair, or a 1× position on a cheap contract, holds capacity and reserve at no cost | A 1× position at 2c locks $49 of reserve per $1 | **Open.** Opens below 3c are now refused, which bounds it at about $32. |
@@ -92,7 +92,7 @@ Leverage before a match, the hand-over at kickoff, and positions held through pl
 
 | Finding | Measured size (draft rules) | Status |
 |---|---|---|
-| After kickoff a holder can sell at the price from before a score | House −0.07 to −0.33 per $1 staked, even at 1× | **Fixed.** A market stops trading at its expiry, set five minutes before kickoff. Nothing opens, closes or is collected after it. |
+| After kickoff a holder can sell at the price from before a score | House −0.07 to −0.33 per $1 staked, even at 1× | **Fixed** in the engine: see the expiry rule in `contracts/src/PerpEngine.sol` and its tests. |
 | Before the match a bot can open at the price from before team news | +0.16 to +1.21 per news item | **Open.** Same root as the last-look finding. Leverage on sports is now at most 5×. |
 | A 2 to 4 point stop in front of scheduled team news | +0.39 to +1.28 per announcement on the cheap side | **Fixed.** Minimum distance on sports is 10 ticks and Boost is off. The agent's re-test of this rule: house +0.03 to +0.05. |
 | The kickoff hand-over depends on one keeper | Upkeep stalled all match: +0.10 to +0.58 to the trader | **Reduced.** From expiry on a leveraged position cannot win. One that was losing at kickoff can still get back to its stake if the keeper is late. |

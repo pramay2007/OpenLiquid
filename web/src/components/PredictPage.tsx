@@ -615,8 +615,8 @@ const SAFETY = [
     body: "The odds can jump, even straight to 0 or 100. A leveraged bet can lose its stake, and it can win at most its stake and never more than the outright payout. That win is locked in the vault when the bet opens.",
   },
   {
-    title: "Less leverage near the result, none after",
-    body: "The limit falls with the square root of the time left, down to 1× when the market closes: five minutes before kickoff for a match. After that nothing opens or closes at a price, and positions wait for the result.",
+    title: "Less leverage near the result",
+    body: "The limit falls with the square root of the time left, down to 1× by the time the event starts. A 1× bet is just the shares: it is never liquidated and it rides to the result.",
   },
   {
     title: "Size follows the real order book",
