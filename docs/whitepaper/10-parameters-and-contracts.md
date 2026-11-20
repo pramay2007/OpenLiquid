@@ -51,9 +51,8 @@ These are the values in the Arc testnet deployment. They are set per market by t
 
 | Parameter | Value |
 |---|---|
-| Starting rate `R0` | 100 OLQ per $1 (per $1 of fee in the deployed first version; per $1 lost in the design) |
+| Base rate | 100 OLQ per $1 |
 | Curve scale `H` | $1,000,000 of cumulative fees |
-| Maximum supply | 100,000,000 OLQ |
 | Pre-mint | None |
 
 ## Contracts on Arc testnet
@@ -65,7 +64,7 @@ Chain ID `5042002`. RPC `https://rpc.testnet.arc.io`.
 | PerpEngine | Positions, fills, limits, fees, liquidation, settlement | [`0xD6D4910E7cACf224c143999186f1a745c22CfdF3`](https://explorer.testnet.arc.io/address/0xD6D4910E7cACf224c143999186f1a745c22CfdF3) |
 | Vault | ERC-4626 pool: trader margin, reserves, liquidity providers | [`0x4eDafC142dA2d5299424b5ac0b884A194A20f7E1`](https://explorer.testnet.arc.io/address/0x4eDafC142dA2d5299424b5ac0b884A194A20f7E1) |
 | PriceOracle | Verifies signed prices, keeps the mid and the slow price | [`0x3D8931Cc87d1A619546A82569E3B0dcb1535EFd5`](https://explorer.testnet.arc.io/address/0x3D8931Cc87d1A619546A82569E3B0dcb1535EFd5) |
-| OpenLiquidToken | OLQ (first version: minted on fees) | [`0xF22b9D7139D0517DABA57f176Ee25A711601b9a1`](https://explorer.testnet.arc.io/address/0xF22b9D7139D0517DABA57f176Ee25A711601b9a1) |
+| OpenLiquidToken | OLQ | [`0xF22b9D7139D0517DABA57f176Ee25A711601b9a1`](https://explorer.testnet.arc.io/address/0xF22b9D7139D0517DABA57f176Ee25A711601b9a1) |
 | Staking | Pays stakers their share of fees in USDC | [`0x40C7E6f03d0B2885976087f1903effD15c691841`](https://explorer.testnet.arc.io/address/0x40C7E6f03d0B2885976087f1903effD15c691841) |
 | Test USDC | Collateral on testnet, with an open faucet | [`0xaAC1cE7B8d2a84541B19C559a384207f4C6F2982`](https://explorer.testnet.arc.io/address/0xaAC1cE7B8d2a84541B19C559a384207f4C6F2982) |
 

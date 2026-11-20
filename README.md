@@ -87,7 +87,7 @@ to offer.
 | Someone can step in front of a change in the LP share price | **Withdrawal delay.** Vault shares unlock ten minutes after a deposit, and the share price bounds each side of each market by what it can lose and win. |
 | The pool ends up with a one-way bet | **Crowding fee.** There is no funding between traders. The larger side of a lopsided market pays the vault up to 0.05% of its size per day, scaled by the imbalance relative to capacity. A balanced market pays nothing. |
 | A 1000× order can open already near liquidation in a fast market | **Entry guard.** An open is refused if its fill would start more than 30% of margin under water, which lowers usable leverage while the price is moving. |
-| A vault that has paid out needs a way to refill | **OLQ.** Earned by losing, on a decaying curve with a hard cap, boosted while the vault is drawn down. Stakers earn a share of the fees winners pay. |
+| A vault that has paid out needs a way to refill | **OLQ.** Earned by losing, boosted while the vault is drawn down. Stakers earn a share of the fees winners pay. |
 | Liquidation forfeits the whole margin | Liquidation happens at 20% of margin left; what remains after the liquidator's reward is returned to the trader. |
 
 ### Leverage on prediction markets
@@ -168,7 +168,7 @@ The same figures are animated on the app's Mechanics page.
 | `contracts/src/PriceOracle.sol` | Verifies signed updates, keeps `mid` and the `slow` price per market. Anyone can relay. |
 | `contracts/src/PerpEngine.sol` | Positions, fills, caps, fees, liquidation, prediction-market rules, settlement. |
 | `contracts/src/Vault.sol` | ERC-4626 USDC vault. Holds trader margin and the reserve for every open position; LP share price marks open positions at the oracle. |
-| `contracts/src/OpenLiquidToken.sol`, `Staking.sol` | The OLQ token (first version) and USDC fee distribution. |
+| `contracts/src/OpenLiquidToken.sol`, `Staking.sol` | The OLQ token and USDC fee distribution. |
 | `keeper/` | Price signer, relayer, liquidation and settlement bot, small HTTP API for the frontend. |
 | `web/` | Opening page, trading interface, Earn, Bridge (CCTP), Mechanics and the whitepaper reader. |
 | `docs/whitepaper/` | The whitepaper, as Markdown. The app renders the same files. |
@@ -303,11 +303,8 @@ A Boost premium for traders who choose Boost.
   short.
 - **Stake OLQ to earn fees from winners:** 30% of every profit fee, in USDC.
 
-The base rate is `rate(F) = R0 · (H / (H + F))²` OLQ per dollar, with `R0 = 100` and `H = $1M`, so
-supply can never exceed 100M.
-
-Status: the contracts on Arc testnet today run the first version of the token, which mints OLQ on
-the fee a winner pays. The loss-minted version above is the next contract update.
+OLQ is designed around one job: refilling the vault. The base rate is 100 OLQ per dollar lost.
+There is no pre-mint and no fixed cap.
 
 ![The Earn page: liquidity vault and OLQ staking](docs/earn.png)
 

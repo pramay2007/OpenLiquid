@@ -58,7 +58,7 @@ By losing a trade. The loss goes to the vault and you receive OLQ for it. There 
 
 ## Why is OLQ minted on losses?
 
-Because a loss is money that enters the vault, and the vault is what pays winners. The rate is boosted while the vault is drawn down, so refilling it is rewarded when it is needed. The contracts on testnet today run the first version, which mints on the fee a winner pays; see [The OLQ token](06-olq-token.md).
+Because a loss is money that enters the vault, and the vault is what pays winners. The rate is boosted while the vault is drawn down, so refilling it is rewarded when it is needed. See [The OLQ token](06-olq-token.md).
 
 ## Who is on the other side of my trade?
 

@@ -25,7 +25,7 @@ const RULES = [
   },
   {
     title: "OLQ refills the vault",
-    body: "OLQ is earned by losing, on a decaying curve with a fixed maximum supply, and faster while the vault is drawn down. Stakers earn a share of the fees winners pay. The contracts on testnet today run the first version, which mints on the fee a winner pays.",
+    body: "OLQ is designed to refill the vault: it is earned by losing, and faster while the vault is drawn down. Stakers earn a share of the fees winners pay.",
   },
 ];
 

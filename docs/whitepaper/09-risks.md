@@ -55,7 +55,7 @@ Liquidation is judged at the live mid. On a thin book the mid can jump when one 
 - **Free occupation.** A balanced long and short pair, or a 1× position on a cheap contract, holds capacity and vault reserve at no cost. Bounded by each market's capacity.
 - **Voided matches.** A void is settled as whatever the reference venue reports.
 - **No pass-through of the reference venue's funding.** A long here against a short on the reference venue can earn that venue's funding. We have not sized this yet. It is one of the next experiments below.
-- **The OLQ update.** The deployed token mints on the fee a winner pays. Moving to the loss-minted design, with its boost while the vault is drawn down, is the next contract change. A token earned on losses can be farmed by two wallets trading against each other for the cost of the profit fee; the cap and the falling rate bound it, and it needs its own stress test.
+- **Farming OLQ.** A token earned on losses can be farmed by two wallets trading against each other for the cost of the profit fee. This needs its own stress test.
 - **The market list only grows**, so vault deposits and withdrawals get more expensive as markets are added.
 - **The share price nets positions on the same side of a market.** It no longer nets across sides or markets.
 

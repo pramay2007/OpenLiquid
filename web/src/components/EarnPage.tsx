@@ -165,7 +165,7 @@ export function EarnPage() {
             </div>
 
             <div>
-              <div className="stack-bar" title="OLQ minted so far against the maximum supply">
+              <div className="stack-bar" title="OLQ minted so far">
                 <i
                   style={{
                     width: `${staking && staking.maxSupply ? (staking.totalSupply / staking.maxSupply) * 100 : 0}%`,
@@ -175,7 +175,7 @@ export function EarnPage() {
               </div>
               <div className="key" style={{ marginTop: 10 }}>
                 <span style={{ ["--c" as string]: "var(--brass)" }}>
-                  Minted {fmtNumber(staking?.totalSupply ?? 0, 0)} of {fmtNumber(staking?.maxSupply ?? 0, 0)} OLQ
+                  Minted {fmtNumber(staking?.totalSupply ?? 0, 0)} OLQ
                 </span>
               </div>
             </div>
@@ -222,9 +222,8 @@ export function EarnPage() {
               )}
             </div>
             <p>
-              OLQ is earned by losing, on a curve that decays toward a fixed maximum supply, and faster while the
-              vault is drawn down. Stake it to earn a share of the fees winners pay. The contracts on testnet today
-              run the first version, which mints on the fee a winner pays.
+              OLQ is designed to refill the vault: it is earned by losing, and faster while the vault is drawn
+              down. Stake it to earn a share of the fees winners pay.
             </p>
           </section>
         </div>

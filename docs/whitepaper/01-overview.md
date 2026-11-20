@@ -31,7 +31,7 @@ The rules below exist so that this does not pay, so that winners are always paid
 | [Softer liquidation](04-fees-funding-liquidation.md) | Liquidation at 20% of margin left, and what remains goes back to the trader. |
 | [Leverage that zooms the odds](05-prediction-markets.md) | On prediction markets a leveraged bet wins at most what its stake would win outright, never more than the stake, and reaches it sooner. A jump cannot leave the vault short. Boost keeps the leveraged win for a daily premium. |
 | [Stress-tested by agents](09-risks.md) | A group of adversarial AI agents attacked the rules before deployment. What they broke was changed, and what is still open is listed. |
-| [The OLQ token](06-olq-token.md) | OLQ is earned by losing, faster when the vault is drawn down, up to a fixed maximum. Stakers earn fees from winners. |
+| [The OLQ token](06-olq-token.md) | OLQ is earned by losing, faster when the vault is drawn down. Stakers earn fees from winners. |
 
 ## What you can trade
 
