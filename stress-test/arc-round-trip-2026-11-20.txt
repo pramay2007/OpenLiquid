@@ -1,0 +1,25 @@
+  crypto #7 market 103 long/yes stake 20 notional 80 entry 0.575 win at 0.681249995 liq at 0.46 max win 14.782608 pnl 0
+  crypto #8 market 103 short/no stake 20 notional 20 entry 0.575 win at 1.125e-8 liq at 1 max win 27.058823 pnl 0
+  crypto #9 market 1 long/yes stake 50 notional 5000 entry 61615.29695342003 win at 67776.82664876203 liq at 61122.374577792674 max win 500 pnl -2.499132
+Dortmund vs Arsenal / Arsenal: yes 0.715 max leverage 2x boost off premium/share/day 0 closed false
+  capacity per side 213.76425 USDC, test stake 20
+  event #10 market 101 long/yes stake 20 notional 40 entry 0.715 win at 0.857499982625 liq at 0.429 max win 7.972027 pnl 0
+  event #11 market 101 short/no stake 20 notional 20 entry 0.715 win at 8.5e-9 liq at 1 max win 50.175438 pnl 0
+BTC price on November 30 / $60,000 or above: yes 0.675 max leverage 6x boost on premium/share/day 0.051342366960588214 closed false
+  capacity per side 106.8145 USDC, test stake 5
+  event #12 market 102 long/yes stake 5 notional 30 entry 0.675 win at 0.7291666575 liq at 0.585 max win 2.407407 pnl 0
+  event #13 market 102 short/no stake 5 notional 5 entry 0.675 win at 2.5e-8 liq at 1 max win 10.384615 pnl 0
+  event #14 market 102 long/yes boost stake 5 notional 30 entry 0.675 win at 0.99999999 liq at 0.585 max win 14.444444 pnl 0
+Chicago vs Detroit / Chicago: yes 0.575 max leverage 4x boost off premium/share/day 0 closed false
+  capacity per side 276.2245 USDC, test stake 20
+  event #15 market 103 long/yes stake 20 notional 80 entry 0.575 win at 0.681249995 liq at 0.46 max win 14.782608 pnl 0
+  event #16 market 103 short/no stake 20 notional 20 entry 0.575 win at 1.125e-8 liq at 1 max win 27.058823 pnl 0
+Green Bay vs Los Angeles R / Los Angeles R: yes 0.625 max leverage 3x boost off premium/share/day 0 closed false
+  capacity per side 300.67125 USDC, test stake 20
+  event #17 market 104 long/yes stake 20 notional 60 entry 0.625 win at 0.75 liq at 0.4583333333333333 max win 12 pnl 0
+  event #18 market 104 short/no stake 20 notional 20 entry 0.625 win at 6.25e-9 liq at 1 max win 33.333333 pnl 0
+Philadelphia vs Dallas / Dallas: yes 0.77 max leverage 2x boost off premium/share/day 0 closed false
+  capacity per side 148.42015 USDC, test stake 20
+  event #19 market 105 long/yes stake 20 notional 40 entry 0.77 win at 0.88499998125 liq at 0.462 max win 5.974025 pnl 0
+  event #20 market 105 short/no stake 20 notional 20 entry 0.77 win at 8.5e-9 liq at 1 max win 66.956521 pnl 0
+net change after all round trips: 37.744226 USDC

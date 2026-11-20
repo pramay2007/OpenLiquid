@@ -10,6 +10,9 @@ const { ethers, network } = require("hardhat");
 
 const KEEPER_URL = process.env.KEEPER_URL ?? "http://localhost:8787";
 const TYPES = ["tuple(uint32 marketId,uint256 price,uint256 depthUsd,uint64 timestamp,bool resolved)[]", "bytes[]"];
+// A load-balanced public RPC estimates gas with almost no headroom, against a block that can be
+// behind. Every call here carries an explicit limit instead.
+const GAS = { gasLimit: 1_500_000n };
 const usd = (n) => ethers.parseUnits(String(n), 6);
 const fmt = (v, d = 6) => Number(ethers.formatUnits(v, d));
 
@@ -43,12 +46,12 @@ async function main() {
   };
   const closeAll = async () => {
     for (const p of await engine.positionsOf(me)) {
-      await (await engine.close(p.id, await priceData(Number(p.position.marketId)))).wait();
+      await (await engine.close(p.id, await priceData(Number(p.position.marketId)), GAS)).wait();
     }
   };
 
   const before = await usdc.balanceOf(me);
-  await (await engine.open(1, true, usd(50), 100, false, await priceData(1))).wait();
+  await (await engine.open(1, true, usd(50), 100, false, await priceData(1), GAS)).wait();
   await show("crypto");
   await closeAll();
 
@@ -64,9 +67,9 @@ async function main() {
     // Capacity follows the reference book, and these books are thin: size the test inside it.
     const stake = Math.max(1, Math.min(20, Math.floor(fmt(v.sideCap) / (lev * 3))));
     console.log(`  capacity per side ${fmt(v.sideCap)} USDC, test stake ${stake}`);
-    await (await engine.open(m.id, true, usd(stake), lev, false, await priceData(m.id))).wait();
-    await (await engine.open(m.id, false, usd(stake), 1, false, await priceData(m.id))).wait();
-    if (boost && lev >= 2) await (await engine.open(m.id, true, usd(stake), lev, true, await priceData(m.id))).wait();
+    await (await engine.open(m.id, true, usd(stake), lev, false, await priceData(m.id), GAS)).wait();
+    await (await engine.open(m.id, false, usd(stake), 1, false, await priceData(m.id), GAS)).wait();
+    if (boost && lev >= 2) await (await engine.open(m.id, true, usd(stake), lev, true, await priceData(m.id), GAS)).wait();
     await show("event");
     await closeAll();
   }

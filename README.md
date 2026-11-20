@@ -129,7 +129,9 @@ Demand for this is real. Kalshi has asked the CFTC for permission to offer margi
 have settled near 1 to 1.5×, because of the jump problem above. The full rules, and what is still
 open, are in [Leverage on prediction markets](docs/whitepaper/05-prediction-markets.md).
 
-![A Gemini prediction market as a leveraged perpetual](docs/event.png)
+![A leveraged position on a live Gemini prediction market](docs/event.png)
+
+![The Predict page: live markets and what leverage does to a bet](docs/predict.png)
 
 ## The price-push test
 
@@ -485,6 +487,18 @@ The suite covers:
 - **The vault and staking.** The share price bounds, the withdrawal delay, fee distribution.
 - **The replay.** The reference-price push attack against the engine configured both ways.
 - **Capacity.** Prediction-market capacity sized in shares, and its ceiling.
+
+**On Arc, end to end.** One script opens and closes a crypto position and, on every live
+prediction market, a leveraged Yes, an outright No and (where it is offered) a boosted Yes, each
+carrying the hosted keeper's freshly signed price:
+
+```
+cd contracts && KEEPER_URL=https://openliquid-keeper.onrender.com npx hardhat run scripts/smoke-events.js --network arcTestnet
+```
+
+The run of 20 November 2026 opened and closed 14 positions across 6 markets on Arc testnet. Its
+output is in [stress-test/arc-round-trip-2026-11-20.txt](stress-test/arc-round-trip-2026-11-20.txt).
+The same two trades were then placed by hand on the public site with a fresh demo account.
 
 56 tests. The agents' mechanism simulations are separate, in [stress-test/](stress-test/README.md), and
 the reproductions the review agents wrote against the earlier contracts are kept in
