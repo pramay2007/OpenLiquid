@@ -40,7 +40,7 @@ Hyperliquid for crypto, stocks and commodities. Gemini Prediction Markets for ev
 
 By closing a winning trade. The profit fee you pay mints OLQ to you. There is no other source.
 
-## Why is OLQ not minted on losses, as on Papertrade?
+## Why is OLQ not minted on losses?
 
 Because that pays people for losing and pays two wallets for trading against each other. See [The OLQ token](06-olq-token.md).
 
@@ -51,10 +51,6 @@ The vault, which is funded by liquidity providers. They earn when traders lose a
 ## Is this live with real money?
 
 No. OpenLiquid runs on Arc testnet with test funds. It is an unaudited prototype.
-
-## How is this different from Papertrade?
-
-See [What we changed from Papertrade](07-what-we-changed.md).
 
 ## What are the weak points?
 

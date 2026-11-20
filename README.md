@@ -1,8 +1,8 @@
 # OpenLiquid
 
-**Up to 1000× perpetuals on crypto, stocks and commodities, plus leveraged perpetuals on live
-prediction markets, in one venue on Arc.** One price, no order book, losses capped at margin,
-built so that the trade which drained the last venue of this kind does not work.
+**Trade anything with a price, at one price. No order book and no slippage in a calm market, up
+to 1000× on crypto, stocks and commodities, and leverage on live prediction markets. On Arc.**
+A position can lose its margin and nothing more, and a winner is always paid when they close.
 
 ![OpenLiquid opening page](docs/home.png)
 
@@ -14,7 +14,7 @@ built so that the trade which drained the last venue of this kind does not work.
 | **Bounty** | Gemini Prediction Markets |
 | **Circle tools** | CCTP V2 with the Forwarding Service, for USDC in and out of Arc ([details](#circle-tools)) |
 | **Live app** | **[pramay2007.github.io/OpenLiquid](https://pramay2007.github.io/OpenLiquid/)**: open it, click **Demo account**, and trade. No wallet needed. |
-| **Whitepaper** | [docs/whitepaper](docs/whitepaper/README.md), including [what we changed from Papertrade](docs/whitepaper/07-what-we-changed.md) |
+| **Whitepaper** | [docs/whitepaper](docs/whitepaper/README.md), also readable inside the app |
 | **Status** | Live and tradeable on Arc testnet ([addresses](#live-on-arc-testnet)). The price keeper is hosted on Render. Testnet prototype, unaudited, test USDC only. |
 
 ### Try it in a minute
@@ -28,7 +28,7 @@ The keeper runs on a free Render instance that sleeps when nobody is using the s
 show as offline, wait up to a minute for it to wake. Its status is at
 [openliquid-keeper.onrender.com/health](https://openliquid-keeper.onrender.com/health).
 
-**Contents:** [What it is](#what-it-is) · [The replay](#the-replay) ·
+**Contents:** [What it is](#what-it-is) · [The price-push test](#the-price-push-test) ·
 [Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) · [Circle tools](#circle-tools) ·
 [Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets) ·
 [Economic design and risks](#economic-design-and-risk-assumptions) · [Keeper](#keeper-decision-loop-and-limits) ·
@@ -36,24 +36,31 @@ show as offline, wait up to a minute for it to wake. Its status is at
 
 ## What it is
 
-In October 2026 a venue launched offering 1000× leverage with every trade filled at a reference
-venue's mid price, at any size, with no slippage. Within hours a trader spent about $52k moving
-that reference price 0.12% and withdrew about $1.28M. Its pool started empty, so winners queued
-for payment, and its token was minted to losing traders, so stakers were paid out of losses.
+**One price.** On an order book the price you see is not the price you get: there is a spread,
+the book thins when the market moves, and a larger order fills worse. OpenLiquid has no book.
+Every trade fills at a single price taken from the deepest market for that asset.
 
-OpenLiquid keeps what people liked (one price, no order book, capped losses, very high leverage) and
-changes the rules underneath:
+**A hard limit on loss.** Margin is isolated, so a position can lose what was put in and nothing
+more. That is what makes very high leverage usable: at 1000×, $10 controls $10,000 for a short
+move, and $10 is the most it can cost.
+
+**Anything with a price.** Crypto, stocks, commodities, and prediction markets, which until now
+have had no leverage at all.
+
+A venue that fills at a price from somewhere else has one obvious weakness: anyone who can move
+that price for a moment can trade against the move. The rules below are what make one price safe
+to offer.
 
 ![Trading BTC on OpenLiquid](docs/trade.png)
 
-| Problem in the "any size at the mid" design | OpenLiquid |
+| The problem with filling at an outside price | OpenLiquid's rule |
 |---|---|
 | A briefly pushed reference price can be traded against | **Worse-of fills.** Buys fill at `max(mid, slow)`, sells at `min(mid, slow)`, where `slow` is a time-weighted price that only moves as a price is held. Calm market: the two are equal, zero slippage. |
 | Size is unlimited relative to the real book | **Depth-backed capacity.** Open interest per side ≤ κ × USD resting near the mid on the reference venue, as reported with every price. |
-| Pool starts empty; winners wait in a queue | **Reserved payouts.** A pre-funded vault locks each position's maximum profit when it opens. LPs cannot withdraw locked funds. Winners are paid at close. |
-| No funding; pool carries one-way risk | **Skew funding.** The crowded side pays, scaled by skew relative to capacity. |
+| Winners may not get paid if the pool is short | **Reserved payouts.** A pre-funded vault locks each position's maximum profit when it opens. LPs cannot withdraw locked funds. Winners are paid at close. |
+| The pool ends up with a one-way bet | **Skew funding.** The crowded side pays, scaled by skew relative to capacity. |
 | A 1000× order can open already near liquidation in a fast market | **Entry guard.** An open is refused if its fill would start more than 30% of margin under water, which lowers usable leverage while the price is moving. |
-| Token minted on losses; stakers earn trader losses; wash-farmable | **Fee-minted token.** OLQ is minted only against fees paid, on a decaying curve with a hard cap. Stakers earn a share of fees. Trader losses belong to the LPs who underwrite trader wins. |
+| A token minted for trading can be farmed by trading against yourself | **Fee-minted token.** OLQ is minted only against fees paid, on a decaying curve with a hard cap. Stakers earn a share of fees. Trader losses belong to the LPs who underwrite trader wins. |
 | Liquidation forfeits the whole margin | Liquidation happens at 20% of margin left; what remains after the liquidator's reward is returned to the trader. |
 
 ### Prediction-market perpetuals
@@ -74,10 +81,11 @@ are thin, and the price jumps to 0 or 1 at resolution. Event markets here use th
 
 ![A Gemini prediction market as a leveraged perpetual](docs/event.png)
 
-## The replay
+## The price-push test
 
-`contracts/test/exploit.test.js` replays the reported attack against the engine configured both
-ways. The oracle reports the manipulated mid faithfully in both cases.
+`contracts/test/exploit.test.js` runs a price-push attack against the engine configured both
+ways: an attacker opens a position, spends about $52k pushing the reference price by 0.12%, and
+closes into the push. The oracle reports the manipulated mid faithfully in both cases.
 
 | Engine | Size the attacker could open | Attacker P&L, one leg | Cost of the move |
 |---|---|---|---|
@@ -365,7 +373,7 @@ Leave `USDC_ADDRESS` unset to deploy a faucet test token as collateral (anyone c
 without waiting on the faucet), or set it to Arc's USDC to use the real testnet asset.
 
 The app also takes deep links: `#m/101` opens market 101; `#earn`, `#bridge` and `#mechanics`
-open those pages; `#docs/what-we-changed` opens a whitepaper page.
+open those pages; `#docs/pricing` opens a whitepaper page.
 
 ## Host it
 
@@ -391,7 +399,7 @@ while it sleeps, which is acceptable on a testnet and not anywhere else.
 PerpEngine: crypto / equity / commodity markets   14 passing
 PriceOracle                                         3 passing
 PerpEngine: event (prediction) markets              7 passing
-Replay: the Papertrade reference-price exploit      6 passing
+Replay: the reference-price push attack              6 passing
 ```
 
 ## Where each requirement is met

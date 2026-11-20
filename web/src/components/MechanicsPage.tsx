@@ -178,9 +178,10 @@ function ExploitReplay() {
         </button>
       </div>
       <p>
-        In October 2026 a trader spent about $52,000 moving a reference price by 0.12% and took roughly $1.28M from a
-        venue that filled any size at that price. The same sequence is replayed here: open at the fair price, push the
-        reference, close into the push. The white line is the mid; the dashed brass line is OpenLiquid's slow price.
+        One price with no order book has one obvious weakness: push the reference price for a minute and trade against
+        the push. Here an attacker spends about $52,000 moving the price by 0.12%. The sequence is the same in both
+        lanes: open at the fair price, push the reference, close into the push. The white line is the mid; the dashed
+        brass line is OpenLiquid's slow price.
       </p>
       <div className="lanes">
         {LANES.map((lane) => (

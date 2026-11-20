@@ -1,10 +1,10 @@
-# What we changed from Papertrade
+# Compared with Papertrade
 
-OpenLiquid starts from Papertrade's idea and keeps the parts people liked. This page lists what we kept, what we changed and why, and what we gave up to do it.
+Papertrade is the best-known venue that fills trades at a reference price with no order book. This page sets the two designs side by side: what they share, where they differ and why, and what OpenLiquid gives up.
 
 Everything said about Papertrade here is our reading of its public documentation at [docs.papertrade.xyz](https://docs.papertrade.xyz/) and of press reports, as of November 2026. We are not affiliated with Papertrade.
 
-## What we kept
+## What the two share
 
 - One price for every trade, taken from a reference venue. No order book, no spread.
 - Leverage up to 1000×.
@@ -105,5 +105,3 @@ These changes are not free, and Papertrade does some things better.
 - **Capital up front.** Papertrade needed no liquidity providers. OpenLiquid needs a funded vault before the first trade, and its size limits what can be traded.
 - **Liquidity providers carry real risk.** Somebody has to be on the other side of a winning trade. Here it is a named party that chose to be.
 - **Track record.** Papertrade is live with real money. OpenLiquid is an unaudited testnet prototype.
-
-Next: [Oracle, keeper and Arc](08-oracle-keeper-arc.md)

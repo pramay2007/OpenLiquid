@@ -67,7 +67,7 @@ We first set it to 10 seconds, and orders began to fail. Arc's nodes estimate a 
 
 What already bounded it: the keeper posts a price on-chain whenever a market has moved 5 basis points, at most every 10 seconds while anyone is trading, and every trade posts the price it carries. Each of those closes the window for everyone.
 
-What is left: up to 20 seconds of choice, and whatever the price moves in that time. Papertrade does not have this problem, because it reads the reference book directly with no signer and no window. Closing it further means posting every price on-chain, so that the newest price always supersedes the older ones, and several independent signers. Shortening the window alone runs into the limit above.
+What is left: up to 20 seconds of choice, and whatever the price moves in that time. A venue built on the same chain as its reference market does not have this problem, because it can read the book directly with no signer and no window. Closing it further means posting every price on-chain, so that the newest price always supersedes the older ones, and several independent signers. Shortening the window alone runs into the limit above.
 
 ## 4. Liquidity-provider solvency
 
@@ -100,7 +100,7 @@ Whether that trade is worth making is a judgment about who the venue is for. Our
 
 ## What the reviewer preferred, and what they asked for
 
-The review's conclusion was that this is a better pricing design than Papertrade's but not yet shown to be a better exchange, and that it should be combined with dynamic open-interest limits, oracle verification across venues and a clearly defined liquidation rule.
+The review's conclusion was that this is a better pricing design than filling at the mid but not yet shown to be a better exchange, and that it should be combined with dynamic open-interest limits, oracle verification across venues and a clearly defined liquidation rule.
 
 | Asked for | Status |
 |---|---|
@@ -110,3 +110,5 @@ The review's conclusion was that this is a better pricing design than Papertrade
 | Evidence that providers are compensated | Not available from a testnet. |
 
 We agree with that conclusion.
+
+Next: [Compared with Papertrade](13-compared-with-papertrade.md)

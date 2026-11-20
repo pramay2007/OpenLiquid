@@ -2,13 +2,21 @@
 
 OpenLiquid is a venue for leveraged trading on crypto, stocks, commodities and live prediction markets, in one place, on Arc. Every trade fills at one price taken from a reference venue. There is no order book. A position can lose its margin and nothing more.
 
-## The idea, and its problem
+## Why it exists
 
-In October 2026 Papertrade showed how much people want this: up to 1000× leverage, any size filled at a reference mid price, no slippage, no fees to get in. It took billions of dollars of volume in its first days.
+Trading should have one price. On an order book the price you see is not the price you get. There is a spread, the book thins out when the market moves, and a larger order fills worse than a smaller one. A trader pays for all of that without ever seeing a fee.
 
-It also showed the problem. If a venue fills any size at a price from somewhere else, then anyone who can move that price for a moment can be paid for it. On launch day one trader reportedly spent about $52,000 moving the reference price by 0.12% and took about $1.28M.
+OpenLiquid removes the book. Every trade fills at a single price taken from the deepest market for that asset. In a calm market that is the mid, with no spread and no slippage, at any size the market has room for.
 
-OpenLiquid keeps the experience and changes the rules underneath, so that the trade stops paying.
+Leverage should come with a hard limit on loss. With isolated margin and one price, a position can lose what was put in and nothing more. That is what makes very high leverage usable: at 1000×, $10 controls $10,000 for a short move, and $10 is the most it can cost.
+
+The same engine should work for anything with a price. That includes prediction markets, which until now have had no leverage at all.
+
+## The problem that had to be solved
+
+A venue that fills at a price from somewhere else has one obvious weakness. Anyone who can move that price for a moment can trade against the move. Pushing a reference price by a tenth of a percent for a minute can cost tens of thousands of dollars and, against a venue that fills any size at the mid, pay hundreds of thousands.
+
+The rules below exist so that this does not pay, so that winners are always paid, and so that the venue cannot owe more than it holds.
 
 ## The rules, in one table
 
@@ -21,8 +29,6 @@ OpenLiquid keeps the experience and changes the rules underneath, so that the tr
 | [Softer liquidation](04-fees-funding-liquidation.md) | Liquidation at 20% of margin left, and what remains goes back to the trader. |
 | [Event-market rules](05-prediction-markets.md) | Prediction markets get tick-bounded leverage that compresses to 1× before the outcome. |
 | [Fee-minted token](06-olq-token.md) | OLQ is minted when a fee is paid, never for losing, up to a fixed maximum. |
-
-One page sets these side by side with Papertrade's design: [What we changed from Papertrade](07-what-we-changed.md).
 
 ## What you can trade
 

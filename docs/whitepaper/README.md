@@ -8,9 +8,9 @@ How OpenLiquid works, and what it does differently. The same pages are readable 
 4. [Fees, funding and liquidation](04-fees-funding-liquidation.md)
 5. [Prediction-market perpetuals](05-prediction-markets.md): leverage on Gemini's event contracts
 6. [The OLQ token](06-olq-token.md): minted on fees, never on losses
-7. [What we changed from Papertrade](07-what-we-changed.md): the differences, side by side
-8. [Oracle, keeper and Arc](08-oracle-keeper-arc.md): signed prices, USDC gas, CCTP
-9. [Risks and assumptions](09-risks.md)
-10. [Parameters and contracts](10-parameters-and-contracts.md): every number and address
-11. [Questions and answers](11-faq.md)
-12. [Objections and answers](12-objections.md): five criticisms of the design, and where each stands
+7. [Oracle, keeper and Arc](08-oracle-keeper-arc.md): signed prices, USDC gas, CCTP
+8. [Risks and assumptions](09-risks.md)
+9. [Parameters and contracts](10-parameters-and-contracts.md): every number and address
+10. [Questions and answers](11-faq.md)
+11. [Objections and answers](12-objections.md): five criticisms of the design, and where each stands
+12. [Compared with Papertrade](13-compared-with-papertrade.md): the one page that sets the two designs side by side

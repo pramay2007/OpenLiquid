@@ -402,11 +402,11 @@ export function LandingPage() {
 
       <section className="replay-strip">
         <div>
-          <div className="eyebrow">The launch-day trade, replayed</div>
+          <div className="eyebrow">The price-push attack, tested</div>
           <p>
-            In October 2026 a trader moved a reference price by 0.12% for about a minute and took roughly $1.28M from a
-            venue that filled any size at that price. Our contract tests replay the same sequence against both sets of
-            rules.
+            A venue that fills any size at a reference price pays anyone who can move that price for a minute. Our
+            contract tests run that attack twice: against an engine that simply fills at the mid, and against
+            OpenLiquid. The attacker spends about $52,000 pushing the price by 0.12%.
           </p>
           <button className="link" onClick={() => setPage("mechanics")}>
             Watch the replay
@@ -427,8 +427,8 @@ export function LandingPage() {
       <footer className="landing-foot">
         <span>Testnet prototype. Unaudited. Test funds only.</span>
         <span>
-          <button className="link" onClick={() => openDoc("what-we-changed")}>
-            What we changed from Papertrade
+          <button className="link" onClick={() => openDoc("")}>
+            Whitepaper
           </button>
           <a className="link" href="https://github.com/pramay2007/OpenLiquid" target="_blank" rel="noreferrer">
             GitHub

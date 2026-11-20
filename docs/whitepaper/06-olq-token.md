@@ -40,27 +40,16 @@ Stakers are paid from fees and only from fees. They do not receive trader losses
 
 ## Why not mint on losses
 
-Papertrade mints its token to traders in proportion to what they lose. We chose not to copy that, for three reasons.
+Some venues mint their token to traders in proportion to what they lose. We chose not to, for three reasons.
 
 **It pays people to trade against themselves.** With one price and no spread, a trader can open a long from one wallet and a short from another. One wallet loses what the other wins. If losing mints tokens, the pair collects tokens on the whole loss while the matching win gives most of the money back. On OpenLiquid the same pair mints OLQ only on the fee it actually pays, at the same rate as everyone else. There is no cheaper way to get the token than paying the protocol.
 
 **It ties the token to the venue losing its users' money.** Under loss emission, supply grows fastest when traders are doing worst. Under fee emission, supply grows when traders are winning and paying fees, and every token in existence corresponds to a dollar-denominated fee that was really paid.
 
-**It needs no ceiling.** A token minted on losses has to keep minting as long as people lose. Papertrade's current rule mints in proportion to the existing supply, with no maximum. OLQ has a fixed maximum and the minting rate can only go down.
-
-| | Papertrade (PAPER) | OpenLiquid (OLQ) |
-|---|---|---|
-| Minted when | A trader loses | A trader pays a profit fee |
-| Minted to | The loser | The fee payer |
-| Maximum supply | None stated | 100,000,000 |
-| Transferable | Not at launch | From the start |
-| Stakers earn | Half of fees, plus pool surplus above a cap | 30% of profit fees |
-| Stakers paid when | Only while no winner is waiting in the queue | Always; there is no queue |
-
-The Papertrade column is our reading of its public documentation at [docs.papertrade.xyz](https://docs.papertrade.xyz/) in November 2026.
+**It needs no ceiling.** A token minted on losses has to keep minting as long as people lose. OLQ has a fixed maximum and the minting rate can only go down.
 
 ## What OLQ is not
 
 This is a testnet deployment. OLQ on Arc testnet has no value and is not offered for sale. The contracts are unaudited.
 
-Next: [What we changed from Papertrade](07-what-we-changed.md)
+Next: [Oracle, keeper and Arc](08-oracle-keeper-arc.md)

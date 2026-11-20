@@ -46,7 +46,7 @@ The contracts have an owner that can list markets, change market parameters and 
 
 ## 8. Software
 
-The contracts are unaudited. They have 30 tests, including the replay of the launch-day trade, and have been exercised on Arc testnet. That is not an audit.
+The contracts are unaudited. They have 30 tests, including the price-push attack, and have been exercised on Arc testnet. That is not an audit.
 
 ## What the tests cover
 
@@ -55,7 +55,7 @@ The contracts are unaudited. They have 30 tests, including the replay of the lau
 | Crypto, stock and commodity markets | 14 |
 | Prediction markets | 7 |
 | Price oracle | 3 |
-| Replay of the launch-day trade | 6 |
+| The price-push attack | 6 |
 
 A review of the design raised five specific objections. They are answered one by one in [Objections and answers](12-objections.md).
 
