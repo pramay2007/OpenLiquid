@@ -1,0 +1,50 @@
+============================================================================================================================================
+A1. closed forms.  'rate' = house EV per $ of boosted margin per unit of (holding time / remaining life), short holds
+     'hold' = house EV per $ if the booster holds until the jump or until the premium liquidates the position
+============================================================================================================================================
+   p0    L | charged/fair     rate     hold P(jump first) | charged/fair     rate     hold P(jump first)
+           | --- premium as written in the brief: B(1-p)/tau --- |         --- as coded: B p(1-p)/tau ---        
+ 0.20    2 |         5.00   +3.280   +0.564         0.181 |         1.00   +0.144   -0.028         0.632 |
+ 0.20    5 |         5.00  +14.680   +0.719         0.049 |         1.00   +2.136   +0.430         0.221 |
+ 0.20   10 |         5.00  +34.280   +0.763         0.022 |         1.00   +6.056   +0.624         0.105 |
+ 0.30    2 |         3.33   +1.703   +0.447         0.290 |         1.00   +0.119   -0.039         0.681 |
+ 0.30    5 |         3.33   +7.053   +0.582         0.082 |         1.00   +0.716   +0.139         0.249 |
+ 0.30   10 |         3.33  +18.370   +0.701         0.037 |         1.00   +4.111   +0.483         0.119 |
+ 0.30   15 |         3.33  +29.687   +0.736         0.024 |         1.00   +7.506   +0.592         0.078 |
+ 0.50    2 |         2.00   +0.550   +0.236         0.551 |         1.00   +0.075   -0.035         0.798 |
+ 0.50    5 |         2.00   +2.050   +0.378         0.181 |         1.00   +0.150   +0.031         0.330 |
+ 0.50   10 |         2.00   +4.550   +0.415         0.085 |         1.00   +0.275   +0.063         0.163 |
+ 0.50   25 |         2.00  +18.800   +0.649         0.033 |         1.00   +7.400   +0.502         0.064 |
+ 0.70    2 |         1.43   +0.159   +0.082         0.845 |         1.00   +0.039   -0.015         0.931 |
+ 0.70    5 |         1.43   +0.544   +0.211         0.373 |         1.00   +0.066   +0.027         0.487 |
+ 0.70   10 |         1.43   +1.187   +0.261         0.187 |         1.00   +0.111   +0.061         0.256 |
+ 0.70   15 |         1.43   +1.830   +0.278         0.125 |         1.00   +0.156   +0.074         0.173 |
+ 0.80    2 |         1.25   +0.070   +0.039         0.959 |         1.00   +0.024   -0.001         0.982 |
+ 0.80    5 |         1.25   +0.220   +0.132         0.551 |         1.00   +0.036   +0.027         0.632 |
+ 0.80   10 |         1.25   +0.470   +0.186         0.299 |         1.00   +0.056   +0.062         0.359 |
+ 0.90    2 |         1.11   +0.021   +0.020         0.999 |         1.00   +0.011   +0.011         1.000 |
+ 0.90    5 |         1.11   +0.054   +0.064         0.835 |         1.00   +0.014   +0.029         0.865 |
+
+============================================================================================================================================
+A2. Monte Carlo, 200,000 paths, tau0 = 30 days, booster holds to the jump or to premium-liquidation; winner closes once slow has caught up
+============================================================================================================================================
+p0=0.50 L=10 brief fc=off one leg                          trader -0.4684 (se 0.0042)  HOUSE +0.4227 (se 0.0041)  prem 0.748 share 0.039 liqfee 0.046  P(win) 0.042  [close=0.042, liquidated=0.958] [dt=148s]
+p0=0.50 L=10 brief fc=off STRADDLE                         trader -0.4615 (se 0.0028)  HOUSE +0.4158 (se 0.0028)  prem 0.749 share 0.040 liqfee 0.046  P(win) 0.086  [close=0.086, liquidated=1.914]
+      closed form (one leg): trader -0.4612  house +0.4154
+p0=0.50 L=10 brief fc=on  one leg                          trader -0.8370 (se 0.0002)  HOUSE +0.7912 (se 0.0002)  prem 0.749 share 0.000 liqfee 0.046  P(win) 0.000  [liquidated=0.957, force-closed=0.043] [dt=148s]
+p0=0.50 L=10 code  fc=off one leg                          trader -0.1180 (se 0.0056)  HOUSE +0.0762 (se 0.0056)  prem 0.702 share 0.075 liqfee 0.042  P(win) 0.081  [close=0.081, liquidated=0.919] [dt=284s]
+      closed form (one leg): trader -0.1050  house +0.0631
+p0=0.50 L=10 code  fc=on  one leg                          trader -0.8244 (se 0.0003)  HOUSE +0.7826 (se 0.0003)  prem 0.701 share 0.000 liqfee 0.042  P(win) 0.000  [liquidated=0.917, force-closed=0.083] [dt=284s]
+p0=0.50 L=25 brief fc=off one leg                          trader -0.6947 (se 0.0027)  HOUSE +0.6464 (se 0.0027)  prem 0.781 share 0.016 liqfee 0.048  P(win) 0.017  [liquidated=0.983, collected=0.017] [dt=60s]
+      closed form (one leg): trader -0.6969  house +0.6485
+p0=0.80 L=10 brief fc=off one leg                          trader -0.2320 (se 0.0025)  HOUSE +0.1969 (se 0.0025)  prem 0.652 share 0.047 liqfee 0.035  P(win) 0.240  [close=0.240, liquidated=0.760] [dt=520s]
+      closed form (one leg): trader -0.2211  house +0.1860
+p0=0.50 L=4 code  fc=on  one leg                           trader -0.1835 (se 0.0035)  HOUSE +0.1542 (se 0.0034)  prem 0.545 share 0.061 liqfee 0.029  P(win) 0.169  [close=0.169, liquidated=0.794, force-closed=0.038] [dt=716s]
+
+-- one-day hold at 30 days out (jump inside the day with probability 1/30)
+1-day hold p0=0.50 L=10 brief fc=off one leg               trader -0.1677 (se 0.0026)  HOUSE +0.1677 (se 0.0026)  prem 0.298 share 0.016 liqfee 0.000  P(win) 0.017  [close=0.984, liquidated=0.016]
+      closed-form rate x (1/30): house +0.1517
+1-day hold p0=0.50 L=10 code  fc=off one leg               trader -0.0190 (se 0.0026)  HOUSE +0.0190 (se 0.0026)  prem 0.149 share 0.016 liqfee 0.000  P(win) 0.017  [close=0.984, liquidated=0.016]
+      closed-form rate x (1/30): house +0.0092
+
+elapsed 323s

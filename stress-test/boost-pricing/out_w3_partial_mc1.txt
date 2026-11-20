@@ -1,0 +1,7 @@
+
+==================================================================================================================================
+C2. Monte Carlo, 200,000 paths, tau0 = 30 days, p0 = 0.5, two-sided jumps, keeper force-close on
+==================================================================================================================================
+L=25 +-0.04 f=1.00 brief                                   trader +0.2248 (se 0.0028)  HOUSE -0.2251 (se 0.0028)  prem 0.082 share 0.081 liqfee 0.000  P(win) 0.493  [close=0.493, liquidated=0.507]  [dt=28s, horizon=23.6h, positions/path=1.00]
+L=25 +-0.04 f=1.00 brief STRADDLE                          trader +0.2230 (se 0.0005)  HOUSE -0.2233 (se 0.0005)  prem 0.082 share 0.081 liqfee 0.000  P(win) 0.975  [close=0.984, liquidated=1.016]  P(straddle>0)=0.975
+L=25 +-0.04 f=1.00 code                                    trader +0.2580 (se 0.0029)  HOUSE -0.2580 (se 0.0029)  prem 0.040 share 0.085 liqfee 0.000  P(win) 0.496  [close=0.496, liquidated=0.504]  [dt=48s, horizon=46.4h, positions/path=1.00]

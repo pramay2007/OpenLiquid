@@ -1,0 +1,26 @@
+variant=code paths=200000 steps/path=40 ops=8000000 time=359s
+opens=1368934 closes by kind={'close': 810630, 'liquidation': 75621, 'forceClose': 33648, 'settlement': 432253, 'collect': 16782} lp_ops=762286
+paths with a resolution inside the run=91242
+open reverts={'EntryTooFarFromMid': 209294, 'PriceDislocated': 251028, 'SideCapExceeded': 152260, 'MarketResolved': 450833, 'BadLeverage': 84675, 'InsufficientLiquidity': 34175, 'PositionTooLarge': 8680, 'EventPriceOutOfRange': 2125}
+VIOLATIONS={'F4 cash stranded in an empty vault (micro-USDC)': 30}
+  example: F4 cash stranded in an empty vault (micro-USDC) 5
+  example: F4 cash stranded in an empty vault (micro-USDC) 6
+  example: F4 cash stranded in an empty vault (micro-USDC) 4
+  example: F4 cash stranded in an empty vault (micro-USDC) 14
+  example: F4 cash stranded in an empty vault (micro-USDC) 5
+  example: F4 cash stranded in an empty vault (micro-USDC) 24
+  example: F4 cash stranded in an empty vault (micro-USDC) 72
+  example: F4 cash stranded in an empty vault (micro-USDC) 8
+max (paid out)/(margin+reserve) over all closes = 0.999650
+event settlements checked against the outright payoff = 432253
+liquidations=75621, with zero liquidator fee=57986
+-- LP mark (vault.totalAssets) vs clamped liability, observed after every op --
+states=8200000  |mis-mark|>$1 in 834642 (10.18%)  understated in 483663  overstated in 350979
+mean |mis-mark|/fair NAV = 0.0760%   max understatement = 99.92% ($127,249)   max overstatement = 213.33% ($121,678)
+states where totalAssets()==0 with shares outstanding = 0
+exits where redeem(balanceOf) would have reverted (must use maxRedeem) = 64184
+mean (fees not yet in the mark)/fair NAV = 0.5916%
+-- JIT depositor (deposit = pool NAV, run NAV-raising upkeep, redeem; one block) --
+attempts=239328  profitable (> $0.01) in 10654 (4.45%)
+mean gain = $18.32 (SE 1.00) per attempt; mean gain/deposit = 3.501 bps (SE 0.492); max gain/deposit = 675.38%
+mean NAV jump caused by the upkeep = $36.57

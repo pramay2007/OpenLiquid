@@ -1,0 +1,74 @@
+A. honest single bet, patient entry, close when the worse-of price is within eps of the cap (whole-cent steps)
+  p0=0.5 L=25: exact lattice (no slow lag) EV -0.0500, P(win) 0.5000; continuous-limit EV -0.0722
+   lam*tau=0.01 best eps=0.02         EV -0.0590 +-0.0015 | P(win) 0.4976 P(liq) 0.5024 | fee 0.0493 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0099 | hold 33.74 h
+   lam*tau=0.1  best eps=0.02         EV -0.0986 +-0.0015 | P(win) 0.4767 P(liq) 0.5233 | fee 0.0472 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0518 | hold 3.72 h
+   lam*tau=0.3  best eps=0.1          EV -0.1477 +-0.0015 | P(win) 0.4595 P(liq) 0.5405 | fee 0.0436 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.1040 | hold 1.34 h
+   lam*tau=1.0  best eps=0.3          EV -0.2395 +-0.0014 | P(win) 0.4309 P(liq) 0.5691 | fee 0.0366 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.2043 | hold 0.46 h
+  p0=0.5 L=10: exact lattice (no slow lag) EV -0.0722, P(win) 0.4444; continuous-limit EV -0.0722
+   lam*tau=0.01 best eps=0.02         EV -0.0766 +-0.0014 | P(win) 0.4429 P(liq) 0.5571 | fee 0.0441 liqcut 0.0279 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0035 | hold 167.09 h
+   lam*tau=0.1  best eps=0.1          EV -0.0907 +-0.0014 | P(win) 0.4384 P(liq) 0.5616 | fee 0.0430 liqcut 0.0281 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0191 | hold 17.08 h
+   lam*tau=0.3  best eps=0.1          EV -0.1094 +-0.0014 | P(win) 0.4276 P(liq) 0.5724 | fee 0.0419 liqcut 0.0286 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0387 | hold 5.97 h
+   lam*tau=1.0  best eps=0.3          EV -0.1476 +-0.0013 | P(win) 0.4141 P(liq) 0.5859 | fee 0.0389 liqcut 0.0293 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0807 | hold 1.91 h
+  p0=0.2 L=10: exact lattice (no slow lag) EV -0.0800, P(win) 0.2000; continuous-limit EV -0.1083
+   lam*tau=0.01 best eps=0.02         EV -0.0813 +-0.0029 | P(win) 0.2001 P(liq) 0.7999 | fee 0.0798 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0040 | hold 133.66 h
+   lam*tau=0.1  best eps=0.1          EV -0.0957 +-0.0029 | P(win) 0.1985 P(liq) 0.8015 | fee 0.0784 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0217 | hold 13.57 h
+   lam*tau=0.3  best eps=0.1          EV -0.1181 +-0.0028 | P(win) 0.1936 P(liq) 0.8064 | fee 0.0765 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0439 | hold 4.66 h
+   lam*tau=1.0  best eps=0.3          EV -0.1621 +-0.0028 | P(win) 0.1877 P(liq) 0.8123 | fee 0.0723 liqcut 0.0000 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0918 | hold 1.46 h
+  p0=0.8 L=10: exact lattice (no slow lag) EV -0.0306, P(win) 0.7778; continuous-limit EV -0.0310
+   lam*tau=0.01 best eps=0.02         EV -0.0348 +-0.0008 | P(win) 0.7756 P(liq) 0.2244 | fee 0.0192 liqcut 0.0112 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0038 | hold 117.91 h
+   lam*tau=0.1  best eps=0.1          EV -0.0514 +-0.0008 | P(win) 0.7671 P(liq) 0.2329 | fee 0.0182 liqcut 0.0116 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0208 | hold 12.42 h
+   lam*tau=0.3  best eps=0.1          EV -0.0724 +-0.0008 | P(win) 0.7487 P(liq) 0.2513 | fee 0.0178 liqcut 0.0126 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0424 | hold 4.63 h
+   lam*tau=1.0  best eps=0.3          EV -0.1167 +-0.0008 | P(win) 0.7242 P(liq) 0.2758 | fee 0.0154 liqcut 0.0138 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0866 | hold 1.57 h
+
+B. same bet, naive timing: opened at a random moment at the worse-of fill (30%-of-margin entry guard applies)
+   p0=0.5 L=25 lam*tau=0.1            EV -0.1171 +-0.0015 | P(win) 0.4761 P(liq) 0.5239 | fee 0.0452 liqcut 0.0048 clamp gain 0.0129 entry cost 0.0128 exit lag 0.0705 | hold 3.75 h
+   p0=0.5 L=25 lam*tau=0.3            EV -0.1810 +-0.0015 | P(win) 0.4410 P(liq) 0.5590 | fee 0.0418 liqcut 0.0071 clamp gain 0.0261 entry cost 0.0282 exit lag 0.1301 | hold 1.44 h
+   p0=0.5 L=25 lam*tau=1.0            EV -0.2562 +-0.0014 | P(win) 0.3964 P(liq) 0.6036 | fee 0.0378 liqcut 0.0095 clamp gain 0.0425 entry cost 0.0431 exit lag 0.2092 | hold 0.51 h
+   p0=0.5 L=10 lam*tau=0.1            EV -0.1176 +-0.0014 | P(win) 0.4438 P(liq) 0.5562 | fee 0.0433 liqcut 0.0239 clamp gain 0.0000 entry cost 0.0091 exit lag 0.0431 | hold 19.56 h
+   p0=0.5 L=10 lam*tau=0.3            EV -0.1457 +-0.0014 | P(win) 0.4344 P(liq) 0.5656 | fee 0.0422 liqcut 0.0250 clamp gain 0.0000 entry cost 0.0230 exit lag 0.0571 | hold 6.80 h
+   p0=0.5 L=10 lam*tau=1.0            EV -0.1991 +-0.0014 | P(win) 0.4087 P(liq) 0.5913 | fee 0.0395 liqcut 0.0264 clamp gain 0.0002 entry cost 0.0466 exit lag 0.0854 | hold 2.18 h
+
+C. the stop-line pocket: stop distance between 2.5 and 2.7 ticks, whole-cent reference steps
+  p0=0.46 L=18 take-profit ticks=inf: exact lattice EV +0.0283, stop 2.556 ticks, win 3.00 ticks
+   lam*tau=0.01 best eps=0.02         EV +0.0203 +-0.0016 | P(win) 0.4979 P(liq) 0.5021 | fee 0.0581 liqcut 0.0000 clamp gain 0.0873 entry cost 0.0000 exit lag 0.0077 | hold 75.57 h
+   lam*tau=0.1  best eps=0.02         EV -0.0075 +-0.0016 | P(win) 0.4843 P(liq) 0.5157 | fee 0.0565 liqcut 0.0000 clamp gain 0.0897 entry cost 0.0000 exit lag 0.0409 | hold 8.04 h
+   lam*tau=0.3  best eps=0.1          EV -0.0461 +-0.0016 | P(win) 0.4719 P(liq) 0.5281 | fee 0.0536 liqcut 0.0000 clamp gain 0.0918 entry cost 0.0000 exit lag 0.0838 | hold 2.83 h
+   lam*tau=1.0  best eps=0.3          EV -0.1223 +-0.0015 | P(win) 0.4499 P(liq) 0.5501 | fee 0.0475 liqcut 0.0000 clamp gain 0.0957 entry cost 0.0000 exit lag 0.1703 | hold 0.93 h
+  p0=0.205 L=8 take-profit ticks=inf: exact lattice EV +0.0362, stop 2.562 ticks, win 9.94 ticks
+   lam*tau=0.01 best eps=0.02         EV -0.1081 +-0.0026 | P(win) 0.1670 P(liq) 0.8330 | fee 0.0667 liqcut 0.0417 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0027 | hold 167.16 h
+   lam*tau=0.1  best eps=0.1          EV -0.1192 +-0.0026 | P(win) 0.1656 P(liq) 0.8344 | fee 0.0656 liqcut 0.0417 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0144 | hold 16.90 h
+   lam*tau=0.3  best eps=0.1          EV -0.1338 +-0.0026 | P(win) 0.1623 P(liq) 0.8377 | fee 0.0643 liqcut 0.0419 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0295 | hold 5.75 h
+   lam*tau=1.0  best eps=0.3          EV -0.1628 +-0.0025 | P(win) 0.1583 P(liq) 0.8417 | fee 0.0614 liqcut 0.0421 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0615 | hold 1.79 h
+  p0=0.255 L=10 take-profit ticks=7: exact lattice EV +0.0412, stop 2.550 ticks, win 7.45 ticks
+   lam*tau=0.01 best eps=0.02         EV +0.0239 +-0.0025 | P(win) 0.2997 P(liq) 0.7003 | fee 0.0805 liqcut 0.0000 clamp gain 0.1077 entry cost 0.0000 exit lag 0.0046 | hold 175.76 h
+   lam*tau=0.1  best eps=0.1          EV +0.0063 +-0.0024 | P(win) 0.2970 P(liq) 0.7030 | fee 0.0788 liqcut 0.0000 clamp gain 0.1082 entry cost 0.0000 exit lag 0.0250 | hold 17.80 h
+   lam*tau=0.3  best eps=0.1          EV -0.0188 +-0.0024 | P(win) 0.2896 P(liq) 0.7104 | fee 0.0769 liqcut 0.0000 clamp gain 0.1093 entry cost 0.0000 exit lag 0.0507 | hold 6.16 h
+   lam*tau=1.0  best eps=0.3          EV -0.0677 +-0.0024 | P(win) 0.2809 P(liq) 0.7191 | fee 0.0724 liqcut 0.0000 clamp gain 0.1106 entry cost 0.0000 exit lag 0.1052 | hold 1.93 h
+  p0=0.18 L=7 take-profit ticks=11: exact lattice EV +0.0393, stop 2.571 ticks, win 11.71 ticks
+   lam*tau=0.01 best eps=0.02         EV +0.0394 +-0.0031 | P(win) 0.2146 P(liq) 0.7854 | fee 0.0916 liqcut 0.0000 clamp gain 0.1309 entry cost 0.0000 exit lag 0.0033 | hold 274.82 h
+   lam*tau=0.1  best eps=0.1          EV +0.0235 +-0.0031 | P(win) 0.2126 P(liq) 0.7874 | fee 0.0901 liqcut 0.0000 clamp gain 0.1312 entry cost 0.0000 exit lag 0.0178 | hold 27.81 h
+   lam*tau=0.3  best eps=0.1          EV +0.0053 +-0.0031 | P(win) 0.2088 P(liq) 0.7912 | fee 0.0885 liqcut 0.0000 clamp gain 0.1319 entry cost 0.0000 exit lag 0.0370 | hold 9.48 h
+   lam*tau=1.0  best eps=0.3          EV -0.0313 +-0.0030 | P(win) 0.2041 P(liq) 0.7959 | fee 0.0849 liqcut 0.0000 clamp gain 0.1326 entry cost 0.0000 exit lag 0.0771 | hold 2.93 h
+  p0=0.53 L=21 take-profit ticks=2: exact lattice EV +0.0279, stop 2.524 ticks, win 2.24 ticks
+   lam*tau=0.01 best eps=0.02         EV +0.0202 +-0.0013 | P(win) 0.5980 P(liq) 0.4020 | fee 0.0469 liqcut 0.0000 clamp gain 0.0759 entry cost 0.0000 exit lag 0.0094 | hold 50.54 h
+   lam*tau=0.1  best eps=0.02         EV -0.0145 +-0.0013 | P(win) 0.5777 P(liq) 0.4223 | fee 0.0453 liqcut 0.0000 clamp gain 0.0797 entry cost 0.0000 exit lag 0.0499 | hold 5.57 h
+   lam*tau=0.3  best eps=0.1          EV -0.0600 +-0.0013 | P(win) 0.5604 P(liq) 0.4396 | fee 0.0422 liqcut 0.0000 clamp gain 0.0830 entry cost 0.0000 exit lag 0.1008 | hold 2.00 h
+   lam*tau=1.0  best eps=0.3          EV -0.1485 +-0.0013 | P(win) 0.5301 P(liq) 0.4699 | fee 0.0357 liqcut 0.0000 clamp gain 0.0887 entry cost 0.0000 exit lag 0.2002 | hold 0.68 h
+  with the brief's slow rule for one sparse update (slow += (mid-slow)*dt/(tau+dt)) instead of the exponential:
+   p0=0.46 L=18 lam*tau=0.1 spec rule EV -0.0634 +-0.0016 | P(win) 0.4634 P(liq) 0.5366 | fee 0.0526 liqcut 0.0000 clamp gain 0.0933 entry cost 0.0000 exit lag 0.1045 | hold 8.79 h
+   p0=0.46 L=18 lam*tau=0.3 spec rule EV -0.1232 +-0.0016 | P(win) 0.4338 P(liq) 0.5662 | fee 0.0492 liqcut 0.0000 clamp gain 0.0985 entry cost 0.0000 exit lag 0.1727 | hold 3.28 h
+  with the proposed fix (liquidatable when equity <= max(20% M, one tick of P&L)):
+   p0=0.46 L=18 lam*tau=0.1 FIX       EV -0.1076 +-0.0014 | P(win) 0.3852 P(liq) 0.6148 | fee 0.0449 liqcut 0.0307 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0327 | hold 5.37 h
+   p0=0.205 L=8 lam*tau=0.1 FIX       EV -0.1184 +-0.0026 | P(win) 0.1647 P(liq) 0.8353 | fee 0.0657 liqcut 0.0418 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0143 | hold 17.03 h
+   p0=0.255 L=10 lam*tau=0.1 FIX      EV -0.1146 +-0.0021 | P(win) 0.2178 P(liq) 0.7822 | fee 0.0585 liqcut 0.0391 clamp gain 0.0000 entry cost 0.0000 exit lag 0.0181 | hold 12.03 h
+
+D. both sides at once (YES and NO, $1 margin each, same path): EV is per $1 of TOTAL margin
+   p0=0.5 YES 25x / NO 25x lam*tau=0.1: EV -0.0993 +-0.0002 per $1 total | YES leg -0.0966 +-0.0015, NO leg -0.1020 +-0.0015 | corr -0.94 | sd per $1: both 0.155 vs single 0.927 | P(both legs win) 0.0000
+   p0=0.5 YES 25x / NO 25x lam*tau=0.3: EV -0.1475 +-0.0004 per $1 total | YES leg -0.1462 +-0.0015, NO leg -0.1487 +-0.0015 | corr -0.85 | sd per $1: both 0.253 vs single 0.925 | P(both legs win) 0.0000
+   p0=0.5 YES 10x / NO 10x lam*tau=0.1: EV -0.0904 +-0.0004 per $1 total | YES leg -0.0900 +-0.0014, NO leg -0.0907 +-0.0014 | corr -0.78 | sd per $1: both 0.284 vs single 0.859 | P(both legs win) 0.0000
+   p0=0.5 YES 10x / NO 10x lam*tau=0.3: EV -0.1093 +-0.0005 per $1 total | YES leg -0.1090 +-0.0014, NO leg -0.1097 +-0.0014 | corr -0.75 | sd per $1: both 0.305 vs single 0.857 | P(both legs win) 0.0000
+   p0=0.2 YES 10x / NO 10x lam*tau=0.1: EV -0.0735 +-0.0011 per $1 total | YES leg -0.0957 +-0.0029, NO leg -0.0514 +-0.0008 | corr -0.90 | sd per $1: both 0.699 vs single 1.817 | P(both legs win) 0.0000
+   p0=0.2 YES 10x / NO 10x lam*tau=0.3: EV -0.0955 +-0.0011 per $1 total | YES leg -0.1183 +-0.0028, NO leg -0.0728 +-0.0008 | corr -0.84 | sd per $1: both 0.704 vs single 1.800 | P(both legs win) 0.0000
+   p0=0.46 YES 18x / NO 18x lam*tau=0.1: EV -0.0726 +-0.0002 per $1 total | YES leg -0.0083 +-0.0016, NO leg -0.1369 +-0.0014 | corr -0.98 | sd per $1: both 0.126 vs single 1.010 | P(both legs win) 0.0000
+   p0=0.46 YES 18x / NO 18x lam*tau=0.3: EV -0.0973 +-0.0003 per $1 total | YES leg -0.0467 +-0.0016, NO leg -0.1480 +-0.0014 | corr -0.93 | sd per $1: both 0.192 vs single 1.009 | P(both legs win) 0.0000
+python3 -u e4_mc.py ABCD  105.74s user 8.94s system 70% cpu 2:41.73 total

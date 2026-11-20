@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { deployment, type MarketMeta } from "../chain/config";
 import { connectDemo } from "../data/wallet";
-import { fmtPct, fmtPrice } from "../lib/format";
+import { corridor } from "../lib/corridor";
+import { fmtDuration, fmtPct, fmtPrice } from "../lib/format";
 import { useStore } from "../state/store";
 import { displayName } from "./MarketRail";
 import { Num, Sparkline } from "./primitives";
@@ -134,9 +135,10 @@ function EventCard({ meta }: { meta: MarketMeta }) {
   const market = useStore((s) => s.markets[meta.id]);
   const select = useStore((s) => s.select);
   const yes = mid != null && mid > 0 ? mid : 0.5;
-  const levYes = market?.maxLevLong || Math.max(1, Math.floor(yes / 0.02));
-  const levNo = market?.maxLevShort || Math.max(1, Math.floor((1 - yes) / 0.02));
-  const best = Math.max(levYes, levNo);
+  // The same limit applies to both sides: each line of the bet stays a minimum distance from entry.
+  const best = market?.maxLevLong || Math.max(1, Math.floor(Math.min(yes, 1 - yes) / (market?.minDistance || 0.1)));
+  // Trading stops at the market's expiry: five minutes before kickoff for a match.
+  const secondsLeft = (market?.expiry || meta.expiry || 0) - Date.now() / 1000;
 
   return (
     <button className="glass event-card" onClick={() => select(meta.id)}>
@@ -167,7 +169,7 @@ function EventCard({ meta }: { meta: MarketMeta }) {
             d="M20 92 A70 70 0 0 1 160 92"
             pathLength={100}
             className="gauge-fill"
-            style={{ strokeDashoffset: 100 - Math.min(100, (best / 50) * 100) }}
+            style={{ strokeDashoffset: 100 - Math.min(100, (best / 10) * 100) }}
           />
         </svg>
         <div className="gauge-read">
@@ -179,11 +181,13 @@ function EventCard({ meta }: { meta: MarketMeta }) {
       </div>
       <div className="event-sides">
         <span>
-          Yes up to <b>{levYes}×</b>
+          Yes or No, up to <b>{best}×</b>
         </span>
-        <span>
-          No up to <b>{levNo}×</b>
-        </span>
+        {secondsLeft > 0 && (
+          <span>
+            closes in <b>{fmtDuration(secondsLeft)}</b>
+          </span>
+        )}
       </div>
     </button>
   );
@@ -328,7 +332,80 @@ function Features() {
           signature, and it arrives ready to spend.
         </p>
       </article>
+
+      <article className="feature">
+        <svg viewBox="0 0 280 140" className="feature-art" aria-hidden>
+          <text x="14" y="44" className="art-label">
+            you win
+          </text>
+          <rect x="74" y="30" width="190" height="22" rx="6" className="art-win" />
+          <rect x="246" y="30" width="18" height="22" rx="6" className="art-fee" />
+          <text x="206" y="68" className="art-label brass">
+            a share of profit
+          </text>
+          <text x="14" y="104" className="art-label">
+            you lose
+          </text>
+          <rect x="74" y="90" width="92" height="22" rx="6" className="art-loss" />
+          <text x="176" y="105" className="art-label">
+            no fee to close
+          </text>
+        </svg>
+        <h4>No fee to open, no funding</h4>
+        <p>
+          Nothing to open or close, and no funding paid between traders. Winners pay a share of profit. The crowded
+          side of a market pays a small daily crowding fee; a balanced market pays none.
+        </p>
+      </article>
     </section>
+  );
+}
+
+/** A leveraged bet on the featured market, drawn as a win line and a stop line on the odds. */
+function OddsZoom({ meta }: { meta: MarketMeta }) {
+  const mid = useMid(meta.id);
+  const market = useStore((s) => s.markets[meta.id]);
+  const maint = useStore((s) => s.params.maintFraction);
+  const select = useStore((s) => s.select);
+  const price = mid != null && mid > 0.03 && mid < 0.97 ? mid : 0.54;
+  const lev = Math.max(1, Math.min(10, Math.floor(market?.maxLevLong || 5)));
+  const c = corridor({ price, isYes: true, margin: 100, leverage: lev, boost: false, maintFraction: maint, maxProfitMult: 10 });
+  const pct = (x: number) => `${Math.max(0, Math.min(1, x)) * 100}%`;
+  const cents = (x: number) => `${(x * 100).toFixed(1)}¢`;
+
+  return (
+    <button className="zoom" onClick={() => select(meta.id)} aria-label={`Trade ${meta.name}`}>
+      <div className="zoom-head">
+        <span>
+          {meta.name} · Yes = {meta.outcome ?? "Yes"}
+        </span>
+        <b>$100 at {lev}×</b>
+      </div>
+      <div className="zoom-bar">
+        <i className="lose" style={{ left: pct(c.liqLine), width: pct(price - c.liqLine) }} />
+        <i className="win" style={{ left: pct(price), width: pct(c.winLine - price) }} />
+        <u style={{ left: pct(price) }} />
+      </div>
+      <div className="zoom-scale">
+        <span>0¢</span>
+        <span>50¢</span>
+        <span>100¢</span>
+      </div>
+      <dl className="zoom-read">
+        <div>
+          <dt>Pays in full at</dt>
+          <dd className="long">{c.winLine >= 0.9995 ? "the result" : cents(c.winLine)}</dd>
+        </div>
+        <div>
+          <dt>You win</dt>
+          <dd>${c.maxWin.toFixed(2)}</dd>
+        </div>
+        <div>
+          <dt>Stops out near</dt>
+          <dd className="short">{c.neverLiquidated ? "never" : cents(c.liqLine)}</dd>
+        </div>
+      </dl>
+    </button>
   );
 }
 
@@ -354,39 +431,45 @@ export function LandingPage() {
         <div className="hero-copy">
           <div className="eyebrow">Live on Arc testnet</div>
           <h1>
-            Leverage on anything with a price.
-            <em>Even the odds.</em>
+            No order book.
+            <br />
+            No slippage.
+            <em>Just the price.</em>
           </h1>
-          <p>
-            Up to 1000× on crypto, stocks and commodities, and leveraged positions on live prediction markets. One
-            price, no order book, and no slippage in a calm market.
-          </p>
+          <ul className="claims">
+            <li>
+              <b>1000×</b> leverage on crypto, stocks and commodities
+            </li>
+            <li>
+              <b>0</b> order book, <b>0</b> spread, <b>0</b> market impact
+            </li>
+            <li>
+              <b>$0</b> to open or close, and no funding between traders
+            </li>
+            <li>
+              <b>leverage on prediction markets</b>, built so the house can always pay
+            </li>
+            <li>
+              <b>100%</b> onchain on Arc, with gas in USDC
+            </li>
+          </ul>
           <div className="hero-cta">
             <button className="btn btn-primary btn-hero" onClick={start}>
               Start trading
             </button>
-            <button className="btn btn-ghost btn-hero" onClick={() => openDoc("")}>
-              Read the whitepaper
+            <button className="btn btn-ghost btn-hero" onClick={() => setPage("predict")}>
+              Prediction markets
+            </button>
+            <button className="link hero-link" onClick={() => openDoc("")}>
+              Whitepaper
             </button>
           </div>
-          <dl className="hero-stats">
-            <div>
-              <dt>1000×</dt>
-              <dd>maximum leverage</dd>
-            </div>
-            <div>
-              <dt>{deployment.markets.length}</dt>
-              <dd>markets, four kinds</dd>
-            </div>
-            <div>
-              <dt>$0</dt>
-              <dd>to open a position</dd>
-            </div>
-            <div>
-              <dt>~1¢</dt>
-              <dd>gas per trade, in USDC</dd>
-            </div>
-          </dl>
+          <p className="hero-foot">
+            No slippage when the market is calm. When a price is moving fast, a fill takes the slower of two prices.{" "}
+            <button className="link" onClick={() => openDoc("pricing")}>
+              How fills work
+            </button>
+          </p>
         </div>
 
         <div className="hero-stage" aria-label="Live markets">
@@ -397,6 +480,36 @@ export function LandingPage() {
 
         <Ticker />
       </section>
+
+      {featured && (
+        <section className="band">
+          <div>
+            <div className="eyebrow">New: leverage on prediction markets</div>
+            <h2>
+              A bet that pays when the odds move, <em>not when the game ends.</em>
+            </h2>
+            <p>
+              Put $100 on an outcome with leverage and it is paid in full as soon as the odds reach your win line. A
+              leveraged position wins what the same stake would win outright, and never more than the stake itself.
+              Leverage brings that win closer. That one rule is why a sudden jump in the odds cannot leave the house
+              short.
+            </p>
+            <p>
+              Want the leveraged win? Where a market offers it, switch on Boost and pay a daily premium for it. Up to
+              10× on dated markets and up to 5× on sports, less as the result nears.
+            </p>
+            <div className="hero-cta">
+              <button className="btn btn-primary btn-hero" onClick={() => setPage("predict")}>
+                See the markets
+              </button>
+              <button className="btn btn-ghost btn-hero" onClick={() => openDoc("prediction-markets")}>
+                How it works
+              </button>
+            </div>
+          </div>
+          <OddsZoom meta={featured} />
+        </section>
+      )}
 
       <Features />
 
@@ -419,13 +532,37 @@ export function LandingPage() {
           </div>
           <div>
             <span>OpenLiquid</span>
-            <b className="brass">+$185</b>
+            <b className="brass">+$187</b>
+          </div>
+        </div>
+      </section>
+
+      <section className="replay-strip">
+        <div>
+          <div className="eyebrow">Stress-tested by a swarm of agents</div>
+          <p>
+            Before launch we set a swarm of AI agents on the design: seven adversarial Monte Carlo attacks and six
+            independent code reviews ran to completion. They reported 58 economic findings and 51 code findings, many
+            of them the same hole seen twice. The ones fixed are listed with the ones still open in the whitepaper.
+          </p>
+          <button className="link" onClick={() => openDoc("risks")}>
+            What they found, and what is still open
+          </button>
+        </div>
+        <div className="replay-figures">
+          <div>
+            <span>Adversarial simulations</span>
+            <b className="brass">11</b>
+          </div>
+          <div>
+            <span>Independent code reviews</span>
+            <b className="brass">6</b>
           </div>
         </div>
       </section>
 
       <footer className="landing-foot">
-        <span>Testnet prototype. Unaudited. Test funds only.</span>
+        <span>Testnet prototype. Unaudited. Test funds only. Some mechanics are still being refined.</span>
         <span>
           <button className="link" onClick={() => openDoc("")}>
             Whitepaper

@@ -20,23 +20,40 @@ interface IEngineView {
 /// The engine can only open a position if the vault can lock its full maximum profit, and LPs
 /// can only withdraw what is not locked. A winner is therefore always paid at close; there is
 /// no payout queue.
+///
+/// Shares cannot be moved or redeemed for `withdrawDelay` seconds after a deposit. The share
+/// price steps whenever a price reaches the chain or a position settles, and without the delay
+/// anyone could deposit just before a step in the vault's favour and redeem just after it,
+/// taking the gain from the LPs who carried the risk.
 contract Vault is ERC4626, Ownable {
     using SafeERC20 for IERC20;
 
     address public engine;
     uint256 public marginHeld;
     uint256 public reserved;
+    /// @notice Seconds after a deposit before the depositor's shares can be redeemed or moved.
+    uint64 public immutable withdrawDelay;
+    /// @notice When each account's shares unlock.
+    mapping(address => uint64) public lockedUntil;
 
     error OnlyEngine();
     error EngineAlreadySet();
     error InsufficientLiquidity();
+    error SharesLocked(uint64 until);
+    error DepositForSelfOnly();
 
     modifier onlyEngine() {
         if (msg.sender != engine) revert OnlyEngine();
         _;
     }
 
-    constructor(IERC20 usdc, address owner_) ERC20("OpenLiquid LP", "olLP") ERC4626(usdc) Ownable(owner_) {}
+    constructor(IERC20 usdc, address owner_, uint64 withdrawDelay_)
+        ERC20("OpenLiquid LP", "olLP")
+        ERC4626(usdc)
+        Ownable(owner_)
+    {
+        withdrawDelay = withdrawDelay_;
+    }
 
     function setEngine(address engine_) external onlyOwner {
         if (engine != address(0)) revert EngineAlreadySet();
@@ -72,15 +89,32 @@ contract Vault is ERC4626, Ownable {
     }
 
     function maxWithdraw(address owner_) public view override returns (uint256) {
+        if (block.timestamp < lockedUntil[owner_]) return 0;
         uint256 own = super.maxWithdraw(owner_);
         uint256 free = freeLiquidity();
         return own < free ? own : free;
     }
 
     function maxRedeem(address owner_) public view override returns (uint256) {
+        if (block.timestamp < lockedUntil[owner_]) return 0;
         uint256 own = super.maxRedeem(owner_);
         uint256 freeShares = convertToShares(freeLiquidity());
         return own < freeShares ? own : freeShares;
+    }
+
+    /// @dev A deposit starts the receiver's lock, so it may only be made for oneself: otherwise
+    ///      a stranger could keep an LP locked by depositing dust for them.
+    function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override {
+        if (caller != receiver) revert DepositForSelfOnly();
+        super._deposit(caller, receiver, assets, shares);
+        lockedUntil[receiver] = uint64(block.timestamp) + withdrawDelay;
+    }
+
+    /// @dev Locked shares can be neither redeemed nor transferred. Unlocked shares move freely
+    ///      and do not lock the account that receives them.
+    function _update(address from, address to, uint256 value) internal override {
+        if (from != address(0) && block.timestamp < lockedUntil[from]) revert SharesLocked(lockedUntil[from]);
+        super._update(from, to, value);
     }
 
     // ---- engine hooks -------------------------------------------------------------------

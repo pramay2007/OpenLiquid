@@ -12,3 +12,6 @@ web/dist/
 deployments/localhost.json
 web/src/chain/deployment.localhost.json
 devpost-additional-info.md
+
+# Drafts of the Devpost pages
+devpost-story.md

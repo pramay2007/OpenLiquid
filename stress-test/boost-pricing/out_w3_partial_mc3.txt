@@ -1,0 +1,8 @@
+
+==================================================================================================================================
+C4. Monte Carlo, ONE-SIDED crashes of delta compensated by upward drift (the YES side can only crash).
+     Booster opens when slow has converged, takes profit at tp x margin measured at the close fill, re-opens. EV is per position per $ of margin.
+==================================================================================================================================
+one-sided L=25 crash 0.04 f=1.00 brief tp=0.45             trader -0.0463 (se 0.0005)  HOUSE +0.0462 (se 0.0005)  prem 0.036 share 0.029 liqfee 0.000  P(win) 0.514  [close=5.155, liquidated=2.301]  [positions/path=7.46 in 12h; trader P&L per path -0.345 (se 0.004) with $1 at work]
+one-sided L=25 crash 0.04 f=0.25 brief tp=0.45             trader -0.2577 (se 0.0006)  HOUSE +0.2519 (se 0.0006)  prem 0.020 share 0.023 liqfee 0.006  P(win) 0.164  [close=5.791, liquidated=5.005]  [positions/path=10.80 in 12h; trader P&L per path -2.782 (se 0.006) with $1 at work]
+one-sided L=5  crash 0.20 f=1.00 brief tp=0.45             trader +0.0049 (se 0.0008)  HOUSE -0.0051 (se 0.0008)  prem 0.127 share 0.022 liqfee 0.000  P(win) 0.655  [close=1.808, liquidated=0.419]  [positions/path=2.23 in 48h; trader P&L per path +0.011 (se 0.002) with $1 at work]

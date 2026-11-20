@@ -4,37 +4,31 @@ A review of this design raised five objections. All five are fair. This page tak
 
 | Objection | Where it stands |
 |---|---|
-| 1. The slow price depends on how often the oracle is updated | Correct. Bounded and documented; the exact fix needs a new oracle contract. |
+| 1. The slow price depends on how often the oracle is updated | Correct, and fixed for the number of updates. Which samples reach the chain is still the caller's choice; see below. |
 | 2. It is unclear which price triggers liquidation | Answered: the mid. The trade-off is stated below. |
-| 3. A 60 second validity window lets a trader choose a stale price | Correct. The window was cut to 20 seconds on the live deployment. Not eliminated. |
+| 3. A 60 second validity window lets a trader choose a stale price | Correct. The window is now 20 seconds, and prediction-market prices are posted on-chain as they change. Not eliminated. |
 | 4. It does not solve liquidity-provider solvency | Paying winners is solved. Provider profit is not, and is not claimed. |
 | 5. It penalises traders who are right about a real move | Correct, and deliberate. |
 
-## 1. The slow price depends on the update pattern
+## 1. The slow price depended on the update pattern
 
-The oracle moves the slow price with this step each time a price arrives:
+The first version of the oracle moved the slow price with this step each time a price arrived:
 
 ```
 slow  ←  slow + (held − slow) × dt / (τ + dt)
 ```
 
-Take a price held for 60 seconds with a 60 second averaging time. If the oracle is updated once at the end, the step is `60 / (60 + 60)` and the slow price covers 50% of the gap. If it is updated every second, the steps compound and it covers `1 − e^(−1)`, about 63%. The same held price gives two different answers.
+Take a price held for 60 seconds with a 60 second averaging time. Updated once at the end, the step is `60 / (60 + 60)` and the slow price covers 50% of the gap. Updated every second, the steps compound and it covers `1 − e^(−1)`, about 63%. The same held price gave two different answers, and anyone can deliver a signed price.
 
-So the reviewer is right: the result depends on how often prices are delivered, and anyone can deliver a signed price.
-
-What this means in practice:
-
-- The slow price always lands between the two paths. It can never move faster than the every-second path.
-- Nobody can force the slower path on someone else, because anyone can deliver prices.
-- The figures in this paper that measure what an attacker can take use the faster path. The replay's "held for 60 seconds" case updates every two seconds. That is close to the attacker's best case.
-
-The clean fix is the exact form, which gives one answer whatever the update pattern:
+The reviewer was right, and this is fixed. The oracle now uses the exact form:
 
 ```
-slow  ←  mid + (slow − mid) × e^(−dt / τ)
+slow  ←  held + (slow − held) × e^(−dt / τ)
 ```
 
-That is a change to the oracle contract. It is not in the current deployment and is the first change we would make in the next one.
+A price held for a given time now moves the slow price by the same amount whether the oracle was updated once or a thousand times in between. A contract test checks this directly: thirty updates and none produce the same number.
+
+One part of this is still open. The oracle treats the newest sample on-chain as held until the next one arrives, and the caller chooses which samples arrive. A later review showed a single hand-picked sample is worth about $4,300 on the replay where the honest sequence is worth $187. The fix is for the keeper to sign its own average over every sample. It is listed in [What we are still working on](09-risks.md).
 
 ## 2. Which price triggers liquidation
 
@@ -46,7 +40,7 @@ The reviewer lists the three options and their costs correctly:
 - Using the slow price leaves positions that are already under water open for up to a minute, and the vault pays for the losses beyond their margin.
 - Using the mid means a short spike can liquidate a high-leverage position.
 
-We chose the mid because the vault pays every winner, and a rule that leaves it holding bad debt in fast markets undermines the one guarantee the design makes. The cost falls on traders at very high leverage, and is limited in three ways: a liquidated trader gets the remaining equity back; causing liquidations pays an attacker only the 5% liquidator reward on margin that the capacity limit keeps small; and leverage is the trader's choice. The numbers are in [Fees, funding and liquidation](04-fees-funding-liquidation.md).
+We chose the mid because the vault pays every winner, and a rule that leaves it holding bad debt in fast markets undermines the one guarantee the design makes. The cost falls on traders at very high leverage, and is limited in three ways: a liquidated trader gets the remaining equity back; causing liquidations pays an attacker only the 5% liquidator reward on margin that the capacity limit keeps small; and leverage is the trader's choice. The numbers are in [Fees and liquidation](04-fees-funding-liquidation.md).
 
 Still open: a confirmation rule, such as requiring two signed prices a few seconds apart to both be past the liquidation level. It would remove single-tick spikes at the price of a few seconds of extra risk for the vault. It is not built.
 
@@ -67,6 +61,8 @@ We first set it to 10 seconds, and orders began to fail. Arc's nodes estimate a 
 
 What already bounded it: the keeper posts a price on-chain whenever a market has moved 5 basis points, at most every 10 seconds while anyone is trading, and every trade posts the price it carries. Each of those closes the window for everyone.
 
+On prediction markets, where one tick is a large share of a leveraged position's range, the keeper now posts every change of price at once. An older signed price is then refused, so the window there is a few seconds in practice. The stress test still measured a one-tick head start at 15 to 17 cents per dollar staked at 10×, so this is not closed. See [What we are still working on](09-risks.md).
+
 What is left: up to 20 seconds of choice, and whatever the price moves in that time. A venue built on the same chain as its reference market does not have this problem, because it can read the book directly with no signer and no window. Closing it further means posting every price on-chain, so that the newest price always supersedes the older ones, and several independent signers. Shortening the window alone runs into the limit above.
 
 ## 4. Liquidity-provider solvency
@@ -81,12 +77,12 @@ What bounds the loss:
 
 - Every position's profit is capped at ten times its margin.
 - Open interest per side follows the real book's depth and is recomputed on every price update. This is a dynamic limit, not a fixed one.
-- The crowded side pays funding.
+- The larger side of a lopsided market pays a crowding fee to the vault while it is open.
 - The worst case at any moment is the total reserve, which anyone can read from the vault contract.
 
 What is missing: hedging the vault's net exposure on the reference venues, and a second reference venue per market. Both are listed as future work.
 
-The reviewer's underlying question is whether the cost traders pay in fast markets, plus fees, funding and trader losses, is enough to pay providers for adverse selection and inventory risk. That is an empirical question. A testnet with test funds cannot answer it, and this paper does not pretend to.
+The reviewer's underlying question is whether the cost traders pay in fast markets, plus fees and trader losses, is enough to pay providers for adverse selection and inventory risk. That is an empirical question. A testnet with test funds cannot answer it, and this paper does not pretend to.
 
 ## 5. A real move is treated like a pushed one
 

@@ -5,7 +5,8 @@
 //   2. Sign one PriceUpdate per market (EIP-712) with the reference mid and nearby depth.
 //   3. Serve the signed updates over HTTP so a trade can carry its own fresh price.
 //   4. Relay them on-chain when a market's heartbeat is due or its price has moved enough.
-//   5. Scan open positions and liquidate, force-close or settle whatever the engine says is due.
+//   5. Scan open positions and liquidate, force-close, collect or settle whatever the engine
+//      says is due.
 //
 // Limits on what this process can do:
 //   - Its key can only sign prices and send the permissionless calls above. It holds no user
@@ -47,6 +48,10 @@ const IDLE_HEARTBEAT_S = Number(process.env.IDLE_HEARTBEAT_S ?? (LOCAL ? HEARTBE
 const IDLE_DEVIATION_BPS = Number(process.env.IDLE_DEVIATION_BPS ?? (LOCAL ? DEVIATION_BPS : 15));
 const IDLE_RELAY_GAP_S = Number(process.env.IDLE_RELAY_GAP_S ?? (LOCAL ? 0 : 60));
 const MAX_SOURCE_AGE_MS = Number(process.env.MAX_SOURCE_AGE_MS ?? 15_000);
+// Prediction markets: the widest bid-ask spread, in dollars per share, at which a mid is signed.
+const MAX_EVENT_SPREAD = Number(process.env.MAX_EVENT_SPREAD ?? 0.1);
+// How often a market with fee-paying positions has its fee indexes brought up to date.
+const POKE_EVERY_S = Number(process.env.POKE_EVERY_S ?? (LOCAL ? 60 : 600));
 const MIN_GAS_BALANCE = ethers.parseEther(process.env.MIN_GAS_BALANCE ?? "0.05");
 const PORT = Number(process.env.PORT ?? 8787);
 // Hardhat's published test key #1 on localhost; a real key must be supplied anywhere else.
@@ -95,6 +100,7 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
 const hlMarkets = markets.filter((m) => m.source === "hyperliquid");
 const gemMarkets = markets.filter((m) => m.source === "gemini");
+const eventIds = new Set(gemMarkets.map((m) => m.id));
 const byRef = new Map(markets.map((m) => [m.ref, m]));
 
 // Best bid/offer only ticks when it changes, so a quiet market is not a stale one. A
@@ -128,8 +134,12 @@ async function refreshGemini() {
   for (const m of gemMarkets) {
     if (source.get(m.id)?.resolved) continue;
     try {
-      const { mid, depthUsd } = depthNearMid(await geminiBook(m.ref));
-      if (mid !== null) source.set(m.id, { mid, depthUsd, at: Date.now(), resolved: false });
+      const { mid, bid, ask, depthUsd } = depthNearMid(await geminiBook(m.ref));
+      // A mid taken across a very wide spread is one pulled order away from somewhere else, so
+      // it is not signed. The last price then goes stale and the market pauses until quotes return.
+      if (mid !== null && ask - bid <= MAX_EVENT_SPREAD) {
+        source.set(m.id, { mid, depthUsd, at: Date.now(), resolved: false });
+      }
     } catch (err) {
       log(`book ${m.symbol}: ${err.message}`);
     }
@@ -204,10 +214,19 @@ let openPositions = 0;
 let lastPollAt = 0;
 const active = () => LOCAL || sseClients.size > 0 || openPositions > 0 || Date.now() - lastPollAt < 15_000;
 
+/**
+ * An event market's price has changed since it was last put on-chain, while someone is watching
+ * or holds a position. One tick is a large share of a leveraged position's range there, so the
+ * change is relayed at once: nobody should be able to trade on the price from before it.
+ */
+const eventMoved = (id, entry) =>
+  active() && eventIds.has(id) && relayed.has(id) && relayed.get(id).mid !== entry.mid;
+
 function dueForRelay(id, entry) {
   const last = relayed.get(id);
   if (!last) return true;
   if (entry.update.resolved) return !last.resolved;
+  if (eventMoved(id, entry)) return true;
   const busy = active();
   if (entry.update.timestamp - last.timestamp >= (busy ? HEARTBEAT_S : IDLE_HEARTBEAT_S)) return true;
   return (Math.abs(entry.mid - last.mid) / last.mid) * 1e4 >= (busy ? DEVIATION_BPS : IDLE_DEVIATION_BPS);
@@ -217,7 +236,8 @@ let relaying = false;
 let lastRelayAt = 0;
 async function relay() {
   if (relaying) return;
-  if (Date.now() - lastRelayAt < (active() ? MIN_RELAY_GAP_S : IDLE_RELAY_GAP_S) * 1000) return;
+  const urgent = [...signed.entries()].some(([id, e]) => eventMoved(id, e));
+  if (!urgent && Date.now() - lastRelayAt < (active() ? MIN_RELAY_GAP_S : IDLE_RELAY_GAP_S) * 1000) return;
   relaying = true;
   try {
     const due = [...signed.entries()].filter(([id, e]) => dueForRelay(id, e));
@@ -267,10 +287,14 @@ function actionFor(p) {
   if (live.update.resolved) return "close";
   const liq = Number(ethers.formatUnits(p.liquidationPrice, 18));
   if (p.liquidatable || (p.position.isLong ? live.mid <= liq : live.mid >= liq)) return "liquidate";
+  // At its maximum win: nothing more to gain, so it is closed and paid.
+  if (p.collectable) return "collect";
   if (p.forceClosable) return "forceClose";
   return null;
 }
 
+/** marketId -> when its indexes were last brought up to date by this process (ms). */
+const poked = new Map();
 let sweeping = false;
 async function sweep() {
   if (sweeping) return;
@@ -278,11 +302,15 @@ async function sweep() {
   try {
     const count = Number(await engine.openPositionCount());
     openPositions = count;
+    const accruing = new Set();
     for (let offset = 0; offset < count; offset += 100) {
       for (const p of await engine.openPositions(offset, 100)) {
+        const marketId = Number(p.position.marketId);
+        if (eventIds.has(marketId) && (p.boostPremium > 0n || p.crowdingFee > 0n || p.position.boosted)) {
+          accruing.add(marketId);
+        }
         const action = actionFor(p);
         if (!action) continue;
-        const marketId = Number(p.position.marketId);
         try {
           // Gas estimation runs the call first, so a position that is not actually due costs nothing.
           // The estimate gets headroom: it has almost none of its own, and a node that is a block
@@ -294,9 +322,21 @@ async function sweep() {
           log(`${action} #${p.id} (market ${marketId})`);
         } catch (err) {
           const reason = err.revert?.name ?? err.shortMessage ?? err.message;
-          if (reason !== "NotLiquidatable") log(`${action} #${p.id}: ${reason}`);
+          if (reason !== "NotLiquidatable" && reason !== "NotCollectable") log(`${action} #${p.id}: ${reason}`);
           wallet.reset();
         }
+      }
+    }
+    // Fees and premiums are priced at the odds in force since the last accrual, so a market
+    // with paying positions is accrued regularly even when nobody trades it.
+    for (const marketId of accruing) {
+      if (Date.now() - (poked.get(marketId) ?? 0) < POKE_EVERY_S * 1000) continue;
+      poked.set(marketId, Date.now());
+      try {
+        await (await engine.poke(marketId)).wait();
+      } catch (err) {
+        log(`poke ${marketId}: ${err.shortMessage ?? err.message}`);
+        wallet.reset();
       }
     }
   } catch (err) {

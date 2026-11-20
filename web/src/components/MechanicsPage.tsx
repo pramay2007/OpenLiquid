@@ -1,26 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { fmtSignedUsd } from "../lib/format";
+import { useStore } from "../state/store";
 
 const RULES = [
   {
     title: "Worse-of fills",
-    body: "Every trade is checked against two prices: the live mid and a slow, time-weighted price. Buys fill at the higher, sells at the lower. In a calm market they are the same number, so there is no slippage. A price that was just pushed has not moved the slow price yet, so it cannot be traded against.",
+    body: "Every trade is checked against two prices: the live mid and a slow, time-averaged price. Buys fill at the higher, sells at the lower. In a calm market they are the same number, so there is no slippage. A price that was just pushed has not moved the slow price yet, so it cannot be traded against.",
   },
   {
     title: "Depth-backed capacity",
-    body: "Open interest on each side is capped at a multiple of the dollars actually resting near the mid on the reference venue. When the real book thins out, so does the room here. The size you can take never outruns what it would cost to move the price.",
+    body: "Open interest on each side is capped at half the dollars resting near the mid on the reference venue, and that depth has to stay there to count. When the real book thins out, so does the room here. The size you can take never outruns what it would cost to move the price.",
   },
   {
     title: "Payouts locked up front",
     body: "A position opens only if the vault can lock its maximum payout at that moment. Liquidity providers cannot withdraw locked funds. A winner is paid in full when they close; there is no queue and no IOU.",
   },
   {
-    title: "Crowded side pays",
-    body: "When one side holds more open interest, it pays funding and the other side receives it. The rate grows with the imbalance relative to capacity, which keeps the vault from carrying a one-way bet.",
+    title: "No funding, one crowding fee",
+    body: "There is no fee to open or close and no funding paid between traders. Winners pay a share of profit. The only holding cost is a crowding fee, paid out of the stake by the crowded side of a market to the vault that is carrying the other side. A balanced market pays nothing.",
   },
   {
-    title: "Event markets, bounded",
-    body: "A No position is a long on the opposite outcome, so 1× is always fully collateralised. Maximum leverage keeps liquidation at least two ticks away, and compresses toward 1× as resolution nears. Anything still above the limit can be closed by anyone, with no penalty.",
+    title: "Leverage that zooms the odds",
+    body: "On a prediction market a leveraged bet wins what the same stake would win outright, and never more than the stake itself. Leverage brings that win closer. The win line is never further from entry than the stop line, which is what keeps a jump across both from paying the trader. Boost keeps the leveraged win for a daily premium. Markets stop trading when their result starts being decided.",
   },
   {
     title: "Fees mint the token",
@@ -42,7 +43,7 @@ const LANES = [
     key: "openliquid",
     name: "OpenLiquid",
     accepted: 9_900_000,
-    pnl: 185,
+    pnl: 187,
     fillsAtPush: false,
   },
 ];
@@ -190,7 +191,7 @@ function ExploitReplay() {
       </div>
       <p className="note">
         Figures come from the contract test suite (<span className="mono">contracts/test/exploit.test.js</span>), not
-        from this animation. Holding the push for a full minute raises OpenLiquid's figure to about $7,100, still far below
+        from this animation. Holding the push for a full minute raises OpenLiquid's figure to about $7,200, still far below
         what the move costs.
       </p>
     </section>
@@ -198,6 +199,7 @@ function ExploitReplay() {
 }
 
 export function MechanicsPage() {
+  const openDoc = useStore((s) => s.openDoc);
   return (
     <main className="page">
       <div className="page-inner">
@@ -224,13 +226,31 @@ export function MechanicsPage() {
         </div>
 
         <section className="card">
-          <h3>What this does not solve</h3>
+          <div className="eyebrow">Stress test</div>
+          <h3 style={{ marginTop: 6 }}>Attacked by a swarm of agents before launch</h3>
           <p>
-            A binary market can jump straight to 0 or 1 on news, before leverage has compressed. Losses stop at margin,
-            so that gap falls on the vault. It is bounded by the profit cap and the capacity limit and priced with a
-            borrow fee, but it is not eliminated. Prices are signed by a single keeper in this build; a production
-            version needs several independent signers. This is a testnet prototype, unaudited.
+            Before launch we set a swarm of AI agents on the design: seven adversarial Monte Carlo attacks and six
+            independent code reviews ran to completion. They reported 58 economic findings and 51 code findings, many
+            of them the same hole seen twice. The ones fixed are listed with the ones still open in the whitepaper.
           </p>
+          <button className="link" onClick={() => openDoc("risks")}>
+            What they found, and what is still open
+          </button>
+        </section>
+
+        <section className="card">
+          <h3>What we are still working on</h3>
+          <p>
+            Prices are signed by a single keeper in this build; a production version needs several independent signers.
+            A trader can choose among the last 20 seconds of signed prices, which matters most on prediction markets,
+            where one cent is a large share of a leveraged stake. No cap can make leverage safe against every kind of
+            jump, so scheduled news needs the market's clock set to it, and Boost is priced for news that arrives at
+            random. Liquidity providers are the other side of every trade and can lose money when traders are right.
+            This is a testnet prototype, unaudited.
+          </p>
+          <button className="link" onClick={() => openDoc("risks")}>
+            Read the full list
+          </button>
         </section>
       </div>
     </main>

@@ -1,0 +1,29 @@
+Book $1,000 within 5 ticks, 1-tick spread, 30 days to expiry, kappa 0.5, n = 200000 unless noted.
+
+2. Two-leg (long into push at L, then NO at the caught-up slow, release, close). Stale book, fee on.
+   L= 1 push 1 hold 900s + leg2 900s            house loss     20.51 ± 0.02 | ref cost    14.78 ± 0.03 | attacker net     +5.73 ± 0.03 | margin  1000.00 | EV per $ margin  +0.006 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 2 hold 900s + leg2 900s            house loss     38.12 ± 0.02 | ref cost    29.27 ± 0.04 | attacker net     +8.84 ± 0.03 | margin  1000.00 | EV per $ margin  +0.009 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 3 hold 900s + leg2 900s            house loss     55.88 ± 0.02 | ref cost    47.17 ± 0.05 | attacker net     +8.71 ± 0.05 | margin  1000.00 | EV per $ margin  +0.009 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 1 hold 900s + leg2 900s            house loss     20.26 ± 0.02 | ref cost    14.78 ± 0.03 | attacker net     +5.48 ± 0.03 | margin   100.00 | EV per $ margin  +0.055 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 2 hold 900s + leg2 900s            house loss     37.81 ± 0.02 | ref cost    29.19 ± 0.04 | attacker net     +8.62 ± 0.03 | margin   100.00 | EV per $ margin  +0.086 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 3 hold 900s + leg2 900s            house loss     55.58 ± 0.02 | ref cost    47.21 ± 0.05 | attacker net     +8.37 ± 0.05 | margin   100.00 | EV per $ margin  +0.084 ±0.000 | liquidated  0.00% collected  0.05%
+   L=24 push 1 hold 900s + leg2 900s            house loss     19.50 ± 0.02 | ref cost    14.78 ± 0.03 | attacker net     +4.72 ± 0.03 | margin    41.72 | EV per $ margin  +0.113 ±0.001 | liquidated  0.00% collected  3.91%
+   L=24 push 2 hold 900s + leg2 900s            house loss     33.48 ± 0.01 | ref cost    29.21 ± 0.04 | attacker net     +4.27 ± 0.04 | margin    42.03 | EV per $ margin  +0.100 ±0.001 | liquidated  0.00% collected 45.78%
+   L=24 push 3 hold 900s + leg2 900s            house loss     39.41 ± 0.01 | ref cost    47.12 ± 0.05 | attacker net     -7.71 ± 0.05 | margin    42.63 | EV per $ margin  -0.182 ±0.001 | liquidated  0.00% collected 100.00%
+
+3. Fee-free / maker-rebated attacker (taker=0), one and two legs, stale book.
+   one-leg push 1 hold 900s, no fee             house loss     11.05 ± 0.01 | ref cost     4.60 ± 0.02 | attacker net     +6.45 ± 0.02 | margin    50.00 | EV per $ margin  +0.129 ±0.000 | liquidated  0.00% collected  0.00%
+   one-leg push 2 hold 900s, no fee             house loss     19.72 ± 0.01 | ref cost    12.26 ± 0.03 | attacker net     +7.46 ± 0.04 | margin    50.00 | EV per $ margin  +0.149 ±0.001 | liquidated  0.00% collected  0.00%
+   one-leg push 3 hold 900s, no fee             house loss     28.41 ± 0.01 | ref cost    23.57 ± 0.04 | attacker net     +4.84 ± 0.05 | margin    50.00 | EV per $ margin  +0.097 ±0.001 | liquidated  0.00% collected  0.05%
+   two-leg push 1 hold 900s, no fee             house loss     20.28 ± 0.02 | ref cost     4.60 ± 0.02 | attacker net    +15.67 ± 0.02 | margin   100.00 | EV per $ margin  +0.157 ±0.000 | liquidated  0.00% collected  0.00%
+   two-leg push 2 hold 900s, no fee             house loss     37.80 ± 0.02 | ref cost    12.21 ± 0.03 | attacker net    +25.59 ± 0.03 | margin   100.00 | EV per $ margin  +0.256 ±0.000 | liquidated  0.00% collected  0.00%
+   two-leg push 3 hold 900s, no fee             house loss     55.57 ± 0.02 | ref cost    23.50 ± 0.04 | attacker net    +32.07 ± 0.04 | margin   100.00 | EV per $ margin  +0.321 ±0.000 | liquidated  0.00% collected  0.06%
+
+4. Extreme price. Favourite NO side at 89.5c (push the YES mid DOWN with a NO long). usd_side='other'.
+   B0 chosen so mid ~0.895; depth $1,000 within 5 ticks. Best m from the static table was large.
+Traceback (most recent call last):
+  File "./mc_batch2.py", line 23, in <module>
+    o = simulate(NP, seed=4000 + m, B0=90, s=1, L=5, m_target=m, T_hold=900, usd_side="other", tau_exp=30 * 86400.0)
+  File "./mc_push.py", line 54, in simulate
+    assert L <= Lmax1 + 1e-9, f"L={L} exceeds the E3 limit {Lmax1} at {q0}"
+AssertionError: L=5 exceeds the E3 limit 4.0 at 0.905

@@ -23,26 +23,13 @@ async function main() {
   const count = Number(await engine.marketCount());
   for (let i = 0; i < count; i++) {
     const id = await engine.marketIds(i);
-    const c = await engine.markets(id);
+    const c = (await engine.marketView(id)).config;
     if (Number(c.maxAge) === maxAge) {
       console.log(`market ${String(id).padStart(3)}  already ${maxAge}s`);
       continue;
     }
-    const next = {
-      enabled: c.enabled,
-      isEvent: c.isEvent,
-      maxLeverage: c.maxLeverage,
-      maxProfitMult: c.maxProfitMult,
-      profitFeeBps: c.profitFeeBps,
-      kappaBps: c.kappaBps,
-      maxGapBps: c.maxGapBps,
-      maxAge,
-      expiry: c.expiry,
-      compressWindow: c.compressWindow,
-      maxPositionNotional: c.maxPositionNotional,
-      fundingPerDay: c.fundingPerDay,
-      borrowPerDay: c.borrowPerDay,
-    };
+    // Every field as it is on-chain, with one changed.
+    const next = { ...c.toObject(), maxAge };
     await (await engine.setMarket(id, next)).wait();
     console.log(`market ${String(id).padStart(3)}  ${c.maxAge}s -> ${maxAge}s`);
   }

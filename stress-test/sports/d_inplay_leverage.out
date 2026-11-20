@@ -1,0 +1,41 @@
+Soccer model: lambda_A=1.53, lambda_B=1.20, YES = 'A wins in 90 min'
+D1. One-cycle expected value per $1 margin, 5x ceiling (soccer, YES = 'A wins'):
+    state                 YES mid   skew 0: YES     NO     skew 1: YES     NO
+     0' 0-0               0.45        -0.157  -0.020         -0.432  -0.351
+    30' 0-0               0.40        -0.332  +0.068         -0.549  -0.280
+    60' 0-0               0.29        -0.532  +0.094         -0.608  -0.128
+    80' 0-0               0.14        -0.757  +0.043         -0.774  +0.006
+    45' 1-0               0.74        +0.029  -0.396         -0.182  -0.615
+    60' 1-0               0.78        +0.060  -0.570         -0.094  -0.651
+    70' 1-0               0.83        +0.042  -0.607         -0.045  -0.654
+    80' 1-0               0.89        +0.033  -0.798         +0.005  -0.807
+    85' 1-0               0.94        -0.012  -0.704         -0.017  -0.712
+    Best one-cycle value over all states (minute 0-89, score difference -3..+3):
+      ceiling    5x, skew 0: max +0.5052 at 8' score diff +2; states with value > +0.02: 610 of 2506   [12s]
+      ceiling    5x, skew 1: max +0.0120 at 80' score diff +0; states with value > +0.02: 0 of 2506   [11s]
+      ceiling   10x, skew 0: max +0.5052 at 8' score diff +2; states with value > +0.02: 740 of 2506   [8s]
+      ceiling   10x, skew 1: max +0.0136 at 78' score diff +0; states with value > +0.02: 0 of 2506   [9s]
+      ceiling   25x, skew 1: max +0.0136 at 78' score diff +0; states with value > +0.02: 0 of 2506   [12s]
+D3. A score traded at the pre-score signed price (R6), profit per $1 of margin after the 10% share:
+    (position opened on the scoring side at the stale mid; collected at the cap, or closed once the slow price has caught up)
+    0-0 at 10'  A scores, long YES: own-side price 0.44 -> 0.71   1x: +0.55   5x: +1.15
+    0-0 at 10'  B scores, long NO : own-side price 0.56 -> 0.80   1x: +0.39   5x: +0.71
+    0-0 at 30'  A scores, long YES: own-side price 0.40 -> 0.72   1x: +0.72   5x: +1.35
+    0-0 at 30'  B scores, long NO : own-side price 0.60 -> 0.84   1x: +0.36   5x: +0.60
+    0-0 at 60'  A scores, long YES: own-side price 0.29 -> 0.78   1x: +1.52   5x: +2.20
+    0-0 at 60'  B scores, long NO : own-side price 0.71 -> 0.93   1x: +0.28   5x: +0.37
+    0-0 at 80'  A scores, long YES: own-side price 0.14 -> 0.89   1x: +4.82   5x: +5.53
+    0-0 at 80'  B scores, long NO : own-side price 0.86 -> 0.99   1x: +0.14   5x: +0.15
+D2. Harvest loop, SOCCER: kick-off YES 0.45, dt=15s, 200000 matches per cell
+  NAIVE     E3-EXT            skew 0           trader -0.0315 (se 0.0004)  house +0.0298 (se 0.0004)  | positions/match 0.99  collects 0.00  liquidations 0.03  fee paid 0.000
+  NAIVE     FIX5              skew 0           trader -0.0144 (se 0.0026)  house +0.0138 (se 0.0026)  | positions/match 3.61  collects 2.59  liquidations 0.89  fee paid 0.000
+  NAIVE     FIX5              skew 1           trader -0.6795 (se 0.0020)  house +0.6789 (se 0.0020)  | positions/match 3.61  collects 2.59  liquidations 0.89  fee paid 0.744
+  SELECTIVE FIX5              skew 0           trader +0.0781 (se 0.0023)  house -0.0785 (se 0.0023)  | positions/match 2.22  collects 1.64  liquidations 0.58  fee paid 0.000
+  SELECTIVE FIX10             skew 0           trader +0.3941 (se 0.0029)  house -0.3946 (se 0.0029)  | positions/match 3.53  collects 2.75  liquidations 0.78  fee paid 0.000
+  SELECTIVE FIX5 (skew-0 policy) at skew 1     trader -0.4290 (se 0.0017)  house +0.4285 (se 0.0017)  | positions/match 2.22  collects 1.64  liquidations 0.58  fee paid 0.563
+  SELECTIVE FIX5 (skew-0 policy) at skew 0.5   trader -0.2874 (se 0.0019)  house +0.2869 (se 0.0019)  | positions/match 2.22  collects 1.64  liquidations 0.58  fee paid 0.408
+D2. Harvest loop, NFL-like two-way moneyline (k=1.158): kick-off YES 0.65, dt=30s, 200000 matches per cell
+  NAIVE     E3-EXT            skew 0           trader -0.2612 (se 0.0019)  house +0.2413 (se 0.0018)  | positions/match 1.30  collects 0.00  liquidations 0.42  fee paid 0.000
+  NAIVE     FIX5              skew 0           trader -0.3608 (se 0.0042)  house +0.3433 (se 0.0042)  | positions/match 5.08  collects 3.07  liquidations 1.88  fee paid 0.000
+  NAIVE     FIX5              skew 1           trader -1.3936 (se 0.0032)  house +1.3762 (se 0.0032)  | positions/match 5.08  collects 3.07  liquidations 1.88  fee paid 1.142
+python3 -u d_inplay_leverage.py  104.24s user 26.50s system 28% cpu 7:43.02 total

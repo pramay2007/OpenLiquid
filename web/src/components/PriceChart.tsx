@@ -175,7 +175,7 @@ export function PriceChart() {
   const positions = useStore((s) => s.positions);
   const key = positions
     .filter((p) => p.marketId === id)
-    .map((p) => `${p.id}:${p.liquidationPrice}`)
+    .map((p) => `${p.id}:${p.liquidationPrice}:${p.winPrice}`)
     .join("|");
   useEffect(() => {
     const s = series.current;
@@ -183,24 +183,47 @@ export function PriceChart() {
     for (const line of posLines.current) s.removePriceLine(line);
     posLines.current = positions
       .filter((p) => p.marketId === id)
-      .flatMap((p) => [
-        s.createPriceLine({
-          price: p.entryPrice,
-          color: p.isLong ? css("--long") : css("--short"),
-          lineWidth: 1,
-          lineStyle: LineStyle.Solid,
-          axisLabelVisible: true,
-          title: `${p.isLong ? "long" : "short"} entry`,
-        }),
-        s.createPriceLine({
-          price: p.liquidationPrice,
-          color: "rgba(244,111,98,0.7)",
-          lineWidth: 1,
-          lineStyle: LineStyle.Dotted,
-          axisLabelVisible: true,
-          title: "liq",
-        }),
-      ]);
+      .flatMap((p) => {
+        const side = isEvent ? (p.isLong ? "Yes" : "No") : p.isLong ? "long" : "short";
+        const lines = [
+          s.createPriceLine({
+            price: p.entryPrice,
+            color: p.isLong ? css("--long") : css("--short"),
+            lineWidth: 1,
+            lineStyle: LineStyle.Solid,
+            axisLabelVisible: true,
+            title: `${side} entry`,
+          }),
+        ];
+        // A 1× event position is a plain purchase of shares and has no stop line.
+        const neverStopped = isEvent && p.notional <= p.margin * 1.0001;
+        if (!neverStopped) {
+          lines.push(
+            s.createPriceLine({
+              price: p.liquidationPrice,
+              color: "rgba(244,111,98,0.7)",
+              lineWidth: 1,
+              lineStyle: LineStyle.Dotted,
+              axisLabelVisible: true,
+              title: isEvent ? "stops out" : "liq",
+            })
+          );
+        }
+        // An event position is paid in full when the odds reach its win line.
+        if (isEvent && p.winPrice > 0 && p.winPrice < 1) {
+          lines.push(
+            s.createPriceLine({
+              price: p.winPrice,
+              color: "rgba(63,214,160,0.75)",
+              lineWidth: 1,
+              lineStyle: LineStyle.Dotted,
+              axisLabelVisible: true,
+              title: "pays in full",
+            })
+          );
+        }
+        return lines;
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, status, id, interval]);
 

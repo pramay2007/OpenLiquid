@@ -1,0 +1,5 @@
+Week of pre-game trading, cheap side at maximum leverage, 200000 paths per cell
+  p=0.30 b=2pts  skew 1, no churn             trader -1.3609 (se 0.0021)  house +1.3532 (se 0.0021)  | positions 18.89  liquidated 0.37  closed in profit 3.79  fee paid 1.337
+  p=0.30 b=2pts  skew 1, churn                trader -0.5400 (se 0.0028)  house +0.5323 (se 0.0028)  | positions 18.88  liquidated 0.37  closed in profit 3.79  fee paid 0.418
+  p=0.30 b=4pts  skew 1, churn                trader -0.4249 (se 0.0034)  house +0.4174 (se 0.0033)  | positions 19.06  liquidated 0.56  closed in profit 3.87  fee paid 0.478
+  p=0.30 b=4pts  skew 0                       trader +0.0106 (se 0.0035)  house -0.0180 (se 0.0035)  | positions 19.06  liquidated 0.56  closed in profit 3.87  fee paid 0.000

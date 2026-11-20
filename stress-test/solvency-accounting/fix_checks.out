@@ -1,0 +1,30 @@
+== (1) liquidation on the grid: share of (entry price, leverage) pairs, leverage 2..Lmax(p), entry 0.02..0.98 ==
+whole-tick mids (task text): pairs=1128; liquidator reward 0 (equity already 0) in 182 (16.1%), reward below 5% in 84 (7.4%); first liquidatable tick is already past the stop line in 124 (11.0%), worst overshoot 19% of margin at (p0,L,ticks)=(53, 21, 3.0); at max leverage: zero reward in 31/93
+half-tick mids (a bid/ask midpoint): pairs=1128; liquidator reward 0 (equity already 0) in 24 (2.1%), reward below 5% in 50 (4.4%); first liquidatable tick is already past the stop line in 0 (0.0%), worst overshoot 0% of margin at (p0,L,ticks)=None; at max leverage: zero reward in 24/93
+
+== (2A) cap the free-mode win at min(outright, 1x margin): trader EV before fees, max tick leverage ==
+p0   L  | normal: as written  with cap 1x | newsy: as written  with cap 1x
+0.04   2 |   +0.1605        -0.0120    |   +0.3089       -0.0595
+0.06   3 |   +0.1706        -0.0039    |   +0.4119       -0.0327
+0.08   4 |   +0.1957        -0.0017    |   +0.4721       -0.0204
+0.10   5 |   +0.1884        -0.0002    |   +0.4611       -0.0111
+0.15   7 |   +0.0784        -0.1486    |   +0.2971       -0.1395
+0.20  10 |   +0.1139        -0.0000    |   +0.2881       -0.0027
+0.25  12 |   +0.0012        -0.1610    |   +0.1282       -0.1411
+0.30  15 |   +0.0181        -0.0000    |   +0.1075       -0.0000
+0.35  17 |   +0.0124        -0.1663    |   +0.0658       -0.1448
+0.40  20 |   +0.0255        -0.0000    |   +0.0569       -0.0000
+0.45  22 |   -0.0781        -0.1693    |   -0.0530       -0.1470
+0.50  25 |   -0.0000        -0.0000    |   -0.0000       -0.0000
+0.60  20 |   -0.0170        -0.0170    |   -0.0380       -0.0380
+0.70  15 |   -0.0333        -0.0333    |   -0.0732       -0.0732
+0.80  10 |   -0.0336        -0.0336    |   -0.0809       -0.0809
+0.90   5 |   -0.0236        -0.0236    |   -0.0588       -0.0588
+
+== (2B) cheap side: trader EV net of the 10% share and liquidator fee, by leverage (stop distance in ticks) ==
+p0=0.10 normal: L=2(stop 5.0t): -0.064; L=3(stop 3.3t): -0.013; L=4(stop 2.5t): -0.020; L=5(stop 2.0t): +0.081
+p0=0.10 newsy : L=2(stop 5.0t): +0.073; L=3(stop 3.3t): +0.203; L=4(stop 2.5t): +0.195; L=5(stop 2.0t): +0.330
+p0=0.20 normal: L=2(stop 10.0t): -0.097; L=3(stop 6.7t): -0.076; L=4(stop 5.0t): -0.067; L=5(stop 4.0t): +0.002; L=6(stop 3.3t): -0.066; L=7(stop 2.9t): +0.015; L=8(stop 2.5t): -0.032; L=9(stop 2.2t): -0.026; L=10(stop 2.0t): +0.025
+p0=0.20 newsy : L=2(stop 10.0t): -0.002; L=3(stop 6.7t): +0.086; L=4(stop 5.0t): +0.076; L=5(stop 4.0t): +0.165; L=6(stop 3.3t): +0.095; L=7(stop 2.9t): +0.182; L=8(stop 2.5t): +0.121; L=9(stop 2.2t): +0.139; L=10(stop 2.0t): +0.185
+p0=0.30 normal: L=2(stop 15.0t): -0.099; L=3(stop 10.0t): -0.109; L=4(stop 7.5t): -0.102; L=5(stop 6.0t): -0.076; L=6(stop 5.0t): -0.089; L=7(stop 4.3t): -0.053; L=8(stop 3.8t): -0.082; L=9(stop 3.3t): -0.070; L=10(stop 3.0t): -0.018; L=11(stop 2.7t): -0.018; L=12(stop 2.5t): -0.074; L=13(stop 2.3t): -0.112; L=14(stop 2.1t): -0.044; L=15(stop 2.0t): -0.053
+p0=0.30 newsy : L=2(stop 15.0t): -0.044; L=3(stop 10.0t): -0.028; L=4(stop 7.5t): -0.025; L=5(stop 6.0t): +0.003; L=6(stop 5.0t): -0.010; L=7(stop 4.3t): +0.048; L=8(stop 3.8t): +0.000; L=9(stop 3.3t): +0.019; L=10(stop 3.0t): +0.066; L=11(stop 2.7t): +0.066; L=12(stop 2.5t): -0.006; L=13(stop 2.3t): -0.033; L=14(stop 2.1t): +0.036; L=15(stop 2.0t): +0.030

@@ -1,0 +1,52 @@
+20 configurations x 200,000 paths
+  done [1/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | 1x benchmark (no leverage) (35s)
+  done [2/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=5 cap: no crowding fee (38s)
+  done [3/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=5 cap: E4 sf=1 (39s)
+  done [4/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 cap: no crowding fee (67s)
+  done [5/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 cap: E4 sf=1 (68s)
+  done [6/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=25 cap: no crowding fee (72s)
+  done [7/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=25 cap: E4 sf=1 (85s)
+  done [8/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 RESET ATTACK (bank>=2 ticks, reset when under water): E4 sf=1 (137s)
+  done [9/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 reset attack vs FIX side-level carry (133s)
+  done [10/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=15 RESET ATTACK (bank>=2 ticks, reset when under water): E4 sf=1 (137s)
+  done [11/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=15 reset attack vs FIX side-level carry (114s)
+  done [12/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 reset attack vs FIX price-space fee (116s)
+  done [13/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 reset attack vs FIX one-tick entry charge (101s)
+  done [14/20] G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day) | L<=10 cap vs FIX price-space fee (64s)
+  done [15/20] G5 noisy, p0=0.5, tau0=30d, diffusion 1 tick/sqrt(day) | L<=15 cap: no crowding fee (60s)
+  done [16/20] G5 noisy, p0=0.5, tau0=30d, diffusion 1 tick/sqrt(day) | L<=15 cap: E4 sf=1 (56s)
+  done [17/20] G5 noisy, p0=0.5, tau0=30d, diffusion 1 tick/sqrt(day) | L<=15 RESET ATTACK: E4 sf=1 (85s)
+  done [18/20] G5 noisy, p0=0.5, tau0=30d, diffusion 4 tick/sqrt(day) | L<=7 cap: no crowding fee (59s)
+  done [19/20] G5 noisy, p0=0.5, tau0=30d, diffusion 4 tick/sqrt(day) | L<=7 cap: E4 sf=1 (56s)
+  done [20/20] G5 noisy, p0=0.5, tau0=30d, diffusion 4 tick/sqrt(day) | L<=7 RESET ATTACK: E4 sf=1 (104s)
+total 589s
+
+### G5 noisy, p0=0.5, tau0=30d, diffusion 1 tick/sqrt(day)   (N = 200,000 paths; per $1 of margin kept deployed)
+strategy / rule set                                                 EV per $-day      (se)      exact  EV/window     (se)  m-days fee paid  accrued gap cost    house  opens   liq P(crash)
+L<=15 cap: no crowding fee                                              +0.26700   0.00029    (MC onl    +1.2512   0.0018   4.686   0.0000   2.1395   1.7250  -1.2513    2.3  0.00   0.1216
+L<=15 cap: E4 sf=1                                                      -0.00437   0.00019    (MC onl    -0.0205   0.0009   4.687   1.4151   2.1395   1.7250  +0.0204    2.3  0.00   0.1217
+L<=15 RESET ATTACK: E4 sf=1                                             +0.12030   0.00028    (MC onl    +0.5639   0.0015   4.687   0.8900   2.1117   1.7024  -0.5639   52.4  0.00   0.1218
+
+### G5 noisy, p0=0.5, tau0=30d, diffusion 2 tick/sqrt(day)   (N = 200,000 paths; per $1 of margin kept deployed)
+strategy / rule set                                                 EV per $-day      (se)      exact  EV/window     (se)  m-days fee paid  accrued gap cost    house  opens   liq P(crash)
+1x benchmark (no leverage)                                              -0.00274   0.00018    (MC onl    -0.0128   0.0008   4.689   0.0000   0.0000   0.0000  +0.0128    1.0  0.00   0.1201
+L<=5 cap: no crowding fee                                               +0.08796   0.00026    (MC onl    +0.4129   0.0014   4.694   0.0000   0.6307   0.5069  -0.4129    1.3  0.00   0.1194
+L<=5 cap: E4 sf=1                                                       +0.00443   0.00020    (MC onl    +0.0208   0.0010   4.692   0.4340   0.6305   0.5067  -0.0208    1.3  0.00   0.1202
+L<=10 cap: no crowding fee                                              +0.18373   0.00037    (MC onl    +0.8621   0.0020   4.692   0.0000   1.3826   1.1099  -0.8657    2.1  0.07   0.1200
+L<=10 cap: E4 sf=1                                                      +0.01606   0.00027    (MC onl    +0.0754   0.0013   4.692   0.8689   1.3833   1.1102  -0.0790    2.1  0.07   0.1202
+L<=25 cap: no crowding fee                                              +0.23797   0.00100    (MC onl    +1.1172   0.0048   4.695   0.0000   3.3953   2.7197  -1.1611    5.8  1.52   0.1191
+L<=25 cap: E4 sf=1                                                      -0.14693   0.00087    (MC onl    -0.6889   0.0040   4.688   1.9976   3.3902   2.7155  +0.6452    5.8  1.52   0.1215
+L<=10 RESET ATTACK (bank>=2 ticks, reset when under water): E4 sf=1      +0.08183   0.00034    (MC onl    +0.3839   0.0017   4.692   0.4201   1.3622   1.0928  -0.3839   51.9  0.00   0.1204
+L<=10 reset attack vs FIX side-level carry                              -0.06351   0.00036    (MC onl    -0.2979   0.0016   4.691   1.1792   1.3612   1.0922  +0.2979   51.9  0.00   0.1213
+L<=15 RESET ATTACK (bank>=2 ticks, reset when under water): E4 sf=1      +0.13126   0.00047    (MC onl    +0.6155   0.0023   4.689   0.6525   2.1168   1.6985  -0.6156   51.9  0.00   0.1216
+L<=15 reset attack vs FIX side-level carry                              -0.09368   0.00050    (MC onl    -0.4397   0.0023   4.693   1.8250   2.1196   1.7005  +0.4395   51.9  0.00   0.1193
+L<=10 reset attack vs FIX price-space fee                               -0.22949   0.00027    (MC onl    -1.0764   0.0011   4.690   2.0471   1.3609   1.0920  +1.0764   51.9  0.00   0.1201
+L<=10 reset attack vs FIX one-tick entry charge                         -0.10599   0.00028    (MC onl    -0.4973   0.0012   4.691   1.4019   1.3615   1.0925  +0.4973   51.9  0.00   0.1202
+L<=10 cap vs FIX price-space fee                                        -0.04781   0.00020    (MC onl    -0.2242   0.0009   4.690   1.2041   1.3823   1.1095  +0.2205    2.1  0.07   0.1208
+
+### G5 noisy, p0=0.5, tau0=30d, diffusion 4 tick/sqrt(day)   (N = 200,000 paths; per $1 of margin kept deployed)
+strategy / rule set                                                 EV per $-day      (se)      exact  EV/window     (se)  m-days fee paid  accrued gap cost    house  opens   liq P(crash)
+L<=7 cap: no crowding fee                                               +0.09474   0.00048    (MC onl    +0.4444   0.0023   4.690   0.0000   0.9306   0.7348  -0.4620    2.3  0.35   0.1203
+L<=7 cap: E4 sf=1                                                       -0.00515   0.00041    (MC onl    -0.0242   0.0019   4.690   0.5145   0.9317   0.7353  +0.0063    2.3  0.36   0.1204
+L<=7 RESET ATTACK: E4 sf=1                                              +0.00656   0.00046    (MC onl    +0.0308   0.0022   4.693   0.2903   0.9194   0.7245  -0.0318   39.4  0.02   0.1201
+finished

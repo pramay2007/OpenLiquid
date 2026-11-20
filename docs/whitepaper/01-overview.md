@@ -10,7 +10,9 @@ OpenLiquid removes the book. Every trade fills at a single price taken from the 
 
 Leverage should be real. A small account should be able to take a real position: at 1000×, $10 controls $10,000 for a short move. With one price and no book to walk, the leverage on the screen is the leverage you get.
 
-The same engine should work for anything with a price. That includes prediction markets, which until now have had no leverage at all.
+Trading should be cheap to try. There is no fee to open or close a position and no funding between traders. A winner pays a share of the profit. The only holding cost is a small fee on the crowded side of a market, paid to the vault that carries the other side of it.
+
+The same engine should work for anything with a price. That includes prediction markets, which until now have had almost no leverage at all.
 
 ## The problem that had to be solved
 
@@ -22,12 +24,13 @@ The rules below exist so that this does not pay, so that winners are always paid
 
 | Rule | What it does |
 |---|---|
-| [Worse-of fills](02-pricing.md) | Each trade fills at the worse, for the trader, of the live mid and a slow time-weighted price. Calm market: the same number, no slippage. Pushed price: it cannot be traded against. |
-| [Depth-backed capacity](03-capacity-and-vault.md) | Open interest per side is capped at a multiple of the dollars really resting near the mid on the reference venue. |
+| [Worse-of fills](02-pricing.md) | Each trade fills at the worse, for the trader, of the live mid and a slow time-averaged price. Calm market: the same number, no slippage. Pushed price: it cannot be traded against. |
+| [Depth-backed capacity](03-capacity-and-vault.md) | Open interest per side is capped at half the dollars really resting near the mid on the reference venue, and that depth has to stay there to count. |
 | [Reserved payouts](03-capacity-and-vault.md) | A funded vault locks each position's maximum profit when it opens. Winners are paid at close. There is no queue. |
-| [Skew funding](04-fees-funding-liquidation.md) | The crowded side pays the other side. |
+| [No fee to trade](04-fees-funding-liquidation.md) | No fee to open or close, and no funding. A share of profit from winners, and a crowding fee on the larger side of a lopsided market. |
 | [Softer liquidation](04-fees-funding-liquidation.md) | Liquidation at 20% of margin left, and what remains goes back to the trader. |
-| [Event-market rules](05-prediction-markets.md) | Prediction markets get tick-bounded leverage that compresses to 1× before the outcome. |
+| [Leverage that zooms the odds](05-prediction-markets.md) | On prediction markets a leveraged bet wins at most what its stake would win outright, never more than the stake, and reaches it sooner. A jump cannot leave the vault short. Boost keeps the leveraged win for a daily premium. |
+| [Stress-tested by agents](09-risks.md) | A group of adversarial AI agents attacked the rules before deployment. What they broke was changed, and what is still open is listed. |
 | [Fee-minted token](06-olq-token.md) | OLQ is minted when a fee is paid, never for losing, up to a fixed maximum. |
 
 ## What you can trade
@@ -37,17 +40,17 @@ The rules below exist so that this does not pay, so that winners are always paid
 | Crypto | BTC, ETH, SOL, HYPE | Hyperliquid | 1000× |
 | Stocks and indices | Nasdaq 100, NVDA, TSLA, AAPL | Hyperliquid | 1000× |
 | Commodities | Gold, silver, oil | Hyperliquid | 1000× |
-| Prediction markets | Four live Gemini contracts | Gemini Prediction Markets | Up to 50×, lower near 0, 1 and the outcome |
+| Prediction markets | Five live Gemini contracts | Gemini Prediction Markets | Up to 10×, or 5× on sports. Lower near 0 and 1 and as the result nears |
 
 ## Who is involved
 
 **Traders** post USDC margin, choose a side and a leverage, and trade against the vault.
 
-**Liquidity providers** deposit USDC into the vault. They are the other side of every trade: they collect trader losses, funding and most of the fees, and they pay trader wins.
+**Liquidity providers** deposit USDC into the vault. They are the other side of every trade: they collect trader losses and most of the fees, and they pay trader wins. Shares can be withdrawn ten minutes after a deposit.
 
 **Stakers** stake OLQ and receive 30% of profit fees in USDC. They take no trading risk.
 
-**The keeper** reads reference prices, signs them, and carries out liquidations and settlements. It holds no user funds and has no special powers over the contracts.
+**The keeper** reads reference prices, signs them, and carries out liquidations, payouts at the win line and settlements. It holds no user funds and has no special powers over the contracts.
 
 ## Why Arc
 

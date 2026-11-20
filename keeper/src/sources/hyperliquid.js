@@ -97,7 +97,15 @@ export function hlSubscribeMids(coins, onMid, onAlive = () => {}) {
       setTimeout(connect, retry);
       retry = Math.min(retry * 2, 30_000);
     };
-    ws.onerror = () => ws.close();
+    ws.onerror = () => {
+      // Closing a socket that never connected raises another error event, so handle only the first.
+      ws.onerror = null;
+      try {
+        ws.close();
+      } catch {
+        /* already closed */
+      }
+    };
   }
 
   connect();

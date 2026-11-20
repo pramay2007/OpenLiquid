@@ -1,0 +1,31 @@
+G1. Leveraged box (equal shares, equal leverage): worst |P&L| over jumps, before fees
+    max |YES leg + NO leg| over all p, L and jump targets = 1.22e-15  (winner then pays the 10% share, so the box loses)
+
+G2. A losing leveraged position left open into a FROZEN match is worth its outright value, not its mark:
+    p0    L   kick-off price   mark (if closed)   value if frozen to the whistle   gain from not closing
+    0.40  5   0.37             -0.375             -0.131                           +0.245
+    0.40  5   0.34             -0.750             -0.201                           +0.549
+    0.50  5   0.45             -0.500             -0.145                           +0.355
+    0.30  3   0.25             -0.500             -0.225                           +0.275
+    0.40  5   0.43             +0.375             +0.010                           -0.364
+
+G4. Frozen 1x bet, reference mid off by eps (true probability = p0 + eps): house EV per $1 staked
+    house = 0.10 (1 - p0) - eps (1 + 0.9 (1 - p0) / p0);  break-even eps:
+    p0=0.10: house edge at eps=0 +0.090;  loses once the buyer's edge exceeds 1.0 pts
+    p0=0.20: house edge at eps=0 +0.080;  loses once the buyer's edge exceeds 1.7 pts
+    p0=0.35: house edge at eps=0 +0.065;  loses once the buyer's edge exceeds 2.4 pts
+    p0=0.50: house edge at eps=0 +0.050;  loses once the buyer's edge exceeds 2.6 pts
+    p0=0.65: house edge at eps=0 +0.035;  loses once the buyer's edge exceeds 2.4 pts
+    p0=0.80: house edge at eps=0 +0.020;  loses once the buyer's edge exceeds 1.6 pts
+    p0=0.90: house edge at eps=0 +0.010;  loses once the buyer's edge exceeds 0.9 pts
+
+G3. Soccer (YES 0.45), 200000 matches: survivors with last look, liquidations on time, no force-close, skew 0
+    YES L=1 phi=0    trader -0.0533 (se 0.0023)   house +0.0533 (se 0.0023)
+    YES L=1 phi=1    trader +0.3339 (se 0.0014)   house -0.3339 (se 0.0014)
+    YES L=2 phi=0    trader -0.1082 (se 0.0023)   house +0.0990 (se 0.0022)
+    YES L=2 phi=1    trader +0.3051 (se 0.0017)   house -0.3122 (se 0.0017)
+    NO  L=1 phi=0    trader -0.0464 (se 0.0019)   house +0.0464 (se 0.0019)
+    NO  L=1 phi=1    trader +0.3387 (se 0.0007)   house -0.3387 (se 0.0007)
+    NO  L=2 phi=0    trader -0.1729 (se 0.0019)   house +0.1572 (se 0.0019)
+    NO  L=2 phi=1    trader +0.4191 (se 0.0007)   house -0.4191 (se 0.0007)
+python3 -u g_checks.py  6.40s user 1.49s system 26% cpu 29.550 total

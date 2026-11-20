@@ -1,0 +1,37 @@
+1. Break-even front-loading factor phi* = hazard now / average remaining hazard at which the
+   hold-to-cap harvest is zero-EV with E4 fully collected at skewFrac = 1:
+   phi* = 0.9 (L-1) rho / (0.9 L - 1)   (continuous-price rate identity)
+   p_s=0.20  L=10.00  rho=2.485  phi*=2.516
+   p_s=0.50  L=25.00  rho=1.443  phi*=1.449
+   p_s=0.70  L=15.00  rho=1.202  phi*=1.211
+   p_s=0.80  L=10.00  rho=1.120  phi*=1.134
+   p_s=0.90  L= 5.00  rho=1.055  phi*=1.085
+   p_s=0.95  L= 2.50  rho=1.026  phi*=1.108
+
+2. Cost of E4 to an honest crowded-side trader (skewFrac = 1): the accrued fee equals the whole
+   capped profit C after tau/(L-1) (price roughly unchanged), whatever the market type:
+   tau =    6 h, L =  3:  fee = C after    3.0 h;  fee per hour = 33.33% of margin at p=0.5
+   tau =   24 h, L =  5:  fee = C after    6.0 h;  fee per hour = 16.67% of margin at p=0.5
+   tau =   48 h, L = 10:  fee = C after    5.3 h;  fee per hour = 18.75% of margin at p=0.5
+   tau =   72 h, L = 10:  fee = C after    8.0 h;  fee per hour = 12.50% of margin at p=0.5
+   tau =  168 h, L = 10:  fee = C after   18.7 h;  fee per hour =  5.36% of margin at p=0.5
+   tau =  168 h, L = 25:  fee = C after    7.0 h;  fee per hour = 14.29% of margin at p=0.5
+   tau =  720 h, L =  5:  fee = C after  180.0 h;  fee per hour =  0.56% of margin at p=0.5
+   tau =  720 h, L = 25:  fee = C after   30.0 h;  fee per hour =  3.33% of margin at p=0.5
+
+3. House loss per $1 of harvested notional per day ~ 0.9*lambda*(1-1/L) - lambda/L (no fee):
+   tau0=30d p_s=0.50 L=25.00 hazard=  2.31%/day  loss/notional/day=  1.99%   expected loss over the market's life ~ 43.0% of notional kept at capacity
+   tau0=30d p_s=0.20 L=10.00 hazard=  5.36%/day  loss/notional/day=  4.29%   expected loss over the market's life ~ 64.0% of notional kept at capacity
+   tau0=30d p_s=0.90 L= 5.00 hazard=  0.35%/day  loss/notional/day=  0.25%   expected loss over the market's life ~  7.0% of notional kept at capacity
+   tau0= 7d p_s=0.50 L=23.66 hazard=  9.90%/day  loss/notional/day=  8.49%   expected loss over the market's life ~ 42.9% of notional kept at capacity
+   tau0= 3d p_s=0.50 L=15.49 hazard= 23.10%/day  loss/notional/day= 19.30%   expected loss over the market's life ~ 41.8% of notional kept at capacity
+   tau0= 1d p_s=0.50 L= 8.94 hazard= 69.31%/day  loss/notional/day= 54.63%   expected loss over the market's life ~ 39.4% of notional kept at capacity
+
+4. Whole-life harvest (hold-to-cap, no fee, continuous price): expected P&L per $1 of margin kept deployed
+   from listing until leverage is no longer offered (p_s > ~0.97):
+   tau0=30d p0=0.50: EV =  +6.628 x margin over 21.2 expected margin-days (24 rounds, last opened at p=0.960, L=2.00)
+   tau0=30d p0=0.20: EV =  +9.531 x margin over 14.8 expected margin-days (30 rounds, last opened at p=0.949, L=2.03)
+   tau0=30d p0=0.70: EV =  +2.100 x margin over 24.0 expected margin-days (14 rounds, last opened at p=0.960, L=2.00)
+   tau0=30d p0=0.90: EV =  +0.179 x margin over 23.2 expected margin-days (4 rounds, last opened at p=0.960, L=2.00)
+   tau0= 7d p0=0.50: EV =  +5.420 x margin over 5.0 expected margin-days (18 rounds, last opened at p=0.956, L=1.29)
+   tau0=90d p0=0.50: EV =  +6.628 x margin over 63.6 expected margin-days (24 rounds, last opened at p=0.960, L=2.00)

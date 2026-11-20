@@ -1,0 +1,7 @@
+======================================================================================================================================================
+D1. 30 days to expiry, p0 = 0.5, hold 24 h (or until liquidated / force-closed), dt = 60 s, 200,000 paths
+======================================================================================================================================================
+tau=30d L=10 brief premium | one leg                       trader -0.2902 (se 0.0022)  HOUSE +0.2592 (se 0.0022)  prem 0.164 share 0.036 liqfee 0.031  P(win) 0.295  [close=0.349, liquidated=0.651]
+tau=30d L=10 brief premium | STRADDLE                      trader -0.2905 (se 0.0012)  HOUSE +0.2594 (se 0.0012)  prem 0.164 share 0.036 liqfee 0.031  P(win) 0.307  [close=0.699, liquidated=1.301]  P(straddle>0)=0.307
+tau=30d L=10 premium OFF   | one leg                       trader -0.1349 (se 0.0024)  HOUSE +0.1039 (se 0.0023)  prem 0.000 share 0.045 liqfee 0.031  P(win) 0.328  [close=0.379, liquidated=0.621]
+tau=30d L=10 premium OFF   | STRADDLE                      trader -0.1353 (se 0.0013)  HOUSE +0.1042 (se 0.0012)  prem 0.000 share 0.045 liqfee 0.031  P(win) 0.421  [close=0.757, liquidated=1.243]  P(straddle>0)=0.421

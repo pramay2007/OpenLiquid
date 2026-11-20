@@ -1,0 +1,692 @@
+/* Prediction markets page. The shared pieces (.page, .card, .seg, .quick, .slider, .rules, .badge,
+   .btn) come from styles.css; everything that belongs to this page alone is prefixed pm-.
+
+   A rule that adjusts a shared class names that class too (.card.pm-explainer), so it wins
+   whichever of the two stylesheets loads first. */
+
+/* ---- page frame ------------------------------------------------------------------------- */
+
+.page-inner.pm-inner {
+  /* An explicit column, so a wide child shrinks instead of pushing the page sideways. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+}
+
+.pm-page h2 {
+  text-wrap: balance;
+}
+
+/* The heading is long: the brass half always takes its own line. */
+.pm-page h2 em {
+  display: block;
+}
+
+.pm-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.pm-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 24px;
+}
+
+.pm-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.pm-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--text-3);
+  font-size: 12.5px;
+}
+
+.pm-live .dot.is-on {
+  background: var(--long);
+}
+
+/* ---- the explainer ---------------------------------------------------------------------- */
+
+.card.pm-explainer {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  padding: 26px;
+}
+
+.card.pm-explainer h3 {
+  font-size: 17px;
+}
+
+.pm-explainer-head {
+  display: grid;
+  gap: 8px;
+}
+
+.pm-explainer-head p {
+  max-width: 70ch;
+}
+
+.pm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px 28px;
+}
+
+/* The bet on the left, how it pays on the right. */
+.pm-controls .pm-payout {
+  margin-left: auto;
+}
+
+.seg.pm-seg {
+  background: var(--ink-1);
+  backdrop-filter: none;
+}
+
+.seg.pm-seg button {
+  height: 28px;
+  min-width: 58px;
+  padding: 0 14px;
+  font-size: 12.5px;
+}
+
+.seg.pm-seg button:hover {
+  color: var(--text-2);
+}
+
+.seg.pm-seg button[aria-pressed="true"] {
+  color: var(--text);
+}
+
+.seg.pm-seg .pm-yes[aria-pressed="true"] {
+  background: var(--long-soft);
+  color: var(--long);
+}
+
+.seg.pm-seg .pm-no[aria-pressed="true"] {
+  background: var(--short-soft);
+  color: var(--short);
+}
+
+.seg.pm-seg .pm-boost[aria-pressed="true"] {
+  background: var(--brass-soft);
+  color: var(--brass);
+}
+
+/* Chips as tall as the toggles beside them. */
+.quick.pm-chips {
+  grid-auto-columns: minmax(58px, 1fr);
+}
+
+.quick.pm-chips button {
+  height: 34px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* ---- the odds bar ----------------------------------------------------------------------- */
+
+.pm-odds {
+  /* Each zone deepens toward its line. --to points from the entry to the win line. */
+  --to: 90deg;
+  --from: 270deg;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.pm-odds.is-no {
+  --to: 270deg;
+  --from: 90deg;
+}
+
+/* Two rows of labels: the entry on top, the two lines under it. The row is a size container, so
+   1cqw is one percent of the bar and a label can be placed from --x, its price in percent. */
+.pm-odds-labels {
+  position: relative;
+  height: 36px;
+  margin-top: 4px;
+  container-type: inline-size;
+}
+
+.pm-entry-label,
+.pm-flag {
+  position: absolute;
+  left: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 16px;
+  transition: transform 0.5s var(--ease);
+}
+
+.pm-entry-label b,
+.pm-flag b {
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+/* Every translate is clamped between 0 and (bar width - label width), which keeps a label on the
+   bar when its line is at an end: it slides back over the line instead of off the edge. */
+.pm-entry-label {
+  top: 0;
+  transform: translateX(clamp(0px, calc(var(--x) * 1cqw - 50%), calc(100cqw - 100%)));
+  color: var(--text-3);
+}
+
+.pm-entry-label b {
+  color: var(--text);
+}
+
+.pm-flag {
+  top: 19px;
+}
+
+.pm-flag.to-left {
+  transform: translateX(clamp(0px, calc(var(--x) * 1cqw - 100% - 7px), calc(100cqw - 100%)));
+}
+
+.pm-flag.to-right {
+  transform: translateX(clamp(0px, calc(var(--x) * 1cqw + 7px), calc(100cqw - 100%)));
+}
+
+.pm-flag-win {
+  color: var(--long);
+}
+
+.pm-flag-stop {
+  color: var(--short);
+}
+
+/* Browsers without container units: the same placement, without the clamp at the ends. */
+@supports not (width: 1cqw) {
+  .pm-entry-label,
+  .pm-flag {
+    left: calc(var(--x) * 1%);
+  }
+
+  .pm-entry-label {
+    transform: translateX(-50%);
+  }
+
+  .pm-flag.to-left {
+    transform: translateX(calc(-100% - 7px));
+  }
+
+  .pm-flag.to-right {
+    transform: translateX(7px);
+  }
+}
+
+.pm-track {
+  position: relative;
+  height: 40px;
+  margin-top: 10px;
+}
+
+/* The zones are clipped to the rounded bar; the lines and the entry pin stand a little proud of
+   it, so they sit outside this layer. */
+.pm-track-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--ink-1);
+}
+
+/* The outline and the quarter marks, drawn over the coloured zones. */
+.pm-track-clip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 25% 100%;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  pointer-events: none;
+}
+
+.pm-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition:
+    left 0.5s var(--ease),
+    width 0.5s var(--ease);
+}
+
+.pm-zone-win {
+  background: linear-gradient(var(--to), rgba(63, 214, 160, 0.2), rgba(63, 214, 160, 0.42));
+}
+
+.pm-zone-stop {
+  background: linear-gradient(var(--from), rgba(244, 111, 98, 0.2), rgba(244, 111, 98, 0.42));
+}
+
+.pm-zone-tail {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(244, 111, 98, 0.3) 0,
+    rgba(244, 111, 98, 0.3) 2px,
+    rgba(244, 111, 98, 0.07) 2px,
+    rgba(244, 111, 98, 0.07) 6px
+  );
+}
+
+.pm-line,
+.pm-pin {
+  position: absolute;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  transition: left 0.5s var(--ease);
+}
+
+.pm-line {
+  top: -4px;
+  bottom: -4px;
+}
+
+.pm-line-win {
+  background: var(--long);
+  box-shadow: 0 0 10px rgba(63, 214, 160, 0.5);
+}
+
+.pm-line-stop {
+  background: var(--short);
+  box-shadow: 0 0 10px rgba(244, 111, 98, 0.45);
+}
+
+.pm-pin {
+  top: -8px;
+  bottom: -4px;
+  background: var(--text);
+}
+
+.pm-pin::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.pm-ticks {
+  position: relative;
+  height: 16px;
+  margin-top: 9px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 16px;
+  color: var(--text-4);
+}
+
+.pm-ticks span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.pm-ticks .pm-tick-first {
+  left: 0;
+  transform: none;
+}
+
+.pm-ticks .pm-tick-last {
+  right: 0;
+  transform: none;
+}
+
+.pm-ticks b {
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* ---- the readout ------------------------------------------------------------------------ */
+
+.pm-readout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pm-statement {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 14px 16px 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--ink-1);
+}
+
+.pm-statement-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+.pm-statement-label::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-4);
+}
+
+.pm-statement.is-win .pm-statement-label::before {
+  background: var(--long);
+}
+
+.pm-statement.is-stop .pm-statement-label::before {
+  background: var(--short);
+}
+
+.pm-statement.is-boost .pm-statement-label::before {
+  background: var(--brass);
+}
+
+.pm-statement .pm-statement-main {
+  color: var(--text);
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.pm-statement .pm-statement-main b {
+  font-weight: 500;
+}
+
+.pm-statement .pm-statement-sub {
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---- live markets ----------------------------------------------------------------------- */
+
+.pm-markets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.pm-markets[data-columns="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* A column, so the buttons sit on the bottom edge whatever the length of the question. */
+.card.pm-market {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 20px;
+}
+
+.pm-market-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.pm-market-when {
+  font-size: 11.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.pm-market-title {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+}
+
+.pm-market-q {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.pm-market .pm-market-yes {
+  margin-top: 7px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.pm-market-trend {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  padding-top: 4px;
+  font-size: 11px;
+}
+
+.pm-quote {
+  display: grid;
+  gap: 9px;
+}
+
+.pm-quote-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.pm-quote-row .num {
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.pm-quote-row small {
+  margin: 0 7px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+/* The shared bar, with No as its track so the two colours always fill it. */
+.pm-quote .bar {
+  height: 5px;
+  background: var(--short);
+}
+
+.pm-quote .bar i {
+  border-radius: 0;
+  box-shadow: 2px 0 0 var(--ink-1);
+}
+
+/* No price yet: the dashes and the bar go quiet. */
+.pm-quote.is-empty .num {
+  color: var(--text-4);
+}
+
+.pm-quote.is-empty .bar {
+  background: var(--ink-4);
+}
+
+.pm-market-lev {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.pm-market .pm-market-line {
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.pm-market .pm-market-line b {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.pm-market .pm-market-line.is-quiet {
+  color: var(--text-3);
+}
+
+.pm-market-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.pm-market-actions.is-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.btn.pm-btn {
+  height: 38px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+}
+
+.btn.pm-btn-yes {
+  background: var(--long-soft);
+  color: var(--long);
+  box-shadow: inset 0 0 0 1px rgba(63, 214, 160, 0.26);
+}
+
+.btn.pm-btn-yes:hover {
+  background: rgba(63, 214, 160, 0.22);
+}
+
+.btn.pm-btn-no {
+  background: var(--short-soft);
+  color: var(--short);
+  box-shadow: inset 0 0 0 1px rgba(244, 111, 98, 0.26);
+}
+
+.btn.pm-btn-no:hover {
+  background: rgba(244, 111, 98, 0.22);
+}
+
+.pm-empty {
+  margin: 0;
+  padding: 28px 22px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* ---- closing line ----------------------------------------------------------------------- */
+
+.note.pm-honest {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+}
+
+/* ---- narrower screens ------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .pm-markets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The controls wrap from here down, so the payout toggle lines up with the rest. */
+  .pm-controls .pm-payout {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .pm-readout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 660px) {
+  .pm-markets,
+  .pm-markets[data-columns="2"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .page.pm-page {
+    padding: 28px 14px 64px;
+  }
+
+  .page-inner.pm-inner {
+    gap: 30px;
+  }
+
+  .pm-page .card.pm-explainer,
+  .pm-page .card.pm-market {
+    padding: 16px;
+  }
+
+  .pm-head h3 {
+    font-size: 26px;
+  }
+
+  /* Side and stake share a row; entry price and payout each take a full one. */
+  .pm-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+
+  .pm-controls .pm-wide,
+  .pm-controls .pm-payout {
+    grid-column: 1 / -1;
+  }
+
+  .seg.pm-seg {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  .seg.pm-seg button {
+    min-width: 0;
+  }
+
+  .quick.pm-chips {
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  .pm-market-q {
+    font-size: 24px;
+  }
+}
+
+/* styles.css already shortens every transition for people who ask for less motion; these are
+   switched off outright so the lines and labels simply appear in place. */
+@media (prefers-reduced-motion: reduce) {
+  .pm-entry-label,
+  .pm-flag,
+  .pm-zone,
+  .pm-line,
+  .pm-pin {
+    transition: none;
+  }
+}

@@ -32,6 +32,19 @@ export function MarketHeader() {
         : fmtPct(mid / prev - 1)
       : null;
 
+  // The crowding fee accrues on one side at most. Shown as a daily rate: on event markets per
+  // dollar of borrowed position, elsewhere per dollar of position.
+  let crowd: { side: string; rate: number } | null = null;
+  if (m && mid != null) {
+    if (m.feePerDayLong > 0) {
+      crowd = { side: isEvent ? "Yes" : "Longs", rate: isEvent ? m.feePerDayLong / Math.max(mid, 0.01) : m.feePerDayLong };
+    } else if (m.feePerDayShort > 0) {
+      crowd = { side: isEvent ? "No" : "Shorts", rate: isEvent ? m.feePerDayShort / Math.max(1 - mid, 0.01) : m.feePerDayShort };
+    }
+  }
+
+  const closedNow = isEvent && !!m && !m.resolved && (m.closed || m.expiry * 1000 <= now);
+
   const slow = m?.slow;
   const gap = mid != null && slow ? (isEvent ? (mid - slow) * 1e4 : ((mid - slow) / slow) * 1e4) : null;
   const paused = gap != null && m ? Math.abs(gap) > m.maxGapBps : false;
@@ -51,7 +64,8 @@ export function MarketHeader() {
         <Num className="big" value={mid} format={(n) => fmtPrice(n, meta)} flash />
         {change && <span className={`badge ${up ? "long" : "short"}`}>{change}</span>}
         {m?.resolved && <span className="badge brass">Resolved</span>}
-        {paused && !m?.resolved && <span className="badge brass">Opens paused</span>}
+        {closedNow && <span className="badge brass">Waiting for result</span>}
+        {paused && !m?.resolved && !closedNow && <span className="badge brass">Opens paused</span>}
       </div>
 
       <div className="stats">
@@ -63,16 +77,20 @@ export function MarketHeader() {
           <label>Gap</label>
           <span className="v mono">{gapText}</span>
         </div>
-        <div className="stat hide-md" title="Paid by the crowded side, per day">
-          <label>Funding / day</label>
-          <span className={`v mono ${m && m.fundingPerDay > 0 ? "long" : m && m.fundingPerDay < 0 ? "short" : ""}`}>
-            {m ? fmtPct(m.fundingPerDay, 4) : "—"}
-          </span>
+        <div
+          className="stat hide-md"
+          title="Paid by the crowded side only, out of the stake, while the market is lopsided. A balanced market pays nothing."
+        >
+          <label>Crowding fee / day</label>
+          <span className="v mono">{!m ? "—" : crowd ? `${crowd.side} ${fmtPct(crowd.rate, 3, false)}` : "None"}</span>
         </div>
         {isEvent && m && (
-          <div className="stat" title="Leverage compresses to 1x by this time">
-            <label>Leverage ends</label>
-            <span className="v mono">{m.resolved ? "—" : fmtDuration(m.expiry - now / 1000)}</span>
+          <div
+            className="stat"
+            title="Trading stops at this time and positions wait for the result. Leverage falls as it nears and is 1x by then."
+          >
+            <label>{closedNow ? "Trading" : "Trading closes"}</label>
+            <span className="v mono">{m.resolved ? "—" : closedNow ? "Closed" : `in ${fmtDuration(m.expiry - now / 1000)}`}</span>
           </div>
         )}
         <div className="stat" title="Open interest on each side against the cap set by reference-venue depth">

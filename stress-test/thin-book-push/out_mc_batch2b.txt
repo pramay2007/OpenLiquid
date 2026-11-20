@@ -1,0 +1,16 @@
+./mc_push.py:128: RuntimeWarning: divide by zero encountered in divide
+  c = np.where(todo, rho / usd_px(tick_px), 0.0)
+4. Extreme price NO@0.905 (push YES mid down, NO long), 30d, depth $1000/5 ticks, kappa 0.5, fee on
+   NO@0.905 push 2 one-leg 900s                 house loss      9.76 ± 0.00 | ref cost    85.74 ± 0.11 | attacker net    -75.99 ± 0.11 | margin   125.00 | EV per $ margin  -0.608 ±0.001 | liquidated  0.00% collected 10.69%
+   NO@0.905 push 4 one-leg 900s                 house loss     11.81 ± 0.00 | ref cost   290.36 ± 0.14 | attacker net   -278.55 ± 0.14 | margin   125.00 | EV per $ margin  -2.228 ±0.001 | liquidated  0.00% collected 100.00%
+   NO@0.905 push 6 one-leg 900s                 house loss     11.81 ± 0.00 | ref cost   770.41 ± 0.25 | attacker net   -758.60 ± 0.25 | margin   125.00 | EV per $ margin  -6.069 ±0.002 | liquidated  0.00% collected 100.00%
+   NO@0.905 push 8 one-leg 900s                 house loss     11.81 ± 0.00 | ref cost  1981.47 ± 0.45 | attacker net  -1969.66 ± 0.45 | margin   125.00 | EV per $ margin -15.757 ±0.004 | liquidated  0.00% collected 100.00%
+   NO@0.905 push 2 two-leg 900s                 house loss    118.15 ± 0.08 | ref cost    85.60 ± 0.11 | attacker net    +32.54 ± 0.09 | margin   291.73 | EV per $ margin  +0.112 ±0.000 | liquidated  0.00% collected 10.71%
+   NO@0.905 push 4 two-leg 900s                 house loss    303.13 ± 0.11 | ref cost   314.12 ± 0.24 | attacker net    -10.99 ± 0.20 | margin   375.20 | EV per $ margin  -0.029 ±0.001 | liquidated  0.00% collected 100.00%
+   NO@0.905 push 6 two-leg 900s                 house loss    674.67 ± 0.18 | ref cost   824.15 ± 0.47 | attacker net   -149.48 ± 0.43 | margin   625.00 | EV per $ margin  -0.239 ±0.001 | liquidated  0.00% collected 100.00%
+
+5. Spoofed depth (Attack 2): rest X/side 15min, open, cancel, push 2, hold 600, two legs, fee on
+   spoof $      0/side                          house loss     32.38 ± 0.02 | ref cost    26.92 ± 0.03 | attacker net     +5.47 ± 0.03 | margin   100.00 | EV per $ margin  +0.055 ±0.000 | liquidated  0.00% collected  0.00%
+   spoof $ 10,000/side                          house loss    340.28 ± 0.21 | ref cost    26.85 ± 0.03 | attacker net   +313.42 ± 0.19 | margin  1050.00 | EV per $ margin  +0.298 ±0.000 | liquidated  0.00% collected  0.00%
+   spoof $100,000/side                          house loss   3110.98 ± 1.88 | ref cost    26.84 ± 0.03 | attacker net  +3084.15 ± 1.87 | margin  9600.00 | EV per $ margin  +0.321 ±0.000 | liquidated  0.00% collected  0.00%
+   spoof $500,000/side                          house loss  15425.81 ± 9.35 | ref cost    26.85 ± 0.03 | attacker net +15398.96 ± 9.33 | margin 47600.00 | EV per $ margin  +0.324 ±0.000 | liquidated  0.00% collected  0.00%

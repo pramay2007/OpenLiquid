@@ -1,0 +1,34 @@
+Columns: base, nofee, spoof100x, extreme-NO, extreme-nf, extreme-spoof
+Worst-case attacker net per $1,000 natural depth. Negative = safe.
+
+S1  SHARE-based capacity: n_side <= kappa_sh * contracts within 5 ticks (removes the 1/q0 blow-up).
+  kappa_sh = 0.5                                   base:   +12.29         nofee:   +26.15     spoof100x:   +12.29    extreme-NO:    +3.12    extreme-nf:    +6.34  extreme-spoof:    +3.12
+  kappa_sh = 0.25                                  base:    -0.58         nofee:    +9.13     spoof100x:    -0.58    extreme-NO:    +0.05    extreme-nf:    +1.59  extreme-spoof:    +0.05
+  kappa_sh = 0.1                                   base:    -5.63         nofee:    +1.37     spoof100x:    -5.63    extreme-NO:    -1.58    extreme-nf:    -0.04  extreme-spoof:    -1.58
+  kappa_sh = 0.05                                  base:    -7.32         nofee:    -0.32     spoof100x:    -7.32    extreme-NO:    -2.12    extreme-nf:    -0.58  extreme-spoof:    -2.12
+
+S2  share capacity + exit tau 1800:
+  kappa_sh = 0.25, tau_exit 1800                   base:    -3.08         nofee:    +4.03     spoof100x:    -3.08    extreme-NO:    -0.15    extreme-nf:    +1.39  extreme-spoof:    -0.15
+  kappa_sh = 0.1, tau_exit 1800                    base:    -6.63         nofee:    +0.37     spoof100x:    -6.63    extreme-NO:    -1.66    extreme-nf:    -0.12  extreme-spoof:    -1.66
+  kappa_sh = 0.05, tau_exit 1800                   base:    -7.82         nofee:    -0.82     spoof100x:    -7.82    extreme-NO:    -2.16    extreme-nf:    -0.62  extreme-spoof:    -2.16
+
+S3  share capacity + absolute share cap (independent of reported depth; = spoof defence):
+  kappa_sh 0.25, abs_shares = 1000                 base:    -0.58         nofee:    +9.13     spoof100x:    -0.58    extreme-NO:    +0.05    extreme-nf:    +1.59  extreme-spoof:    +0.05
+  kappa_sh 0.25, abs_shares = 500                  base:    -0.58         nofee:    +9.13     spoof100x:    -0.58    extreme-NO:    +0.05    extreme-nf:    +1.59  extreme-spoof:    +0.05
+  kappa_sh 0.25, abs_shares = 250                  base:    -4.62         nofee:    +2.38     spoof100x:    -4.62    extreme-NO:    -0.17    extreme-nf:    +1.37  extreme-spoof:    -0.17
+
+S4  FULL STACK: kappa_sh 0.1  +  exit tau 1800  +  absolute share cap 500  (fee per scenario, incl. nofee):
+  full stack                                       base:    -6.63         nofee:    +0.37     spoof100x:    -6.63    extreme-NO:    -1.66    extreme-nf:    -0.12  extreme-spoof:    -1.66
+
+F5  Minimum hold time (kappa 0.5 USD-depth otherwise) with the book refilling. 1/refill = mean seconds to replace a level.
+  H_min 300s, stale book                           base:   +13.40         nofee:   +27.26     spoof100x: +4265.50    extreme-NO:  +264.51    extreme-nf:  +280.75  extreme-spoof:+35588.58
+  H_min 300s, refill ~600s                         base:    -2.33         nofee:   +15.12     spoof100x: +4002.08    extreme-NO:  +134.28    extreme-nf:  +163.32  extreme-spoof:+35403.98
+  H_min 300s, refill ~120s                         base:   -20.33         nofee:    +4.17     spoof100x: +3743.92    extreme-NO:   +36.91    extreme-nf:   +62.26  extreme-spoof:+34665.60
+  H_min 300s, refill ~30s                          base:   -87.83         nofee:   -10.83     spoof100x: +3309.93    extreme-NO:    +0.83    extreme-nf:   +17.77  extreme-spoof:+31896.65
+  H_min 900s, stale book                           base:   +13.98         nofee:   +27.84     spoof100x: +4278.60    extreme-NO:  +270.11    extreme-nf:  +286.35  extreme-spoof:+36148.69
+  H_min 900s, refill ~600s                         base:    -5.66         nofee:   +14.29     spoof100x: +3986.23    extreme-NO:  +128.13    extreme-nf:  +159.28  extreme-spoof:+35871.79
+  H_min 900s, refill ~120s                         base:   -59.66         nofee:    -0.16     spoof100x: +3649.21    extreme-NO:   +24.83    extreme-nf:   +52.20  extreme-spoof:+34764.22
+  H_min 900s, refill ~30s                          base:  -262.16         nofee:   -45.16     spoof100x: +2792.46    extreme-NO:   -37.26    extreme-nf:   +10.48  extreme-spoof:+31896.65
+
+F5b Minimum hold time WITH share-cap kappa_sh 0.1 + abs 500, refill ~120 s:
+  H_min 300s, refill ~120s                         base:   -31.13         nofee:    -6.63     spoof100x:   -31.13    extreme-NO:    -9.17    extreme-nf:    -3.78  extreme-spoof:    -9.17

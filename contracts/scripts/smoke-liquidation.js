@@ -26,7 +26,7 @@ async function priceData(marketId) {
 
   for (const isLong of [true, false]) {
     try {
-      await (await engine.open(BTC, isLong, ethers.parseUnits("50", 6), 1000, await priceData(BTC))).wait();
+      await (await engine.open(BTC, isLong, ethers.parseUnits("50", 6), 1000, false, await priceData(BTC))).wait();
       console.log(`opened 1000x ${isLong ? "long" : "short"}`);
     } catch (err) {
       console.log(`${isLong ? "long" : "short"} refused: ${err.revert?.name ?? err.shortMessage}`);

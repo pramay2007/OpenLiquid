@@ -1,0 +1,104 @@
+(i) known / predicted next tick, whole-cent walk
+  p0=0.5, 25x  (one tick = 0.500 of margin)
+   pi=1.0  lam*tau=0.1  (eps=0.05)                EV +0.4155 +-0.0005 per $1 margin | P(win) 0.953 P(liq) 0.047 | fee 0.0514 exit lag 0.0326 | hold 30 min | traded 1.000
+   pi=1.0  lam*tau=0.3  (eps=0.05)                EV +0.3707 +-0.0009 per $1 margin | P(win) 0.877 P(liq) 0.123 | fee 0.0548 exit lag 0.0750 | hold 29 min | traded 1.000
+   pi=1.0  lam*tau=1.0  (eps=0.2)                 EV +0.2787 +-0.0010 per $1 margin | P(win) 0.816 P(liq) 0.184 | fee 0.0514 exit lag 0.1712 | hold 14 min | traded 1.000
+   pi=0.75 lam*tau=0.1  (eps=0.05)                EV +0.1788 +-0.0010 per $1 margin | P(win) 0.793 P(liq) 0.207 | fee 0.0428 exit lag 0.0273 | hold 50 min | traded 1.000
+   pi=0.75 lam*tau=0.3  (eps=0.05)                EV +0.1426 +-0.0011 per $1 margin | P(win) 0.731 P(liq) 0.269 | fee 0.0457 exit lag 0.0628 | hold 32 min | traded 1.000
+   pi=0.75 lam*tau=1.0  (eps=0.2)                 EV +0.0628 +-0.0012 per $1 margin | P(win) 0.678 P(liq) 0.322 | fee 0.0428 exit lag 0.1425 | hold 14 min | traded 1.000
+   pi=0.6  lam*tau=0.1  (eps=0.05)                EV +0.0375 +-0.0011 per $1 margin | P(win) 0.698 P(liq) 0.302 | fee 0.0377 exit lag 0.0240 | hold 62 min | traded 1.000
+   pi=0.6  lam*tau=0.3  (eps=0.05)                EV +0.0041 +-0.0012 per $1 margin | P(win) 0.642 P(liq) 0.358 | fee 0.0402 exit lag 0.0552 | hold 35 min | traded 1.000
+   pi=0.6  lam*tau=1.0  (eps=0.2)                 EV -0.0641 +-0.0013 per $1 margin | P(win) 0.596 P(liq) 0.404 | fee 0.0377 exit lag 0.1256 | hold 15 min | traded 1.000
+   pi=0.5  lam*tau=0.1  (eps=0.05)                EV -0.0559 +-0.0011 per $1 margin | P(win) 0.635 P(liq) 0.365 | fee 0.0343 exit lag 0.0218 | hold 70 min | traded 1.000
+   pi=0.5  lam*tau=0.3  (eps=0.05)                EV -0.0865 +-0.0012 per $1 margin | P(win) 0.584 P(liq) 0.416 | fee 0.0366 exit lag 0.0504 | hold 36 min | traded 1.000
+   pi=0.5  lam*tau=1.0  (eps=0.2)                 EV -0.1495 +-0.0013 per $1 margin | P(win) 0.542 P(liq) 0.458 | fee 0.0343 exit lag 0.1146 | hold 15 min | traded 1.000
+  p0=0.5, 10x  (one tick = 0.200 of margin)
+   pi=1.0  lam*tau=0.1  (eps=0.05)                EV +0.1678 +-0.0003 per $1 margin | P(win) 0.971 P(liq) 0.029 | fee 0.0213 exit lag 0.0095 | hold 46 min | traded 1.000
+   pi=1.0  lam*tau=0.3  (eps=0.05)                EV +0.1621 +-0.0005 per $1 margin | P(win) 0.922 P(liq) 0.078 | fee 0.0254 exit lag 0.0084 | hold 45 min | traded 1.000
+   pi=1.0  lam*tau=1.0  (eps=0.05)                EV +0.1460 +-0.0008 per $1 margin | P(win) 0.835 P(liq) 0.165 | fee 0.0318 exit lag 0.0147 | hold 34 min | traded 1.000
+   pi=0.75 lam*tau=0.1  (eps=0.05)                EV +0.0659 +-0.0006 per $1 margin | P(win) 0.874 P(liq) 0.126 | fee 0.0192 exit lag 0.0086 | hold 116 min | traded 1.000
+   pi=0.75 lam*tau=0.3  (eps=0.05)                EV +0.0601 +-0.0007 per $1 margin | P(win) 0.829 P(liq) 0.171 | fee 0.0229 exit lag 0.0076 | hold 66 min | traded 1.000
+   pi=0.75 lam*tau=1.0  (eps=0.05)                EV +0.0470 +-0.0009 per $1 margin | P(win) 0.751 P(liq) 0.249 | fee 0.0288 exit lag 0.0136 | hold 38 min | traded 1.000
+   pi=0.6  lam*tau=0.1  (eps=0.05)                EV +0.0045 +-0.0007 per $1 margin | P(win) 0.815 P(liq) 0.185 | fee 0.0179 exit lag 0.0080 | hold 159 min | traded 1.000
+   pi=0.6  lam*tau=0.3  (eps=0.05)                EV +0.0005 +-0.0008 per $1 margin | P(win) 0.774 P(liq) 0.226 | fee 0.0214 exit lag 0.0071 | hold 78 min | traded 1.000
+   pi=0.6  lam*tau=1.0  (eps=0.05)                EV -0.0125 +-0.0009 per $1 margin | P(win) 0.700 P(liq) 0.300 | fee 0.0269 exit lag 0.0128 | hold 40 min | traded 1.000
+   pi=0.5  lam*tau=0.1  (eps=0.05)                EV -0.0359 +-0.0007 per $1 margin | P(win) 0.777 P(liq) 0.223 | fee 0.0171 exit lag 0.0076 | hold 186 min | traded 1.000
+   pi=0.5  lam*tau=0.3  (eps=0.05)                EV -0.0396 +-0.0008 per $1 margin | P(win) 0.737 P(liq) 0.263 | fee 0.0204 exit lag 0.0068 | hold 87 min | traded 1.000
+   pi=0.5  lam*tau=1.0  (eps=0.05)                EV -0.0532 +-0.0009 per $1 margin | P(win) 0.666 P(liq) 0.334 | fee 0.0256 exit lag 0.0121 | hold 42 min | traded 1.000
+  p0=0.665, 16x  (one tick = 0.241 of margin)
+   pi=1.0  lam*tau=0.1  (eps=0.05)                EV +0.2007 +-0.0003 per $1 margin | P(win) 0.971 P(liq) 0.029 | fee 0.0255 exit lag 0.0156 | hold 45 min | traded 1.000
+   pi=1.0  lam*tau=0.3  (eps=0.05)                EV +0.1771 +-0.0006 per $1 margin | P(win) 0.922 P(liq) 0.078 | fee 0.0283 exit lag 0.0348 | hold 43 min | traded 1.000
+   pi=1.0  lam*tau=1.0  (eps=0.2)                 EV +0.1280 +-0.0007 per $1 margin | P(win) 0.880 P(liq) 0.120 | fee 0.0276 exit lag 0.0837 | hold 22 min | traded 1.000
+   pi=0.75 lam*tau=0.1  (eps=0.05)                EV +0.0805 +-0.0007 per $1 margin | P(win) 0.874 P(liq) 0.126 | fee 0.0229 exit lag 0.0141 | hold 117 min | traded 1.000
+   pi=0.75 lam*tau=0.3  (eps=0.05)                EV +0.0583 +-0.0008 per $1 margin | P(win) 0.829 P(liq) 0.171 | fee 0.0255 exit lag 0.0315 | hold 64 min | traded 1.000
+   pi=0.75 lam*tau=1.0  (eps=0.2)                 EV +0.0143 +-0.0008 per $1 margin | P(win) 0.790 P(liq) 0.210 | fee 0.0249 exit lag 0.0759 | hold 27 min | traded 1.000
+   pi=0.6  lam*tau=0.1  (eps=0.05)                EV +0.0078 +-0.0008 per $1 margin | P(win) 0.815 P(liq) 0.185 | fee 0.0214 exit lag 0.0131 | hold 159 min | traded 1.000
+   pi=0.6  lam*tau=0.3  (eps=0.05)                EV -0.0108 +-0.0009 per $1 margin | P(win) 0.775 P(liq) 0.225 | fee 0.0238 exit lag 0.0294 | hold 77 min | traded 1.000
+   pi=0.6  lam*tau=1.0  (eps=0.2)                 EV -0.0536 +-0.0009 per $1 margin | P(win) 0.736 P(liq) 0.264 | fee 0.0233 exit lag 0.0714 | hold 31 min | traded 1.000
+   pi=0.5  lam*tau=0.1  (eps=0.05)                EV -0.0395 +-0.0008 per $1 margin | P(win) 0.777 P(liq) 0.223 | fee 0.0204 exit lag 0.0125 | hold 187 min | traded 1.000
+   pi=0.5  lam*tau=0.3  (eps=0.05)                EV -0.0590 +-0.0009 per $1 margin | P(win) 0.737 P(liq) 0.263 | fee 0.0227 exit lag 0.0284 | hold 85 min | traded 1.000
+   pi=0.5  lam*tau=1.0  (eps=0.2)                 EV -0.0978 +-0.0009 per $1 margin | P(win) 0.701 P(liq) 0.299 | fee 0.0223 exit lag 0.0686 | hold 33 min | traded 1.000
+  p0=0.2, 10x  (one tick = 0.500 of margin)
+   pi=1.0  lam*tau=0.1  (eps=0.05)                EV +0.4239 +-0.0006 per $1 margin | P(win) 0.953 P(liq) 0.047 | fee 0.0523 exit lag 0.0233 | hold 31 min | traded 1.000
+   pi=1.0  lam*tau=0.3  (eps=0.05)                EV +0.4218 +-0.0010 per $1 margin | P(win) 0.877 P(liq) 0.123 | fee 0.0605 exit lag 0.0183 | hold 30 min | traded 1.000
+   pi=1.0  lam*tau=1.0  (eps=0.05)                EV +0.4161 +-0.0016 per $1 margin | P(win) 0.753 P(liq) 0.247 | fee 0.0737 exit lag 0.0092 | hold 23 min | traded 1.000
+   pi=0.75 lam*tau=0.1  (eps=0.05)                EV +0.1858 +-0.0010 per $1 margin | P(win) 0.793 P(liq) 0.207 | fee 0.0436 exit lag 0.0194 | hold 51 min | traded 1.000
+   pi=0.75 lam*tau=0.3  (eps=0.05)                EV +0.1845 +-0.0012 per $1 margin | P(win) 0.731 P(liq) 0.269 | fee 0.0504 exit lag 0.0152 | hold 34 min | traded 1.000
+   pi=0.75 lam*tau=1.0  (eps=0.05)                EV +0.1808 +-0.0016 per $1 margin | P(win) 0.627 P(liq) 0.373 | fee 0.0616 exit lag 0.0076 | hold 22 min | traded 1.000
+   pi=0.6  lam*tau=0.1  (eps=0.05)                EV +0.0436 +-0.0011 per $1 margin | P(win) 0.698 P(liq) 0.302 | fee 0.0384 exit lag 0.0171 | hold 62 min | traded 1.000
+   pi=0.6  lam*tau=0.3  (eps=0.05)                EV +0.0424 +-0.0013 per $1 margin | P(win) 0.643 P(liq) 0.357 | fee 0.0444 exit lag 0.0134 | hold 36 min | traded 1.000
+   pi=0.6  lam*tau=1.0  (eps=0.05)                EV +0.0389 +-0.0017 per $1 margin | P(win) 0.550 P(liq) 0.450 | fee 0.0543 exit lag 0.0068 | hold 21 min | traded 1.000
+   pi=0.5  lam*tau=0.1  (eps=0.05)                EV -0.0508 +-0.0012 per $1 margin | P(win) 0.635 P(liq) 0.365 | fee 0.0349 exit lag 0.0155 | hold 70 min | traded 1.000
+   pi=0.5  lam*tau=0.3  (eps=0.05)                EV -0.0526 +-0.0013 per $1 margin | P(win) 0.584 P(liq) 0.416 | fee 0.0404 exit lag 0.0121 | hold 37 min | traded 1.000
+   pi=0.5  lam*tau=1.0  (eps=0.05)                EV -0.0557 +-0.0017 per $1 margin | P(win) 0.500 P(liq) 0.500 | fee 0.0493 exit lag 0.0062 | hold 20 min | traded 1.000
+
+(ii) paired half-steps: follow the first half-step of a quote shift
+  p0=0.665, 16x  (half a tick = 0.120 of margin)
+   rho=1.0  shifts*tau=0.1  (eps=0.05)            EV +0.0949 +-0.0003 per $1 margin | P(win) 0.965 P(liq) 0.035 | fee 0.0140 exit lag 0.0132 | hold 37 min | traded 1.000
+   rho=1.0  shifts*tau=0.3  (eps=0.05)            EV +0.0861 +-0.0005 per $1 margin | P(win) 0.907 P(liq) 0.093 | fee 0.0188 exit lag 0.0219 | hold 36 min | traded 1.000
+   rho=1.0  shifts*tau=1.0  (eps=0.2)             EV +0.0497 +-0.0006 per $1 margin | P(win) 0.863 P(liq) 0.137 | fee 0.0191 exit lag 0.0618 | hold 18 min | traded 1.000
+   rho=0.9  shifts*tau=0.1  (eps=0.05)            EV +0.0689 +-0.0004 per $1 margin | P(win) 0.944 P(liq) 0.056 | fee 0.0133 exit lag 0.0126 | hold 54 min | traded 1.000
+   rho=0.9  shifts*tau=0.3  (eps=0.05)            EV +0.0621 +-0.0006 per $1 margin | P(win) 0.892 P(liq) 0.108 | fee 0.0177 exit lag 0.0196 | hold 42 min | traded 1.000
+   rho=0.9  shifts*tau=1.0  (eps=0.05)            EV +0.0281 +-0.0008 per $1 margin | P(win) 0.795 P(liq) 0.205 | fee 0.0235 exit lag 0.0537 | hold 29 min | traded 1.000
+   rho=0.75 shifts*tau=0.1  (eps=0.05)            EV +0.0335 +-0.0005 per $1 margin | P(win) 0.913 P(liq) 0.087 | fee 0.0124 exit lag 0.0118 | hold 85 min | traded 1.000
+   rho=0.75 shifts*tau=0.3  (eps=0.05)            EV +0.0259 +-0.0006 per $1 margin | P(win) 0.869 P(liq) 0.131 | fee 0.0159 exit lag 0.0165 | hold 52 min | traded 1.000
+   rho=0.75 shifts*tau=1.0  (eps=0.05)            EV -0.0046 +-0.0008 per $1 margin | P(win) 0.778 P(liq) 0.222 | fee 0.0216 exit lag 0.0429 | hold 33 min | traded 1.000
+   rho=0.6  shifts*tau=0.1  (eps=0.05)            EV -0.0038 +-0.0005 per $1 margin | P(win) 0.881 P(liq) 0.119 | fee 0.0114 exit lag 0.0111 | hold 135 min | traded 1.000
+   rho=0.6  shifts*tau=0.3  (eps=0.05)            EV -0.0106 +-0.0006 per $1 margin | P(win) 0.845 P(liq) 0.155 | fee 0.0142 exit lag 0.0138 | hold 68 min | traded 1.000
+   rho=0.6  shifts*tau=1.0  (eps=0.05)            EV -0.0345 +-0.0008 per $1 margin | P(win) 0.765 P(liq) 0.235 | fee 0.0195 exit lag 0.0327 | hold 39 min | traded 1.000
+   rho=0.5  shifts*tau=0.1  (eps=0.05)            EV -0.0278 +-0.0006 per $1 margin | P(win) 0.860 P(liq) 0.140 | fee 0.0108 exit lag 0.0106 | hold 184 min | traded 1.000
+   rho=0.5  shifts*tau=0.3  (eps=0.05)            EV -0.0338 +-0.0006 per $1 margin | P(win) 0.830 P(liq) 0.170 | fee 0.0131 exit lag 0.0124 | hold 84 min | traded 1.000
+   rho=0.5  shifts*tau=1.0  (eps=0.05)            EV -0.0569 +-0.0008 per $1 margin | P(win) 0.756 P(liq) 0.244 | fee 0.0178 exit lag 0.0257 | hold 45 min | traded 1.000
+  p0=0.5, 25x  (half a tick = 0.250 of margin)
+   rho=1.0  shifts*tau=0.1  (eps=0.05)            EV +0.2108 +-0.0005 per $1 margin | P(win) 0.952 P(liq) 0.048 | fee 0.0287 exit lag 0.0280 | hold 30 min | traded 1.000
+   rho=1.0  shifts*tau=0.3  (eps=0.05)            EV +0.2135 +-0.0008 per $1 margin | P(win) 0.876 P(liq) 0.124 | fee 0.0373 exit lag 0.0481 | hold 29 min | traded 1.000
+   rho=1.0  shifts*tau=1.0  (eps=0.05)            EV +0.1730 +-0.0011 per $1 margin | P(win) 0.753 P(liq) 0.247 | fee 0.0464 exit lag 0.1249 | hold 20 min | traded 1.000
+   rho=0.9  shifts*tau=0.1  (eps=0.05)            EV +0.1657 +-0.0006 per $1 margin | P(win) 0.922 P(liq) 0.078 | fee 0.0270 exit lag 0.0263 | hold 39 min | traded 1.000
+   rho=0.9  shifts*tau=0.3  (eps=0.05)            EV +0.1660 +-0.0008 per $1 margin | P(win) 0.852 P(liq) 0.148 | fee 0.0347 exit lag 0.0425 | hold 31 min | traded 1.000
+   rho=0.9  shifts*tau=1.0  (eps=0.05)            EV +0.1281 +-0.0011 per $1 margin | P(win) 0.731 P(liq) 0.269 | fee 0.0438 exit lag 0.1096 | hold 21 min | traded 1.000
+   rho=0.75 shifts*tau=0.1  (eps=0.05)            EV +0.0940 +-0.0007 per $1 margin | P(win) 0.873 P(liq) 0.127 | fee 0.0245 exit lag 0.0239 | hold 56 min | traded 1.000
+   rho=0.75 shifts*tau=0.3  (eps=0.05)            EV +0.0909 +-0.0009 per $1 margin | P(win) 0.814 P(liq) 0.186 | fee 0.0306 exit lag 0.0344 | hold 36 min | traded 1.000
+   rho=0.75 shifts*tau=1.0  (eps=0.05)            EV +0.0527 +-0.0012 per $1 margin | P(win) 0.697 P(liq) 0.303 | fee 0.0393 exit lag 0.0856 | hold 23 min | traded 1.000
+   rho=0.6  shifts*tau=0.1  (eps=0.05)            EV +0.0153 +-0.0008 per $1 margin | P(win) 0.817 P(liq) 0.183 | fee 0.0220 exit lag 0.0216 | hold 80 min | traded 1.000
+   rho=0.6  shifts*tau=0.3  (eps=0.05)            EV +0.0107 +-0.0009 per $1 margin | P(win) 0.769 P(liq) 0.231 | fee 0.0267 exit lag 0.0277 | hold 42 min | traded 1.000
+   rho=0.6  shifts*tau=1.0  (eps=0.05)            EV -0.0239 +-0.0011 per $1 margin | P(win) 0.664 P(liq) 0.336 | fee 0.0344 exit lag 0.0641 | hold 25 min | traded 1.000
+   rho=0.5  shifts*tau=0.1  (eps=0.05)            EV -0.0403 +-0.0008 per $1 margin | P(win) 0.777 P(liq) 0.223 | fee 0.0203 exit lag 0.0201 | hold 102 min | traded 1.000
+   rho=0.5  shifts*tau=0.3  (eps=0.05)            EV -0.0482 +-0.0009 per $1 margin | P(win) 0.736 P(liq) 0.264 | fee 0.0239 exit lag 0.0239 | hold 49 min | traded 1.000
+   rho=0.5  shifts*tau=1.0  (eps=0.05)            EV -0.0816 +-0.0011 per $1 margin | P(win) 0.641 P(liq) 0.359 | fee 0.0307 exit lag 0.0497 | hold 27 min | traded 1.000
+  p0=0.5, 10x  (half a tick = 0.100 of margin)
+   rho=1.0  shifts*tau=0.1  (eps=0.05)            EV +0.0813 +-0.0003 per $1 margin | P(win) 0.972 P(liq) 0.028 | fee 0.0119 exit lag 0.0096 | hold 45 min | traded 1.000
+   rho=1.0  shifts*tau=0.3  (eps=0.05)            EV +0.0865 +-0.0005 per $1 margin | P(win) 0.924 P(liq) 0.076 | fee 0.0173 exit lag 0.0082 | hold 45 min | traded 1.000
+   rho=1.0  shifts*tau=1.0  (eps=0.05)            EV +0.0960 +-0.0008 per $1 margin | P(win) 0.840 P(liq) 0.160 | fee 0.0269 exit lag 0.0100 | hold 34 min | traded 1.000
+   rho=0.9  shifts*tau=0.1  (eps=0.05)            EV +0.0605 +-0.0004 per $1 margin | P(win) 0.954 P(liq) 0.046 | fee 0.0113 exit lag 0.0094 | hold 66 min | traded 1.000
+   rho=0.9  shifts*tau=0.3  (eps=0.05)            EV +0.0641 +-0.0005 per $1 margin | P(win) 0.911 P(liq) 0.089 | fee 0.0161 exit lag 0.0081 | hold 51 min | traded 1.000
+   rho=0.9  shifts*tau=1.0  (eps=0.05)            EV +0.0700 +-0.0008 per $1 margin | P(win) 0.828 P(liq) 0.172 | fee 0.0252 exit lag 0.0086 | hold 37 min | traded 1.000
+   rho=0.75 shifts*tau=0.1  (eps=0.05)            EV +0.0299 +-0.0004 per $1 margin | P(win) 0.929 P(liq) 0.071 | fee 0.0105 exit lag 0.0092 | hold 108 min | traded 1.000
+   rho=0.75 shifts*tau=0.3  (eps=0.05)            EV +0.0302 +-0.0005 per $1 margin | P(win) 0.892 P(liq) 0.108 | fee 0.0143 exit lag 0.0080 | hold 64 min | traded 1.000
+   rho=0.75 shifts*tau=1.0  (eps=0.05)            EV +0.0296 +-0.0008 per $1 margin | P(win) 0.812 P(liq) 0.188 | fee 0.0224 exit lag 0.0068 | hold 42 min | traded 1.000
+   rho=0.6  shifts*tau=0.1  (eps=0.05)            EV -0.0030 +-0.0005 per $1 margin | P(win) 0.901 P(liq) 0.099 | fee 0.0098 exit lag 0.0089 | hold 171 min | traded 1.000
+   rho=0.6  shifts*tau=0.3  (eps=0.05)            EV -0.0052 +-0.0006 per $1 margin | P(win) 0.870 P(liq) 0.130 | fee 0.0126 exit lag 0.0079 | hold 84 min | traded 1.000
+   rho=0.6  shifts*tau=1.0  (eps=0.05)            EV -0.0074 +-0.0008 per $1 margin | P(win) 0.801 P(liq) 0.199 | fee 0.0195 exit lag 0.0057 | hold 50 min | traded 1.000
+   rho=0.5  shifts*tau=0.1  (eps=0.05)            EV -0.0238 +-0.0005 per $1 margin | P(win) 0.883 P(liq) 0.117 | fee 0.0093 exit lag 0.0087 | hold 233 min | traded 1.000
+   rho=0.5  shifts*tau=0.3  (eps=0.05)            EV -0.0263 +-0.0006 per $1 margin | P(win) 0.858 P(liq) 0.142 | fee 0.0115 exit lag 0.0078 | hold 105 min | traded 1.000
+   rho=0.5  shifts*tau=1.0  (eps=0.05)            EV -0.0317 +-0.0007 per $1 margin | P(win) 0.795 P(liq) 0.205 | fee 0.0174 exit lag 0.0052 | hold 57 min | traded 1.000
+python3 -u e9_info.py 12  158.91s user 115.61s system 22% cpu 20:19.55 total

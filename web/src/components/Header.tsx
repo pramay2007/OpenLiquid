@@ -7,10 +7,10 @@ import { Mark, Num, Spinner } from "./primitives";
 
 const PAGES: { id: Page; label: string }[] = [
   { id: "trade", label: "Trade" },
+  { id: "predict", label: "Predict" },
   { id: "earn", label: "Earn" },
   { id: "bridge", label: "Bridge" },
-  { id: "mechanics", label: "Mechanics" },
-  { id: "docs", label: "Whitepaper" },
+  { id: "docs", label: "Docs" },
 ];
 
 export function Header() {

@@ -23,8 +23,8 @@ The keeper is a small program that runs once a second.
 1. Read prices: Hyperliquid's best bid and offer by websocket, Gemini's books by REST.
 2. Sign one update per market, with the mid and the nearby depth.
 3. Serve the signed updates to the app, so each trade can carry one.
-4. Post them on-chain when a market's price has moved enough or its heartbeat is due.
-5. Scan open positions and liquidate, force-close or settle whatever is due.
+4. Post them on-chain when a market's price has moved enough or its heartbeat is due. A change in a prediction market's price is posted at once.
+5. Scan open positions and liquidate, pay out at the win line, close what is above the leverage limit, or settle, whichever is due.
 
 What it is not allowed to do:
 
@@ -34,13 +34,13 @@ What it is not allowed to do:
 
 What the contracts stop it doing regardless: signatures are checked, timestamps cannot go backwards, prices expire after 20 seconds, and resolved markets are closed to updates.
 
-The limit of this design is stated plainly in [Risks and assumptions](09-risks.md): one signer is one point of trust.
+The limit of this design is stated plainly in [What we are still working on](09-risks.md): one signer is one point of trust.
 
 ## Why Arc
 
 **One unit of account.** Margin, profit, fees, the vault and staking rewards are in USDC. On Arc gas is in USDC as well, because USDC is the chain's native token. A trader holds one asset.
 
-**Small, predictable fees.** Opening a position costs about 1.3 cents of USDC in gas and closing one about half a cent, measured on testnet. Deploying the whole protocol, with its 15 markets, cost about 0.3 USDC.
+**Small, predictable fees.** Opening a position costs about 1.3 cents of USDC in gas and closing one about half a cent, measured on testnet. Deploying the whole protocol, with its 16 markets, cost well under one USDC.
 
 **Fast finality.** A signed price is valid for 20 seconds, to leave little room for choosing a stale one. That is only workable on a chain where a trade is final in about a second.
 
@@ -58,4 +58,4 @@ On this testnet deployment the trading collateral is a faucet token, so that any
 
 Circle's USDC Paymaster is not deployed on Arc, and is not needed there: gas is already paid in USDC.
 
-Next: [Risks and assumptions](09-risks.md)
+Next: [What we are still working on](09-risks.md)

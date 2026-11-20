@@ -19,7 +19,9 @@ const BTC = 1;
 const EVT = 2;
 
 function marketConfig(overrides = {}) {
-  return {
+  // Names from before the fee was split in two still work, so older tests read naturally.
+  const { boostEnabled, hazardScale, ...rest } = overrides;
+  const config = {
     enabled: true,
     isEvent: false,
     maxLeverage: 1000,
@@ -28,21 +30,33 @@ function marketConfig(overrides = {}) {
     kappaBps: 5000,
     maxGapBps: 10,
     maxAge: 30,
+    reactionSeconds: 0,
     expiry: 0,
-    compressWindow: 0,
+    nextEvent: 0,
+    minDistance: 0n,
     maxPositionNotional: usd(10_000_000),
-    fundingPerDay: 0n,
-    borrowPerDay: 0n,
-    ...overrides,
+    maxSideNotional: 0n,
+    crowdingPerDay: 0n,
+    crowdingScale: 0n,
+    boostScale: 0n,
+    ...rest,
   };
+  if (hazardScale !== undefined) {
+    if (rest.crowdingScale === undefined) config.crowdingScale = hazardScale;
+    if (rest.boostScale === undefined && boostEnabled) config.boostScale = hazardScale;
+  }
+  // Event markets need a minimum line distance. Two ticks unless a test asks for another.
+  if (config.isEvent && config.minDistance === 0n) config.minDistance = px(0.02);
+  return config;
 }
 
-async function deploy() {
+/** @param withdrawDelay seconds LP shares stay locked after a deposit (600 in production). */
+async function deploy({ withdrawDelay = 0 } = {}) {
   const [owner, keeper, lp, alice, bob, carol, liquidator] = await ethers.getSigners();
 
   const usdc = await (await ethers.getContractFactory("MockUSDC")).deploy();
   const oracle = await (await ethers.getContractFactory("PriceOracle")).deploy(owner.address);
-  const vault = await (await ethers.getContractFactory("Vault")).deploy(usdc.target, owner.address);
+  const vault = await (await ethers.getContractFactory("Vault")).deploy(usdc.target, owner.address, withdrawDelay);
   // 100 OLQ per 1 USDC of fee at launch, 1M USDC curve scale => 100M OLQ maximum supply.
   const token = await (await ethers.getContractFactory("OpenLiquidToken")).deploy(
     ethers.parseEther("100"),

@@ -31,19 +31,12 @@ export function liquidationPrice(
   return entry * (1 + frac);
 }
 
-/** The most a position can make: the reserve the vault locks for it. */
-export function maxProfit(
-  isEvent: boolean,
-  isLong: boolean,
-  margin: number,
-  notional: number,
-  entry: number,
-  maxProfitMult: number
-): number {
-  const cap = margin * maxProfitMult;
-  if (!isEvent) return isLong ? cap : Math.min(cap, notional);
-  const natural = isLong ? (notional * (1 - entry)) / entry : (notional * entry) / (1 - entry);
-  return Math.min(cap, natural);
+/**
+ * The most a position can make: the reserve the vault locks for it. Event markets are handled by
+ * lib/corridor.ts; this is the rule for every other market, a 100% move or the margin ceiling.
+ */
+export function maxProfit(margin: number, notional: number, maxProfitMult: number): number {
+  return Math.min(margin * maxProfitMult, notional);
 }
 
 /** Leverage slider position (0..1) to leverage and back, on a log scale. */

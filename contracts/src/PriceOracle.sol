@@ -9,12 +9,17 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 /// @notice Signed reference prices, relayed by anyone.
 ///
 /// Each update carries the reference venue's mid price and the USD depth resting near the mid.
-/// The oracle keeps two prices per market:
-///   - `mid`  : the latest signed mid.
-///   - `slow` : a time-weighted average that only moves as time passes. A price that was just
-///              pushed has no effect on `slow` until it has been held.
-/// The engine fills every trade at the worse of the two for the trader, so a short-lived push of
-/// the reference price cannot be traded against.
+/// The oracle keeps, per market:
+///   - `mid`       : the latest signed mid.
+///   - `slow`      : an exponential time average of the mid. A price that was just pushed has no
+///                   effect on `slow` until it has been held.
+///   - `slowDepth` : the same average of the reported depth, so resting depth has to persist
+///                   before it counts toward capacity.
+/// The engine fills every trade at the worse of `mid` and `slow` for the trader, so a short-lived
+/// push of the reference price cannot be traded against.
+///
+/// The average is exact: after a value has been held for `dt` seconds the average has covered
+/// `1 - e^(-dt/tau)` of the gap, however many updates arrived in between.
 contract PriceOracle is Ownable, EIP712 {
     struct PriceUpdate {
         uint32 marketId;
@@ -28,6 +33,7 @@ contract PriceOracle is Ownable, EIP712 {
         uint256 mid;
         uint256 slow;
         uint256 depthUsd;
+        uint256 slowDepth;
         uint64 timestamp;
         bool resolved;
     }
@@ -37,6 +43,9 @@ contract PriceOracle is Ownable, EIP712 {
 
     /// @dev Tolerated lead of the signer's clock over the chain's.
     uint64 public constant MAX_FUTURE_DRIFT = 10;
+
+    uint256 internal constant WAD = 1e18;
+    uint256 internal constant LN2 = 693147180559945309;
 
     mapping(address => bool) public isSigner;
     mapping(uint32 => Feed) private _feeds;
@@ -82,10 +91,14 @@ contract PriceOracle is Ownable, EIP712 {
         Feed storage f = _feeds[u.marketId];
         if (f.resolved || u.timestamp <= f.timestamp) return;
 
-        if (f.timestamp == 0 || u.resolved || tau[u.marketId] == 0) {
+        uint64 tau_ = tau[u.marketId];
+        if (f.timestamp == 0 || u.resolved || tau_ == 0) {
             f.slow = u.price;
+            f.slowDepth = u.depthUsd;
         } else {
-            f.slow = _advance(f.slow, f.mid, u.timestamp - f.timestamp, tau[u.marketId]);
+            uint256 decay = _expNeg((uint256(u.timestamp - f.timestamp) * WAD) / tau_);
+            f.slow = _toward(f.slow, f.mid, decay);
+            f.slowDepth = _toward(f.slowDepth, f.depthUsd, decay);
         }
         f.mid = u.price;
         f.depthUsd = u.depthUsd;
@@ -94,18 +107,35 @@ contract PriceOracle is Ownable, EIP712 {
         emit PriceUpdated(u.marketId, f.mid, f.slow, f.depthUsd, f.timestamp, f.resolved);
     }
 
-    /// @dev Move `slow` toward the price that prevailed over the last `dt` seconds.
-    function _advance(uint256 slow, uint256 held, uint256 dt, uint64 tau_) internal pure returns (uint256) {
-        if (tau_ == 0 || dt == 0) return tau_ == 0 ? held : slow;
-        if (held >= slow) return slow + ((held - slow) * dt) / (tau_ + dt);
-        return slow - ((slow - held) * dt) / (tau_ + dt);
+    /// @dev The average after the value `held` has prevailed: held + (avg - held) * decay.
+    function _toward(uint256 avg, uint256 held, uint256 decay) internal pure returns (uint256) {
+        if (avg >= held) return held + ((avg - held) * decay) / WAD;
+        return held - ((held - avg) * decay) / WAD;
     }
 
-    /// @notice Latest feed, with `slow` advanced to the current block time.
+    /// @dev e^(-x) for x >= 0, both in 1e18 fixed point. Writes x = k*ln2 + r with 0 <= r < ln2,
+    ///      sums the series for e^r, and returns 2^-k / e^r. Accurate to about 1e-15.
+    function _expNeg(uint256 x) internal pure returns (uint256) {
+        uint256 k = x / LN2;
+        if (k >= 60) return 0;
+        uint256 r = x - k * LN2;
+        uint256 term = WAD;
+        uint256 sum = WAD;
+        for (uint256 i = 1; i <= 16; i++) {
+            term = (term * r) / (WAD * i);
+            sum += term;
+        }
+        return ((WAD * WAD) / sum) >> k;
+    }
+
+    /// @notice Latest feed, with `slow` and `slowDepth` advanced to the current block time.
     function read(uint32 marketId) external view returns (Feed memory f) {
         f = _feeds[marketId];
-        if (f.timestamp != 0 && !f.resolved && block.timestamp > f.timestamp) {
-            f.slow = _advance(f.slow, f.mid, block.timestamp - f.timestamp, tau[marketId]);
+        uint64 tau_ = tau[marketId];
+        if (f.timestamp != 0 && !f.resolved && tau_ != 0 && block.timestamp > f.timestamp) {
+            uint256 decay = _expNeg(((block.timestamp - f.timestamp) * WAD) / tau_);
+            f.slow = _toward(f.slow, f.mid, decay);
+            f.slowDepth = _toward(f.slowDepth, f.depthUsd, decay);
         }
     }
 

@@ -30,12 +30,16 @@ contract Staking {
         usdc = usdc_;
     }
 
-    /// @dev Fees arrive as plain transfers; anything above `accounted` is new revenue.
+    /// @dev Fees arrive as plain transfers; anything above `accounted` is new revenue. Only what
+    ///      was actually credited to stakers is marked as accounted, so an amount too small to
+    ///      divide stays pending and is distributed with the next fee instead of being lost.
     function _sync() internal {
         uint256 bal = usdc.balanceOf(address(this));
         if (bal > accounted && totalStaked > 0) {
-            accPerShare += ((bal - accounted) * 1e18) / totalStaked;
-            accounted = bal;
+            uint256 inc = ((bal - accounted) * 1e18) / totalStaked;
+            if (inc == 0) return;
+            accPerShare += inc;
+            accounted += (inc * totalStaked) / 1e18;
         }
     }
 

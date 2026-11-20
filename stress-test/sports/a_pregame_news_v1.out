@@ -1,0 +1,119 @@
+==============================================================================================================
+A1. E3 stop distance vs time to kickoff (integer leverage; stop distance = own-side price / L)
+    tau       p=0.50: L  stop(pts)   p=0.30: L  stop(pts)   p=0.20: L  stop(pts)
+    7 d              23       2.2         15       2.0         10       2.0
+    5 d              20       2.5         13       2.3         10       2.0
+    3 d              15       3.3         10       3.0          7       2.9
+    48 h             12       4.2          8       3.8          6       3.3
+    24 h              8       6.2          5       6.0          4       5.0
+    12 h              6       8.3          4       7.5          3       6.7
+    6 h               4      12.5          2      15.0          2      10.0
+    3 h               3      16.7          2      15.0          1      20.0
+    72 min            2      25.0          1      30.0          1      20.0
+    60 min            1      50.0          1      30.0          1      20.0
+    18 min            1      50.0          1      30.0          1      20.0
+
+A2. UNINFORMED holder through a symmetric +-J news jump, cheap side vs favourite side (skew fee = 1)
+ p=0.30, tau=7 d, L=15: stop 2.0 pts (cheap side), win line +4.7 pts, C=2.33
+  cheap side  YES  J=+-3 pts  (analytic no-noise +0.175)     trader +0.1005 (se 0.0017)   house -0.1005 (se 0.0017)
+  cheap side  YES  J=+-5 pts  (analytic no-noise +0.550)     trader +0.5178 (se 0.0024)   house -0.5178 (se 0.0024)
+  cheap side  YES  J=+-8 pts  (analytic no-noise +0.550)     trader +0.5397 (se 0.0024)   house -0.5397 (se 0.0024)
+  cheap side  YES  J=+-10 pts  (analytic no-noise +0.550)    trader +0.5411 (se 0.0024)   house -0.5411 (se 0.0024)
+  cheap side  YES  J=+-15 pts  (analytic no-noise +0.550)    trader +0.5432 (se 0.0024)   house -0.5432 (se 0.0024)
+  favourite side NO  J=+-5 pts                               trader -0.5000 (se 0.0008)   house +0.5000 (se 0.0008)
+  favourite side NO  J=+-10 pts                              trader -0.5000 (se 0.0008)   house +0.5000 (se 0.0008)
+ p=0.30, tau=48 h, L=8: stop 3.8 pts (cheap side), win line +8.8 pts, C=2.33
+  cheap side  YES  J=+-3 pts  (analytic no-noise -0.065)     trader -0.1030 (se 0.0011)   house +0.1030 (se 0.0011)
+  cheap side  YES  J=+-5 pts  (analytic no-noise +0.100)     trader +0.0311 (se 0.0016)   house -0.0311 (se 0.0016)
+  cheap side  YES  J=+-8 pts  (analytic no-noise +0.460)     trader +0.3868 (se 0.0022)   house -0.3868 (se 0.0022)
+  cheap side  YES  J=+-10 pts  (analytic no-noise +0.550)    trader +0.5210 (se 0.0024)   house -0.5210 (se 0.0024)
+  cheap side  YES  J=+-15 pts  (analytic no-noise +0.550)    trader +0.5354 (se 0.0024)   house -0.5354 (se 0.0024)
+  favourite side NO  J=+-5 pts                               trader -0.2869 (se 0.0005)   house +0.2868 (se 0.0005)
+  favourite side NO  J=+-10 pts                              trader -0.5000 (se 0.0008)   house +0.5000 (se 0.0008)
+ p=0.30, tau=24 h, L=5: stop 6.0 pts (cheap side), win line +14.0 pts, C=2.33
+  cheap side  YES  J=+-3 pts  (analytic no-noise -0.025)     trader -0.0835 (se 0.0007)   house +0.0832 (se 0.0007)
+  cheap side  YES  J=+-5 pts  (analytic no-noise -0.067)     trader -0.1297 (se 0.0012)   house +0.1047 (se 0.0012)
+  cheap side  YES  J=+-8 pts  (analytic no-noise +0.100)     trader +0.0324 (se 0.0016)   house -0.0324 (se 0.0016)
+  cheap side  YES  J=+-10 pts  (analytic no-noise +0.250)    trader +0.1806 (se 0.0019)   house -0.1806 (se 0.0019)
+  cheap side  YES  J=+-15 pts  (analytic no-noise +0.550)    trader +0.5109 (se 0.0024)   house -0.5109 (se 0.0024)
+  favourite side NO  J=+-5 pts                               trader -0.0336 (se 0.0005)   house +0.0336 (se 0.0005)
+  favourite side NO  J=+-10 pts                              trader -0.3581 (se 0.0006)   house +0.3578 (se 0.0006)
+ p=0.30, tau=6 h, L=2: stop 15.0 pts (cheap side), win line +35.0 pts, C=2.33
+  cheap side  YES  J=+-3 pts  (analytic no-noise -0.010)     trader -0.0560 (se 0.0002)   house +0.0560 (se 0.0002)
+  cheap side  YES  J=+-5 pts  (analytic no-noise -0.017)     trader -0.0687 (se 0.0004)   house +0.0687 (se 0.0004)
+  cheap side  YES  J=+-8 pts  (analytic no-noise -0.027)     trader -0.0834 (se 0.0007)   house +0.0834 (se 0.0007)
+  cheap side  YES  J=+-10 pts  (analytic no-noise -0.033)    trader -0.0918 (se 0.0009)   house +0.0915 (se 0.0009)
+  cheap side  YES  J=+-15 pts  (analytic no-noise -0.050)    trader -0.1089 (se 0.0014)   house +0.1089 (se 0.0014)
+  favourite side NO  J=+-5 pts                               trader -0.0177 (se 0.0002)   house +0.0177 (se 0.0002)
+  favourite side NO  J=+-10 pts                              trader -0.0248 (se 0.0004)   house +0.0248 (se 0.0004)
+ p=0.20, tau=5 d, L=10: stop 2.0 pts (cheap side), win line +8.0 pts, C=4.00
+  cheap side  YES  J=+-3 pts  (analytic no-noise +0.175)     trader +0.0901 (se 0.0017)   house -0.0901 (se 0.0017)
+  cheap side  YES  J=+-5 pts  (analytic no-noise +0.625)     trader +0.5342 (se 0.0024)   house -0.5342 (se 0.0024)
+  cheap side  YES  J=+-8 pts  (analytic no-noise +1.300)     trader +1.1951 (se 0.0035)   house -1.1951 (se 0.0035)
+  cheap side  YES  J=+-10 pts  (analytic no-noise +1.300)    trader +1.2764 (se 0.0036)   house -1.2764 (se 0.0036)
+  cheap side  YES  J=+-15 pts  (analytic no-noise +1.300)    trader +1.2859 (se 0.0036)   house -1.2859 (se 0.0036)
+  favourite side NO  J=+-5 pts                               trader -0.3140 (se 0.0005)   house +0.3137 (se 0.0005)
+  favourite side NO  J=+-10 pts                              trader -0.5000 (se 0.0008)   house +0.5000 (se 0.0008)
+ p=0.50, tau=24 h, L=8: stop 6.2 pts (cheap side), win line +6.2 pts, C=1.00
+  cheap side  YES  J=+-3 pts  (analytic no-noise -0.024)     trader -0.0717 (se 0.0007)   house +0.0715 (se 0.0007)
+  cheap side  YES  J=+-5 pts  (analytic no-noise -0.065)     trader -0.1029 (se 0.0011)   house +0.1001 (se 0.0011)
+  cheap side  YES  J=+-8 pts  (analytic no-noise -0.050)     trader -0.5010 (se 0.0008)   house +0.5010 (se 0.0008)
+  cheap side  YES  J=+-10 pts  (analytic no-noise -0.050)    trader -0.5010 (se 0.0008)   house +0.5010 (se 0.0008)
+  cheap side  YES  J=+-15 pts  (analytic no-noise -0.050)    trader -0.5010 (se 0.0008)   house +0.5010 (se 0.0008)
+  favourite side NO  J=+-5 pts                               trader -0.1223 (se 0.0012)   house +0.0973 (se 0.0011)
+  favourite side NO  J=+-10 pts                              trader -0.5000 (se 0.0008)   house +0.5000 (se 0.0008)
+
+A3. UNINFORMED holder, skewed news (likely small move in favour, unlikely large move against)
+  p=0.30 tau=7 d L=15: +3 pts w.p. 0.70 / -7.0 pts           trader +0.5442 (se 0.0016)   house -0.5442 (se 0.0016)
+  p=0.30 tau=48 h L=8: +3 pts w.p. 0.70 / -7.0 pts           trader +0.1182 (se 0.0012)   house -0.1182 (se 0.0012)
+  p=0.50 tau=7 d L=23: +2 pts w.p. 0.70 / -4.7 pts           trader -0.2996 (se 0.0007)   house +0.2996 (se 0.0007)
+  p=0.50 tau=24 h L=8: +3 pts w.p. 0.75 / -9.0 pts           trader +0.0063 (se 0.0009)   house -0.0063 (se 0.0009)
+
+A4. Laplace news jump (mean |J| = b), cheap side at the E3 maximum, uninformed
+  p=0.30 tau=7 d L=15  Laplace b=2 pts                       trader +0.0308 (se 0.0014)   house -0.0308 (se 0.0014)
+  p=0.30 tau=7 d L=15  Laplace b=4 pts                       trader +0.1756 (se 0.0018)   house -0.1756 (se 0.0018)
+  p=0.30 tau=48 h L=8  Laplace b=2 pts                       trader -0.0387 (se 0.0009)   house +0.0387 (se 0.0009)
+  p=0.30 tau=48 h L=8  Laplace b=4 pts                       trader +0.0504 (se 0.0014)   house -0.0504 (se 0.0014)
+  p=0.30 tau=24 h L=5  Laplace b=2 pts                       trader -0.0543 (se 0.0006)   house +0.0530 (se 0.0006)
+  p=0.30 tau=24 h L=5  Laplace b=4 pts                       trader -0.0209 (se 0.0011)   house +0.0188 (se 0.0011)
+  p=0.20 tau=5 d L=10  Laplace b=2 pts                       trader +0.0559 (se 0.0015)   house -0.0559 (se 0.0015)
+  p=0.20 tau=5 d L=10  Laplace b=4 pts                       trader +0.3156 (se 0.0022)   house -0.3156 (se 0.0022)
+  p=0.50 tau=7 d L=23  Laplace b=2 pts                       trader -0.2697 (se 0.0007)   house +0.2639 (se 0.0007)
+  p=0.50 tau=7 d L=23  Laplace b=4 pts                       trader -0.3632 (se 0.0008)   house +0.3587 (se 0.0008)
+
+A5. R6 STALE-PRICE OPEN: bot sees the jump, opens in its direction at the pre-jump signed price
+  p=0.30 tau=7 d L=15  Laplace b=2 pts, phi=1                trader +0.3746 (se 0.0009)   house -0.3746 (se 0.0009)
+  p=0.30 tau=7 d L=15  Laplace b=4 pts, phi=1                trader +0.5874 (se 0.0013)   house -0.5874 (se 0.0013)
+  p=0.30 tau=7 d L=15  J=+-5 pts, phi=1                      trader +1.0198 (se 0.0016)   house -1.0198 (se 0.0016)
+  p=0.30 tau=24 h L=5  Laplace b=2 pts, phi=1                trader +0.1553 (se 0.0003)   house -0.1553 (se 0.0003)
+  p=0.30 tau=24 h L=5  Laplace b=4 pts, phi=1                trader +0.2976 (se 0.0007)   house -0.2976 (se 0.0007)
+  p=0.30 tau=24 h L=5  J=+-5 pts, phi=1                      trader +0.4621 (se 0.0003)   house -0.4621 (se 0.0003)
+  p=0.50 tau=24 h L=8  Laplace b=2 pts, phi=1                trader +0.1607 (se 0.0003)   house -0.1607 (se 0.0003)
+  p=0.50 tau=24 h L=8  Laplace b=4 pts, phi=1                trader +0.1769 (se 0.0003)   house -0.1769 (se 0.0003)
+  p=0.50 tau=24 h L=8  J=+-5 pts, phi=1                      trader +0.6099 (se 0.0001)   house -0.6099 (se 0.0001)
+  p=0.50 tau=6 h L=4  Laplace b=2 pts, phi=1                 trader +0.0447 (se 0.0001)   house -0.0447 (se 0.0001)
+  p=0.50 tau=6 h L=4  Laplace b=4 pts, phi=1                 trader +0.0546 (se 0.0001)   house -0.0546 (se 0.0001)
+  p=0.50 tau=6 h L=4  J=+-5 pts, phi=1                       trader +0.2361 (se 0.0000)   house -0.2361 (se 0.0000)
+  p=0.50 tau=60 min (1x) L=1  Laplace b=2 pts, phi=1         trader +0.0323 (se 0.0001)   house -0.0323 (se 0.0001)
+  p=0.50 tau=60 min (1x) L=1  Laplace b=4 pts, phi=1         trader +0.0682 (se 0.0001)   house -0.0682 (se 0.0001)
+  p=0.50 tau=60 min (1x) L=1  J=+-5 pts, phi=1               trader +0.0857 (se 0.0000)   house -0.0857 (se 0.0000)
+  p=0.30 tau=60 min (1x) L=1  Laplace b=2 pts, phi=1         trader +0.0385 (se 0.0001)   house -0.0385 (se 0.0001)
+  p=0.30 tau=60 min (1x) L=1  Laplace b=4 pts, phi=1         trader +0.0811 (se 0.0002)   house -0.0811 (se 0.0002)
+  p=0.30 tau=60 min (1x) L=1  J=+-5 pts, phi=1               trader +0.1019 (se 0.0001)   house -0.1019 (se 0.0001)
+
+A6. Same tests under the proposed sports cap  L <= floor(min(p,1-p)/0.10)  (stop >= 10 pts)
+  p=0.30 tau=7 d L=3  cheap side J=+-5 pts                   trader -0.0383 (se 0.0007)   house +0.0383 (se 0.0007)
+  p=0.30 tau=7 d L=3  cheap side J=+-10 pts                  trader -0.0610 (se 0.0015)   house +0.0610 (se 0.0015)
+  p=0.30 tau=7 d L=3  cheap side J=+-15 pts                  trader +0.1646 (se 0.0018)   house -0.1646 (se 0.0018)
+  p=0.30 tau=7 d L=3  cheap side Laplace b=2 pts             trader -0.0223 (se 0.0004)   house +0.0221 (se 0.0004)
+  p=0.30 tau=7 d L=3  cheap side Laplace b=4 pts             trader -0.0189 (se 0.0008)   house +0.0181 (se 0.0008)
+  p=0.20 tau=5 d L=2  cheap side J=+-5 pts                   trader -0.0390 (se 0.0007)   house +0.0390 (se 0.0007)
+  p=0.20 tau=5 d L=2  cheap side J=+-10 pts                  trader -0.0618 (se 0.0015)   house +0.0618 (se 0.0015)
+  p=0.20 tau=5 d L=2  cheap side J=+-15 pts                  trader +0.1638 (se 0.0018)   house -0.1638 (se 0.0018)
+  p=0.20 tau=5 d L=2  cheap side Laplace b=2 pts             trader -0.0229 (se 0.0004)   house +0.0225 (se 0.0004)
+  p=0.20 tau=5 d L=2  cheap side Laplace b=4 pts             trader -0.0198 (se 0.0008)   house +0.0181 (se 0.0008)
+  p=0.50 tau=7 d L=5  cheap side J=+-5 pts                   trader -0.0378 (se 0.0007)   house +0.0378 (se 0.0007)
+  p=0.50 tau=7 d L=5  cheap side J=+-10 pts                  trader -0.0627 (se 0.0015)   house +0.0627 (se 0.0015)
+  p=0.50 tau=7 d L=5  cheap side J=+-15 pts                  trader -0.0477 (se 0.0015)   house +0.0477 (se 0.0015)
+  p=0.50 tau=7 d L=5  cheap side Laplace b=2 pts             trader -0.0227 (se 0.0004)   house +0.0222 (se 0.0004)
+  p=0.50 tau=7 d L=5  cheap side Laplace b=4 pts             trader -0.0326 (se 0.0007)   house +0.0309 (se 0.0007)

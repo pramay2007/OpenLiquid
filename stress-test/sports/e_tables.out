@@ -1,0 +1,46 @@
+E1. Time before kick-off at which a position of leverage L becomes force-closable (Ltime < L)
+    L      p=0.50      p=0.40      p=0.30      p=0.20      p=0.10
+    2         72 min     108 min       2.8 h       4.8 h      10.8 h
+    3          2.7 h       4.0 h       6.3 h      10.8 h      24.3 h
+    5          7.5 h      11.2 h      17.5 h      30.0 h       2.8 d
+    8         19.2 h      28.8 h      44.8 h       3.2 d       7.2 d
+    10        30.0 h      45.0 h       2.9 d       5.0 d      11.2 d
+    15         2.8 d       4.2 d       6.6 d      11.2 d      25.3 d
+    20         5.0 d       7.5 d      11.7 d      20.0 d      45.0 d
+    => nothing above 1x can be OPENED inside the last 72 min (p=0.5) / 2.8 h (p=0.3) / 4.8 h (p=0.2) / 10.8 h (p=0.1).
+       Soccer line-ups (~60 min before), NFL inactives (90 min), NBA line-ups (30 min) all land when only 1x exists.
+
+E2. Crowding fee at full skew, tau = time to kick-off (floored at 1 h).  Fee as a multiple of the
+    position's maximum profit C, for a hold from tau1 to tau2 with the price unchanged:
+    fee / C = (L - 1) * [ln(tau1 / max(tau2, 1h)) + (time spent inside the last hour) / 1h]
+    L=2   48h->24h: 0.69 C   24h->12h: 0.69 C   24h->23h: 0.04 C   6h->3h: 0.69 C   2h->1h: 0.69 C
+    L=3   48h->24h: 1.39 C   24h->12h: 1.39 C   24h->23h: 0.09 C   6h->3h: 1.39 C   2h->1h: 1.39 C
+    L=5   48h->24h: 2.77 C   24h->12h: 2.77 C   24h->23h: 0.17 C   6h->3h: 2.77 C   2h->1h: 2.77 C
+    L=10  48h->24h: 6.24 C   24h->12h: 6.24 C   24h->23h: 0.38 C   6h->3h: 6.24 C   2h->1h: 6.24 C
+    Share of the remaining time after which the fee equals the whole possible profit:  L=2: 63%, L=3: 39%, L=5: 22%, L=10: 11%, L=20: 5%
+    Boost premium is the same amount but taken from margin.  Minutes until a boosted position that has not
+    moved in price is liquidated (premium = 80% of margin), for p0 = 0.50:
+    L=2: inside the last hour: 48 min;  opened 6 h out: dead 3.3 h later;  opened 24 h out: dead 13.2 h later
+    L=3: inside the last hour: 24 min;  opened 6 h out: dead 119 min later;  opened 24 h out: dead 7.9 h later
+    L=5: inside the last hour: 12 min;  opened 6 h out: dead 65 min later;  opened 24 h out: dead 4.4 h later
+    Churn: the fee is capped at profit and wiped when a position closes at zero profit.  With no
+    open/close fee and mid = slow, closing and re-opening an unmoved position resets the accrual at the
+    cost of gas only, so a trader who churns pays only what accrues between his last re-open and the move.
+
+E3. Smallest favourable jump after which a position opened at the E3 maximum is force-closable
+    (Ltime is evaluated at the NEW mid), while its close price is still the pre-jump slow price:
+    own side   tau      L_max   jump that makes it force-closable   profit at the mid   profit paid if force-closed at once
+    0.50       24 h        8    +6 tick(s)                          +0.960 M             0 (close price = slow = entry)
+    0.60       24 h        7    +3 tick(s)                          +0.350 M             0 (close price = slow = entry)
+    0.70       24 h        5    +7 tick(s)                          +0.429 M             0 (close price = slow = entry)
+    0.70       7 d        15    +2 tick(s)                          +0.429 M             0 (close price = slow = entry)
+    0.50       7 d        23    +2 tick(s)                          +0.920 M             0 (close price = slow = entry)
+    Time for the close price to give the winner his gain back: slow covers 1 - exp(-t/300 s); 90% after 11.5 min.  A keeper that sweeps every 3 s closes him first.
+
+E4. Upkeep queue (keeper sends one transaction per position and waits for it):
+    1 s per position: 100 positions -> 2 min, 500 positions -> 8 min, 1500 positions -> 25 min, 3000 positions -> 50 min
+    2 s per position: 100 positions -> 3 min, 500 positions -> 17 min, 1500 positions -> 50 min, 3000 positions -> 100 min
+    All positions with the same L and price fall due in the same second (table E1), and a force-close
+    costs the trader nothing, so $1 positions are a free way to fill that queue: the margin comes back.
+    Liquidations share the same queue.  Reward for outside liquidators = min(5% of margin, equity left),
+    which is 0 after a jump through the stop, so in a jump market the keeper is the only liquidator.

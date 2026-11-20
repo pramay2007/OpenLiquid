@@ -1,7 +1,6 @@
 import { createPublicClient, formatUnits, http } from "viem";
 import { abis, addresses, chain, IS_LOCAL } from "../chain/config";
 import { useStore, type MarketState, type PositionRow } from "../state/store";
-import { pnl as pnlAt } from "../lib/engine";
 
 // A public RPC rate-limits, so off localhost reads go through Multicall3 and polling is slower.
 export const publicClient = createPublicClient({
@@ -29,12 +28,20 @@ export async function refreshMarkets() {
         id,
         enabled: v.config.enabled,
         isEvent: v.config.isEvent,
+        // Boost is offered wherever the market charges for it. (`boostEnabled` is the flag an
+        // older deployment carried; it is read only until the app is pointed at the new one.)
+        boostEnabled: v.config.boostScale != null ? v.config.boostScale > 0n : !!v.config.boostEnabled,
         maxLeverage: Number(v.config.maxLeverage),
         maxProfitMult: Number(v.config.maxProfitMult),
         profitFeeBps: Number(v.config.profitFeeBps),
         maxGapBps: Number(v.config.maxGapBps),
         expiry: Number(v.config.expiry),
-        compressWindow: Number(v.config.compressWindow),
+        nextEvent: Number(v.config.nextEvent ?? 0n),
+        closed: !!v.closed,
+        reactionSeconds: Number(v.config.reactionSeconds),
+        minDistance: wad(v.config.minDistance ?? 20_000_000_000_000_000n),
+        crowdingScale: wad(v.config.crowdingScale ?? v.config.hazardScale ?? 0n),
+        boostScale: wad(v.config.boostScale ?? (v.config.boostEnabled ? (v.config.hazardScale ?? 0n) : 0n)),
         maxPositionNotional: usd(v.config.maxPositionNotional),
         longOI: usd(v.state.longOI),
         shortOI: usd(v.state.shortOI),
@@ -45,7 +52,9 @@ export async function refreshMarkets() {
         sideCap: usd(v.sideCap),
         maxLevLong: Number(v.maxLeverageLong),
         maxLevShort: Number(v.maxLeverageShort),
-        fundingPerDay: wad(v.fundingPerDayNow),
+        feePerDayLong: wad(v.feePerDayLong),
+        feePerDayShort: wad(v.feePerDayShort),
+        boostPerDay: wad(v.boostPerDay ?? v.boostPerDayLong ?? 0n),
       };
     }
     useStore.setState({ markets, chainOnline: true });
@@ -86,27 +95,24 @@ export async function refreshAccount() {
       publicClient.getBalance({ address: account.address }),
       read<any[]>(addresses.PerpEngine, abis.engine, "positionsOf", [account.address]),
     ]);
-    const markets = useStore.getState().markets;
     const positions: PositionRow[] = views.map((v) => {
       const p = v.position;
-      const marketId = Number(p.marketId);
-      const notional = usd(p.notional);
-      const entryPrice = wad(p.entryPrice);
-      const isEvent = markets[marketId]?.isEvent ?? false;
-      // The view reports PnL after carry at its mark price; back the carry out of it.
-      const gross = pnlAt(isEvent, p.isLong, notional, entryPrice, wad(v.markPrice));
       return {
         id: v.id,
-        marketId,
+        marketId: Number(p.marketId),
         isLong: p.isLong,
         openedAt: Number(p.openedAt),
         margin: usd(p.margin),
-        notional,
-        entryPrice,
+        notional: usd(p.notional),
+        entryPrice: wad(p.entryPrice),
         reserve: usd(p.reserve),
+        boosted: p.boosted,
         liquidationPrice: wad(v.liquidationPrice),
-        carry: gross - Number(formatUnits(v.pnl, 6)),
+        winPrice: wad(v.winPrice),
+        crowdingFee: usd(v.crowdingFee),
+        boostPremium: usd(v.boostPremium),
         liquidatable: v.liquidatable,
+        collectable: v.collectable,
       };
     });
     positions.sort((a, b) => Number(b.id - a.id));
@@ -135,6 +141,11 @@ export async function refreshEarn() {
       read<bigint>(addresses.Vault, abis.vault, "maxWithdraw", [who]),
     ]);
     const myAssets = await read<bigint>(addresses.Vault, abis.vault, "convertToAssets", [myShares]);
+    // The share lock arrived with the current vault; an older deployment has neither call.
+    const [withdrawDelay, lockedUntil] = await Promise.all([
+      read<bigint>(addresses.Vault, abis.vault, "withdrawDelay"),
+      read<bigint>(addresses.Vault, abis.vault, "lockedUntil", [who]),
+    ]).catch(() => [0n, 0n]);
     const [totalStaked, myStaked, myPending, totalSupply, maxSupply, cumFees, perDollar] = await Promise.all([
       read<bigint>(addresses.Staking, abis.staking, "totalStaked"),
       read<bigint>(addresses.Staking, abis.staking, "staked", [who]),
@@ -155,6 +166,8 @@ export async function refreshEarn() {
         myShares,
         myAssets: usd(myAssets),
         myMaxWithdraw: usd(myMax),
+        withdrawDelay: Number(withdrawDelay),
+        lockedUntil: Number(lockedUntil),
       },
       staking: {
         totalStaked: wad(totalStaked),

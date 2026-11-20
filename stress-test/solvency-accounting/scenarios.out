@@ -1,0 +1,118 @@
+
+====================================================================================================
+S1 [code]  Resolution jump, YES-only leveraged free book: deposit -> settle -> redeem (3 calls, no price risk)
+====================================================================================================
+side notional 20,000 USDC, borrowed shares net 36,000; formula (1-p)*B = 18,000.00
+NAV before 2,000,000.00 | after resolution: vault marks 1,980,000.00, clamped liability leaves 1,998,000.00 | mis-mark 18,000.00
+  depositor puts in 1x the pool (1,980,000.00), settles the 10 winners, redeems: gain 9,070.00 ; original LP's 2,000,000 is now worth 1,989,070.00
+  depositor puts in 9x the pool (17,820,000.00), settles the 10 winners, redeems: gain 16,326.00 ; original LP's 2,000,000 is now worth 1,981,814.00
+
+====================================================================================================
+S1 [code]  Resolution jump, YES-only leveraged free book: deposit -> settle -> redeem (3 calls, no price risk)
+====================================================================================================
+side notional 20,000 USDC, borrowed shares net 38,400; formula (1-p)*B = 19,200.00
+NAV before 2,000,000.00 | after resolution: vault marks 1,980,000.00, clamped liability leaves 1,999,200.00 | mis-mark 19,200.00
+  depositor puts in 1x the pool (1,980,000.00), settles the 10 winners, redeems: gain 9,628.00 ; original LP's 2,000,000 is now worth 1,989,628.00
+  depositor puts in 9x the pool (17,820,000.00), settles the 10 winners, redeems: gain 17,330.40 ; original LP's 2,000,000 is now worth 1,981,925.60
+
+====================================================================================================
+S2  Resolution jump, NO-only leveraged free book: an LP holding half the vault leaves before the settlements
+====================================================================================================
+vault marks 2,020,000.00, clamped liability leaves 2,002,000.00 (traders can lose only their 2,000 of margin)
+carol redeems her half for 1,010,000.00 (fair half = 1,001,000.00): takes 9,000.00 from the LP who stays, who is left with 992,000.00
+
+====================================================================================================
+S3  Fees only (1x positions, nothing capped): a stranger wraps the settlements in deposit/redeem
+====================================================================================================
+  winners' profit share kept by the vault 1,400.00; depositor with 1x the pool takes 700.00 (50.0%), LP keeps 700.00
+  winners' profit share kept by the vault 1,400.00; depositor with 9x the pool takes 1,260.00 (90.0%), LP keeps 140.00
+
+====================================================================================================
+S4 [code]  The payer gets the crowding fee / Boost premium / profit share back by wrapping its own close
+====================================================================================================
+  free (crowding fee)    deposit 0x pool: price P&L 999.99, crowding 158.96, premium 0.00, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 0.00 (0.0%)
+  free (crowding fee)    deposit 1x pool: price P&L 999.99, crowding 158.96, premium 0.00, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 108.92 (44.8%)
+  free (crowding fee)    deposit 9x pool: price P&L 999.99, crowding 158.96, premium 0.00, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 196.06 (80.7%)
+  boost (premium)        deposit 0x pool: price P&L 999.99, crowding 0.00, premium 158.96, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 0.00 (0.0%)
+  boost (premium)        deposit 1x pool: price P&L 999.99, crowding 0.00, premium 158.96, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 108.92 (44.8%)
+  boost (premium)        deposit 9x pool: price P&L 999.99, crowding 0.00, premium 158.96, profit share 84.10 (stakers 25.23) -> charged 243.07, recovered through shares 196.06 (80.7%)
+
+====================================================================================================
+S4 [task]  The payer gets the crowding fee / Boost premium / profit share back by wrapping its own close
+====================================================================================================
+  free (crowding fee)    deposit 0x pool: price P&L 999.99, crowding 316.76, premium 0.00, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 0.00 (0.0%)
+  free (crowding fee)    deposit 1x pool: price P&L 999.99, crowding 316.76, premium 0.00, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 182.30 (47.3%)
+  free (crowding fee)    deposit 9x pool: price P&L 999.99, crowding 316.76, premium 0.00, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 328.13 (85.2%)
+  boost (premium)        deposit 0x pool: price P&L 999.99, crowding 0.00, premium 316.76, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 0.00 (0.0%)
+  boost (premium)        deposit 1x pool: price P&L 999.99, crowding 0.00, premium 316.76, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 182.30 (47.3%)
+  boost (premium)        deposit 9x pool: price P&L 999.99, crowding 0.00, premium 316.76, profit share 68.32 (stakers 20.50) -> charged 385.08, recovered through shares 328.13 (85.2%)
+
+====================================================================================================
+S5  A stranger force-closes a winner at the slow price inside deposit/redeem (E3 'normal close price')
+====================================================================================================
+  mid 0.80, slow 0.5000; time-limit leverage 6x < 10x; vault marks 1,994,000.00 vs clamped 1,999,000.00
+  forceClose fills at 0.5000: alice is paid a profit of 0.00 instead of her cap 1,000.00
+  mid 0.80, slow 0.5000; time-limit leverage 6x < 10x; vault marks 1,994,000.00 vs clamped 1,999,000.00
+  forceClose fills at 0.5000: alice is paid a profit of 0.00 instead of her cap 1,000.00; depositor of 1x pool gains 3,000.00
+
+====================================================================================================
+S6  Reserve locked per dollar of margin by an OUTRIGHT (1x) long-shot position (liquidity occupation)
+====================================================================================================
+entry  | reserve / margin: task text E2 (outright payoff) | contract (ceiling 10x)
+ 0.01  |   99.00x                                          | 10.00x
+ 0.02  |   49.00x                                          | 10.00x
+ 0.05  |   19.00x                                          | 10.00x
+ 0.09  |   10.11x                                          | 10.00x
+ 0.10  |    9.00x                                          |  9.00x
+ 0.25  |    3.00x                                          |  3.00x
+ 0.50  |    1.00x                                          |  1.00x
+example: book depth 50,000 -> side cap 25,000.00 of notional; one 1x YES at 0.02 for 25,000.00 locks 1,225,000.00 of the 2,000,000 vault until resolution, at no carrying cost
+
+====================================================================================================
+S7  Contract only: the 10x ceiling on a free-mode reserve vs E2/E3 for a 1x long shot
+====================================================================================================
+1x YES at 0.05, margin 1,000: outright win would be 19,000.00; reserve locked 10,000.00
+at 0.55 held for 2 h (exactly the 10x line): collectable = False (slow is 23054796 wei short of the mid; P&L at the close price is 1 micro-USDC under the cap)
+at 0.56 held for 30 min: collectable by anyone = True (E3: 1x positions stay open through resolution)
+resolves YES: vault marks 1,981,000.00 vs clamped 1,990,000.00 (mis-mark 9,000.00); alice is paid a profit of 10,000.00 before the 10% share, not 19,000.00
+
+====================================================================================================
+S8  R4 applied literally to an outright position: a fully paid 1x YES bought at 0.50
+====================================================================================================
+  [code] one print at 0.10: liquidatable=True; alice gets 150.00, liquidator 50.00, vault keeps 800.00; her 2,000 shares would still pay 2,000 on YES
+  [task] one print at 0.10: liquidatable=True; alice gets 150.00, liquidator 50.00, vault keeps 800.00; her 2,000 shares would still pay 2,000 on YES
+
+====================================================================================================
+S9 [code]  Crowding fee / Boost premium are indexed only when the market is touched
+====================================================================================================
+  keeper pokes hourly                        free : accrued crowding 26,716.27 (taken 1,000.00), premium 0.00, result 1,000.00, payout 1,000.00
+  keeper pokes hourly                        boost: accrued crowding 0.00 (taken 0.00), premium 26,716.27, result -1,000.00, payout 0.00
+  nobody touches the market                  free : accrued crowding 8,833.52 (taken 1,000.00), premium 0.00, result 1,000.00, payout 1,000.00
+  nobody touches the market                  boost: accrued crowding 0.00 (taken 0.00), premium 8,833.52, result -1,000.00, payout 0.00
+  nobody touches it, then it resolves YES    free : accrued crowding 0.00 (taken 0.00), premium 0.00, result 1,000.00, payout 1,900.00
+  nobody touches it, then it resolves YES    boost: accrued crowding 0.00 (taken 0.00), premium 0.00, result 10,000.00, payout 10,000.00
+
+====================================================================================================
+S9 [task]  Crowding fee / Boost premium are indexed only when the market is touched
+====================================================================================================
+  keeper pokes hourly                        free : accrued crowding 52,957.35 (taken 1,000.00), premium 0.00, result 1,000.00, payout 1,000.00
+  keeper pokes hourly                        boost: accrued crowding 0.00 (taken 0.00), premium 52,957.35, result -1,000.00, payout 0.00
+  nobody touches the market                  free : accrued crowding 15,774.14 (taken 1,000.00), premium 0.00, result 1,000.00, payout 1,000.00
+  nobody touches the market                  boost: accrued crowding 0.00 (taken 0.00), premium 15,774.14, result -1,000.00, payout 0.00
+  nobody touches it, then it resolves YES    free : accrued crowding 0.00 (taken 0.00), premium 0.00, result 1,000.00, payout 1,900.00
+  nobody touches it, then it resolves YES    boost: accrued crowding 0.00 (taken 0.00), premium 0.00, result 10,000.00, payout 10,000.00
+
+====================================================================================================
+S10  Liquidator reward at the first liquidatable tick, and what one missed price change is worth
+====================================================================================================
+  25x YES at 0.50: at 0.49 equity 200.00, liquidatable=False
+  at 0.48 equity 0.00, liquidatable=True
+  nobody liquidates (reward would be 0.00); one tick back to 0.49: equity 200.00 -> expected value of one missed +-1 tick change = 100.00 per 400 of margin
+  liquidated at 0.48: trader 0.00, liquidator 0.00, vault keeps 400.00
+  [literal R4: liquidator always gets 5% of M] trader 0.00, liquidator 20.00, vault keeps 380.00
+
+====================================================================================================
+S11  E2 at settlement: the same stake is paid the same at 1x, 5x and 25x when the market resolves without warning
+====================================================================================================
+  [code] YES 1x/5x/25x paid ['190.00', '190.00', '190.00']; NO 1x/5x/25x paid ['0.00', '0.00', '0.00']; reserves ['100.00', '100.00', '100.00']
+  [task] YES 1x/5x/25x paid ['190.00', '190.00', '190.00']; NO 1x/5x/25x paid ['0.00', '0.00', '0.00']; reserves ['100.00', '100.00', '100.00']

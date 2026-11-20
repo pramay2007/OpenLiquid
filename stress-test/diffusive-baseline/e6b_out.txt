@@ -1,0 +1,6 @@
+pocket table (price c @ leverage, take-profit ticks): 13@5x/+17, 18@7x/+11, 21@8x/+9, 23@9x/+8, 26@10x/+7, 28@11x/+6
+   lam*tau=0.02  (  5.8 changes/day) start 18c: P&L over 30 days per $1 margin +0.1165 +-0.0082 | bets   3.89 | per bet +0.0299 | clamp gain 0.455 fee 0.324 | share of time in a position 0.66 | P(30-day P&L > 0) 0.465
+   lam*tau=0.02  (  5.8 changes/day) start 26c: P&L over 30 days per $1 margin +0.1152 +-0.0079 | bets   4.77 | per bet +0.0242 | clamp gain 0.536 fee 0.376 | share of time in a position 0.63 | P(30-day P&L > 0) 0.582
+   lam*tau=0.1   ( 28.8 changes/day) start 18c: P&L over 30 days per $1 margin +0.2716 +-0.0150 | bets  11.22 | per bet +0.0242 | clamp gain 1.399 fee 0.986 | share of time in a position 0.45 | P(30-day P&L > 0) 0.534
+   lam*tau=0.1   ( 28.8 changes/day) start 26c: P&L over 30 days per $1 margin +0.2752 +-0.0143 | bets  11.83 | per bet +0.0233 | clamp gain 1.440 fee 1.007 | share of time in a position 0.41 | P(30-day P&L > 0) 0.589
+   lam*tau=0.3   ( 86.4 changes/day) start 18c: P&L over 30 days per $1 margin +0.3120 +-0.0221 | bets  23.64 | per bet +0.0132 | clamp gain 2.975 fee 2.086 | share of time in a position 0.34 | P(30-day P&L > 0) 0.570

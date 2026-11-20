@@ -2,16 +2,16 @@
   "network": "arcTestnet",
   "chainId": 5042002,
   "rpcUrl": "https://rpc.testnet.arc.io",
-  "deployedAt": "2026-11-15T09:33:53.981Z",
+  "deployedAt": "2026-11-20T05:05:56.520Z",
   "keeper": "0xe386ABa1C3197D166130ec45566208b0A658F6d2",
   "faucet": true,
   "contracts": {
-    "USDC": "0xE4475D526B1f625C87b3B0C56C7548016d20BB72",
-    "PriceOracle": "0xbF48c715F8816649D7D56AC01e5ae19850Ae517a",
-    "Vault": "0x2b32560890De4070A66b47fD4242F2b817FBEF58",
-    "OpenLiquidToken": "0x0C1221ee07A921B078391512acb8fD1dCE72E6C3",
-    "Staking": "0xb0FaFD344dE5d451638B7711206e6A3Df0902f06",
-    "PerpEngine": "0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8"
+    "USDC": "0xaAC1cE7B8d2a84541B19C559a384207f4C6F2982",
+    "PriceOracle": "0x3D8931Cc87d1A619546A82569E3B0dcb1535EFd5",
+    "Vault": "0x4eDafC142dA2d5299424b5ac0b884A194A20f7E1",
+    "OpenLiquidToken": "0xF22b9D7139D0517DABA57f176Ee25A711601b9a1",
+    "Staking": "0x40C7E6f03d0B2885976087f1903effD15c691841",
+    "PerpEngine": "0xD6D4910E7cACf224c143999186f1a745c22CfdF3"
   },
   "markets": [
     {
@@ -116,18 +116,6 @@
     },
     {
       "id": 102,
-      "symbol": "NCAAF-2611211930-IOW-ILL-M-IOW",
-      "name": "Iowa vs Illinois",
-      "outcome": "Iowa",
-      "category": "Sports",
-      "kind": "event",
-      "source": "gemini",
-      "ref": "GEMI-NCAAF-2611211930-IOW-ILL-M-IOW",
-      "eventTicker": "NCAAF-2611211930-IOW-ILL-M",
-      "expiry": 1795289400
-    },
-    {
-      "id": 103,
       "symbol": "BTC2611302200-HI60000",
       "name": "BTC price on November 30",
       "outcome": "$60,000 or above",
@@ -139,16 +127,40 @@
       "expiry": 1796076000
     },
     {
-      "id": 104,
-      "symbol": "ZEC2611302200-HI1040",
-      "name": "ZEC price on November 30",
-      "outcome": "$1,040 or above",
-      "category": "Crypto",
+      "id": 103,
+      "symbol": "NFL-2611261800-CHI-DET-M-CHI",
+      "name": "Chicago vs Detroit",
+      "outcome": "Chicago",
+      "category": "Sports",
       "kind": "event",
       "source": "gemini",
-      "ref": "GEMI-ZEC2611302200-HI1040",
-      "eventTicker": "ZEC2611302200",
-      "expiry": 1796076000
+      "ref": "GEMI-NFL-2611261800-CHI-DET-M-CHI",
+      "eventTicker": "NFL-2611261800-CHI-DET-M",
+      "expiry": 1795716000
+    },
+    {
+      "id": 104,
+      "symbol": "NFL-2611260100-GB-LAR-M-LAR",
+      "name": "Green Bay vs Los Angeles R",
+      "outcome": "Los Angeles R",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-NFL-2611260100-GB-LAR-M-LAR",
+      "eventTicker": "NFL-2611260100-GB-LAR-M",
+      "expiry": 1795654800
+    },
+    {
+      "id": 105,
+      "symbol": "NFL-2611262130-PHI-DAL-M-DAL",
+      "name": "Philadelphia vs Dallas",
+      "outcome": "Dallas",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-NFL-2611262130-PHI-DAL-M-DAL",
+      "eventTicker": "NFL-2611262130-PHI-DAL-M",
+      "expiry": 1795728600
     }
   ]
 }

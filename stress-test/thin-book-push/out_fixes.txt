@@ -1,0 +1,43 @@
+Worst-case attacker net per $1,000 natural depth (two legs allowed), by scenario and fix.
+Negative = the house is safe.  Scenarios differ in fee, spoofed depth, price/side.
+
+                                                columns: base, nofee, spoof10x, spoof100x, extreme-NO, extreme-nf
+
+  as written (kappa 0.5, ref=5-tick depth, tau 300)       base:  +13.98       nofee:  +27.84    spoof10x: +360.39   spoof100x:+4278.60  extreme-NO: +270.11  extreme-nf: +286.35
+
+F1  lower kappa (ref depth = 5 ticks, tau 300, fee as per scenario):
+  kappa = 0.25                                         base:   -0.16       nofee:   +9.98    spoof10x: +161.15   spoof100x:+2054.81  extreme-NO:  +88.91  extreme-nf: +105.15
+  kappa = 0.1                                          base:   -5.46       nofee:   +1.54    spoof10x:  +49.71   spoof100x: +758.85  extreme-NO:  +13.14  extreme-nf:  +18.83
+  kappa = 0.05                                         base:   -7.23       nofee:   -0.23    spoof10x:  +13.98   spoof100x: +360.39  extreme-NO:   +2.09  extreme-nf:   +4.99
+  kappa = 0.02                                         base:   -8.29       nofee:   -1.29    spoof10x:   -1.93   spoof100x: +121.31  extreme-NO:   -0.76  extreme-nf:   +0.78
+  kappa = 0.01                                         base:   -8.65       nofee:   -1.65    spoof10x:   -5.46   spoof100x:  +49.71  extreme-NO:   -1.71  extreme-nf:   -0.17
+
+F2  exit averaging only (kappa 0.5), exit tau:
+  tau_exit = 300s                                      base:  +14.07       nofee:  +27.93    spoof10x: +360.45   spoof100x:+4280.66  extreme-NO: +270.99  extreme-nf: +287.23
+  tau_exit = 600s                                      base:  +10.86       nofee:  +24.72    spoof10x: +360.45   spoof100x:+4280.66  extreme-NO: +270.99  extreme-nf: +287.23
+  tau_exit = 1200s                                     base:   +6.16       nofee:  +20.02    spoof10x: +337.12   spoof100x:+4278.60  extreme-NO: +270.11  extreme-nf: +286.35
+  tau_exit = 1800s                                     base:   +3.43       nofee:  +17.13    spoof10x: +316.83   spoof100x:+4265.50  extreme-NO: +261.31  extreme-nf: +277.55
+  tau_exit = 3600s                                     base:   +0.59       nofee:  +11.37    spoof10x: +207.11   spoof100x:+3323.76  extreme-NO: +212.50  extreme-nf: +228.74
+
+F3  corridor capacity: N_side <= kappa_c * USD between mid and the win line (fee as per scenario, tau 300).
+    Evaluated at a few leverages because the corridor width = (1-q0)/L depends on L.
+  L<=  5, kappa_c = 0.5                                base: +136.62       nofee: +188.70    spoof10x: +136.62   spoof100x: +136.62  extreme-NO:+1212.38  extreme-nf:+1228.62
+  L<=  5, kappa_c = 0.25                               base:  +16.06       nofee:  +44.83    spoof10x:  +16.06   spoof100x:  +16.06  extreme-NO: +560.04  extreme-nf: +576.28
+  L<=  5, kappa_c = 0.1                                base:   -1.93       nofee:   +6.41    spoof10x:   -1.93   spoof100x:   -1.93  extreme-NO: +168.64  extreme-nf: +184.88
+  L<= 10, kappa_c = 0.5                                base:  +16.06       nofee:  +44.83    spoof10x:  +16.06   spoof100x:  +16.06  extreme-NO:+1212.38  extreme-nf:+1228.62
+  L<= 10, kappa_c = 0.25                               base:   -0.16       nofee:   +9.98    spoof10x:   -0.16   spoof100x:   -0.16  extreme-NO: +560.04  extreme-nf: +576.28
+  L<= 10, kappa_c = 0.1                                base:   -5.46       nofee:   +1.54    spoof10x:   -5.46   spoof100x:   -5.46  extreme-NO: +168.64  extreme-nf: +184.88
+  L<= 24, kappa_c = 0.5                                base:   -1.93       nofee:   +6.41    spoof10x:   -1.93   spoof100x:   -1.93  extreme-NO:+1212.38  extreme-nf:+1228.62
+  L<= 24, kappa_c = 0.25                               base:   -5.46       nofee:   +1.54    spoof10x:   -5.46   spoof100x:   -5.46  extreme-NO: +560.04  extreme-nf: +576.28
+  L<= 24, kappa_c = 0.1                                base:   -7.59       nofee:   -0.59    spoof10x:   -7.59   spoof100x:   -7.59  extreme-NO: +168.64  extreme-nf: +184.88
+
+F4  absolute per-side OI cap C_abs (independent of reported depth), kappa 0.5 otherwise, fee per scenario:
+  C_abs = $500 per $1k natural depth                   base:  +13.98       nofee:  +27.84    spoof10x:  +13.98   spoof100x:  +13.98  extreme-NO: +270.11  extreme-nf: +286.35
+  C_abs = $250 per $1k natural depth                   base:   -0.16       nofee:   +9.98    spoof10x:   -0.16   spoof100x:   -0.16  extreme-NO:  +88.91  extreme-nf: +105.15
+  C_abs = $100 per $1k natural depth                   base:   -5.46       nofee:   +1.54    spoof10x:   -5.46   spoof100x:   -5.46  extreme-NO:  +13.14  extreme-nf:  +18.83
+  C_abs = $50 per $1k natural depth                    base:   -7.23       nofee:   -0.23    spoof10x:   -7.23   spoof100x:   -7.23  extreme-NO:   +2.09  extreme-nf:   +4.99
+
+STACK  kappa 0.1  +  exit tau 1800  +  absolute side cap = 0.1*5-tick depth (= $100 / $1k):
+  stacked fix                                          base:   -6.51       nofee:   +0.49    spoof10x:   -6.51   spoof100x:   -6.51  extreme-NO:  +11.13  extreme-nf:  +16.86
+  (spoof neutralised by the absolute cap; shown with spoof forced to 0 since the cap makes reported depth irrelevant)
+  stacked fix, spoofer still tries                     base:   -6.51       nofee:   +0.49    spoof10x:   -6.51   spoof100x:   -6.51  extreme-NO:  +11.13  extreme-nf:  +16.86

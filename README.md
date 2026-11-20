@@ -28,11 +28,40 @@ The keeper runs on a free Render instance that sleeps when nobody is using the s
 show as offline, wait up to a minute for it to wake. Its status is at
 [openliquid-keeper.onrender.com/health](https://openliquid-keeper.onrender.com/health).
 
-**Contents:** [What it is](#what-it-is) · [The price-push test](#the-price-push-test) ·
+**Contents:** [Stress test](#stress-tested-by-a-swarm-of-agents) · [What it is](#what-it-is) · [The price-push test](#the-price-push-test) ·
 [Architecture](#architecture) · [Live on Arc](#live-on-arc-testnet) · [Circle tools](#circle-tools) ·
 [Gemini Prediction Markets](#how-it-uses-gemini-prediction-markets) ·
 [Economic design and risks](#economic-design-and-risk-assumptions) · [Keeper](#keeper-decision-loop-and-limits) ·
-[Run it](#run-it-locally) · [Host it](#host-it) · [Where each requirement is met](#where-each-requirement-is-met)
+[Still open](#what-we-are-still-working-on) · [Run it](#run-it-locally) · [Host it](#host-it) · [Where each requirement is met](#where-each-requirement-is-met)
+
+## Stress-tested by a swarm of agents
+
+Before the current contracts were deployed, the rules were handed to a group of AI agents with one
+instruction: break them. Eleven agents were each given one line of attack on the mechanism, to
+measure the best strategy against the vault with exact enumeration and Monte Carlo at 200,000 to
+1,000,000 paths. Seven finished and reported 58 findings; four were cut off by a usage limit. Six
+more reviewed the Solidity through different lenses, reported 51 findings (many of them the same
+defect seen from two sides) and wrote failing tests for them. A randomized invariant test ran
+10,400 steps over 1,738 positions.
+
+What they found changed the design:
+
+- **A fee taken only from winners can be dodged.** Closing flat and re-opening shed 96% of the
+  crowding fee. It is now an ordinary holding cost on the crowded side.
+- **A jump that stops part of the way paid the cheap side up to +$1.30 per dollar staked.** A
+  leveraged win is now capped at the stake as well as the outright payoff. The agent's best strategy
+  against the new cap returns −$0.01 where it returned +$0.55.
+- **Selling at the price from before a goal cost the house up to 33 cents per dollar, even at 1×.**
+  A market now stops trading five minutes before kickoff.
+- **One deposit, one relayed price and one redemption, in a single block, took LP money.** Vault
+  shares now unlock ten minutes after a deposit, and the share price bounds each side of each market.
+
+What held: in every run, no position was ever paid more than the amount locked for it.
+
+Not everything is fixed. The largest open item is that a trader can choose among the prices signed
+in the last 20 seconds. The full record, with the agents' scripts, is in
+[stress-test/](stress-test/README.md). The open list is in
+[What we are still working on](docs/whitepaper/09-risks.md).
 
 ## What it is
 
@@ -58,26 +87,47 @@ to offer.
 | A briefly pushed reference price can be traded against | **Worse-of fills.** Buys fill at `max(mid, slow)`, sells at `min(mid, slow)`, where `slow` is a time-weighted price that only moves as a price is held. Calm market: the two are equal, zero slippage. |
 | Size is unlimited relative to the real book | **Depth-backed capacity.** Open interest per side ≤ κ × USD resting near the mid on the reference venue, as reported with every price. |
 | Winners may not get paid if the pool is short | **Reserved payouts.** A pre-funded vault locks each position's maximum profit when it opens. LPs cannot withdraw locked funds. Winners are paid at close. |
-| The pool ends up with a one-way bet | **Skew funding.** The crowded side pays, scaled by skew relative to capacity. |
+| Someone can step in front of a change in the LP share price | **Withdrawal delay.** Vault shares unlock ten minutes after a deposit, and the share price bounds each side of each market by what it can lose and win. |
+| The pool ends up with a one-way bet | **Crowding fee.** There is no funding between traders. The larger side of a lopsided market pays the vault up to 0.05% of its size per day, scaled by the imbalance relative to capacity. A balanced market pays nothing. |
 | A 1000× order can open already near liquidation in a fast market | **Entry guard.** An open is refused if its fill would start more than 30% of margin under water, which lowers usable leverage while the price is moving. |
 | A token minted for trading can be farmed by trading against yourself | **Fee-minted token.** OLQ is minted only against fees paid, on a decaying curve with a hard cap. Stakers earn a share of fees. Trader losses belong to the LPs who underwrite trader wins. |
 | Liquidation forfeits the whole margin | Liquidation happens at 20% of margin left; what remains after the liquidator's reward is returned to the trader. |
 
-### Prediction-market perpetuals
+### Leverage on prediction markets
 
-Listing a binary market on a perp engine unchanged does not work: prices tick in 1¢ steps, books
-are thin, and the price jumps to 0 or 1 at resolution. Event markets here use their own rules:
+Prediction markets have had almost no leverage, for a good reason. The odds can jump from 54 cents
+to 20 on one headline, and nobody can close a position in the middle of a jump. A loser at 10× can
+only lose the stake. A winner paid on the full move is owed several times that. The house is short
+the difference.
 
-- **A short is a long on NO.** PnL for a short is measured on `1 − price`, so a 1× position on
-  either side is fully collateralised and can never lose more than it put in.
-- **Tick-bounded leverage.** Maximum leverage keeps the zero-equity price at least two ticks from
-  entry: `price / 0.02` for Yes, `(1 − price) / 0.02` for No. At 50¢ that is 25×, not 1000×.
-- **Leverage compression.** The cap decays linearly to 1× over the last 24 hours before the
-  outcome starts being decided (kickoff for a match, expiry otherwise). Positions above the cap
-  can be force-closed by anyone at the normal close price, with no penalty.
+OpenLiquid's rule is that **leverage zooms the odds**. A leveraged position wins at most what its
+stake would win outright, and never more than the stake. It reaches that payout after a move
+1/leverage as large.
+
+| $100 on Yes at 54¢ | Wins $85.19 when | Loses the $100 when |
+|---|---|---|
+| Outright (1×) | the market resolves Yes | the market resolves No |
+| 5× | the odds reach 63.2¢ | the odds fall to 43.2¢ |
+| 10× | the odds reach 58.6¢ | the odds fall to 48.6¢ |
+
+- **A short is a long on No.** A 1× position on either side is a plain purchase of shares. It is
+  never liquidated and it is paid the full outright result.
+- **Win line and stop line.** The position is paid in full at its win line and stopped out near its
+  stop line, with what is left returned. Anyone can collect a position that has reached its win line.
+- **Boost.** On markets that offer it, a position can keep the leveraged win, up to ten times the
+  stake, by paying a daily premium out of the stake: `borrowed shares × p(1 − p) / days left × 2.5`.
+- **Three leverage limits.** A ceiling per market (10× on dated markets, 5× on sports). Both lines a
+  minimum distance from entry (5 ticks, or 10 on sports). And a limit that falls with the square
+  root of the time to the market's next scheduled information event, to 1× at the event.
+- **No trading in play.** A market stops trading at its expiry, five minutes before kickoff for a
+  match. Positions wait for the result. A position still leveraged then can lose but cannot win.
 - **Settlement.** When Gemini reports the contract settled, the keeper signs the final price and
   anyone can settle any position.
-- Longer averaging (5 minutes), a wider profit fee (10%) and a borrow fee on the leveraged part.
+
+Demand for this is real. Kalshi has asked the CFTC for permission to offer margin. dYdX listed a
+20× election market in 2024. Several teams are building leverage on prediction markets and most
+have settled near 1 to 1.5×, because of the jump problem above. The full rules, and what is still
+open, are in [Leverage on prediction markets](docs/whitepaper/05-prediction-markets.md).
 
 ![A Gemini prediction market as a leveraged perpetual](docs/event.png)
 
@@ -90,8 +140,10 @@ closes into the push. The oracle reports the manipulated mid faithfully in both 
 | Engine | Size the attacker could open | Attacker P&L, one leg | Cost of the move |
 |---|---|---|---|
 | Any size at the mid | $297.0M | **+$349,272** | ~$52,000 |
-| OpenLiquid | $9.9M | **+$185** | ~$52,000 |
-| OpenLiquid, push held for 60 s | $9.9M | +$7,135 | more than $52,000 |
+| OpenLiquid | $9.9M | **+$187** | ~$52,000 |
+| OpenLiquid, push held for 60 s | $9.9M | +$7,203 | more than $52,000 |
+
+A reviewer later showed that one hand-picked price sample raises the +$187 to about +$4,300. It is still far below the cost of the push, and it is listed as open.
 
 The same figures are animated on the app's Mechanics page.
 
@@ -117,7 +169,7 @@ The same figures are animated on the app's Mechanics page.
 | Path | What it is |
 |---|---|
 | `contracts/src/PriceOracle.sol` | Verifies signed updates, keeps `mid` and the `slow` price per market. Anyone can relay. |
-| `contracts/src/PerpEngine.sol` | Positions, fills, caps, funding, liquidation, event-market rules, settlement. |
+| `contracts/src/PerpEngine.sol` | Positions, fills, caps, fees, liquidation, prediction-market rules, settlement. |
 | `contracts/src/Vault.sol` | ERC-4626 USDC vault. Holds trader margin and the reserve for every open position; LP share price marks open positions at the oracle. |
 | `contracts/src/OpenLiquidToken.sol`, `Staking.sol` | Fee-minted token and USDC fee distribution. |
 | `keeper/` | Price signer, relayer, liquidation and settlement bot, small HTTP API for the frontend. |
@@ -127,21 +179,21 @@ The same figures are animated on the app's Mechanics page.
 
 ### Live on Arc testnet
 
-Chain ID `5042002`, RPC `https://rpc.testnet.arc.io`. Deployed 2026-11-15 with Hardhat.
+Chain ID `5042002`, RPC `https://rpc.testnet.arc.io`. Deployed with Hardhat.
 
 | Contract | Address |
 |---|---|
-| PerpEngine | [`0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8`](https://explorer.testnet.arc.io/address/0xa7c418e3A57292F59eCB554191D2906cd0Cd44e8) |
-| Vault (ERC-4626) | [`0x2b32560890De4070A66b47fD4242F2b817FBEF58`](https://explorer.testnet.arc.io/address/0x2b32560890De4070A66b47fD4242F2b817FBEF58) |
-| PriceOracle | [`0xbF48c715F8816649D7D56AC01e5ae19850Ae517a`](https://explorer.testnet.arc.io/address/0xbF48c715F8816649D7D56AC01e5ae19850Ae517a) |
-| OpenLiquidToken (OLQ) | [`0x0C1221ee07A921B078391512acb8fD1dCE72E6C3`](https://explorer.testnet.arc.io/address/0x0C1221ee07A921B078391512acb8fD1dCE72E6C3) |
-| Staking | [`0xb0FaFD344dE5d451638B7711206e6A3Df0902f06`](https://explorer.testnet.arc.io/address/0xb0FaFD344dE5d451638B7711206e6A3Df0902f06) |
-| Test USDC (collateral, open faucet) | [`0xE4475D526B1f625C87b3B0C56C7548016d20BB72`](https://explorer.testnet.arc.io/address/0xE4475D526B1f625C87b3B0C56C7548016d20BB72) |
+| PerpEngine | [`0xD6D4910E7cACf224c143999186f1a745c22CfdF3`](https://explorer.testnet.arc.io/address/0xD6D4910E7cACf224c143999186f1a745c22CfdF3) |
+| Vault (ERC-4626) | [`0x4eDafC142dA2d5299424b5ac0b884A194A20f7E1`](https://explorer.testnet.arc.io/address/0x4eDafC142dA2d5299424b5ac0b884A194A20f7E1) |
+| PriceOracle | [`0x3D8931Cc87d1A619546A82569E3B0dcb1535EFd5`](https://explorer.testnet.arc.io/address/0x3D8931Cc87d1A619546A82569E3B0dcb1535EFd5) |
+| OpenLiquidToken (OLQ) | [`0xF22b9D7139D0517DABA57f176Ee25A711601b9a1`](https://explorer.testnet.arc.io/address/0xF22b9D7139D0517DABA57f176Ee25A711601b9a1) |
+| Staking | [`0x40C7E6f03d0B2885976087f1903effD15c691841`](https://explorer.testnet.arc.io/address/0x40C7E6f03d0B2885976087f1903effD15c691841) |
+| Test USDC (collateral, open faucet) | [`0xaAC1cE7B8d2a84541B19C559a384207f4C6F2982`](https://explorer.testnet.arc.io/address/0xaAC1cE7B8d2a84541B19C559a384207f4C6F2982) |
 | Price signer and keeper | [`0xe386ABa1C3197D166130ec45566208b0A658F6d2`](https://explorer.testnet.arc.io/address/0xe386ABa1C3197D166130ec45566208b0A658F6d2) |
 
 Also used: Arc's native USDC (`0x3600000000000000000000000000000000000000`) as the gas token, and
 Multicall3 (`0xcA11bde05977b3631167028862bE2a173976CA11`) to batch the app's reads.
-The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.json`.
+The same addresses, with the 16 listed markets, are in `deployments/arcTestnet.json`.
 
 ### How it uses Arc
 
@@ -149,7 +201,7 @@ The same addresses, with the 15 listed markets, are in `deployments/arcTestnet.j
   settled in, the LP asset, the fee asset stakers receive, and on Arc also the gas token. A
   trader never holds a second token to pay fees.
 - **Fees are small and predictable.** Opening a position costs about 1.3 cents of USDC in gas and
-  closing one about half a cent (measured on testnet at 25 gwei). The whole deployment (six contracts, 15 markets,
+  closing one about half a cent (measured on testnet at 25 gwei). The whole deployment (six contracts, 16 markets,
   vault seeding) cost about 0.3 USDC.
 - **One-click trading without a wallet.** The demo account is a key held in the browser. The
   keeper sends it 0.2 USDC once, enough gas for about ten round trips, so a new user trades
@@ -237,11 +289,12 @@ market-data endpoints, no API key:
 ## Economic design and risk assumptions
 
 **Who is on the other side.** The vault. Traders' net PnL is the vault's, with the sign flipped.
-LPs earn trader losses, funding from the crowded side, borrow fees and 70% of profit fees; they
-pay trader wins. Stakers earn 30% of profit fees and carry no trading risk.
+LPs earn trader losses, the crowding fee, Boost premiums and 70% of profit fees; they pay trader
+wins. Stakers earn 30% of profit fees and carry no trading risk.
 
-**Fees.** Nothing to open or close. 5% of profit on crypto, stocks and commodities, 10% on event
-markets. Skew funding. A borrow fee on the leveraged part of event positions.
+**Fees.** Nothing to open or close, and no funding between traders. 5% of profit on crypto, stocks
+and commodities, 10% on prediction markets. A crowding fee on the larger side of a lopsided market.
+A Boost premium for traders who choose Boost.
 
 **Token (OLQ).** Minted only to a trader who pays a profit fee, at
 `rate(F) = R0 · (H / (H + F))²` OLQ per dollar of fee, where `F` is all fees paid so far,
@@ -254,46 +307,68 @@ USDC.
 
 **Parameters in this build** (`contracts/scripts/deploy.js`):
 
-| | Crypto | Stocks / commodities | Event markets |
-|---|---|---|---|
-| Max leverage | 1000× | 1000× | 50× before the tick and time limits |
-| Slow-price averaging | 60 s | 120 s | 300 s |
-| Capacity κ (× reference depth) | 0.5 | 0.5 | 2.0 |
-| Depth band | ±10 bps on Hyperliquid | ±10 bps on Hyperliquid | ±5 ticks on Gemini |
-| Opens paused when mid−slow gap exceeds | 20 bps | 25 bps | 5 points |
-| Profit cap | 10× margin | 10× margin | 10× margin, or the contract's natural maximum |
-| Liquidation | 20% of margin left | same | same |
+| | Crypto | Stocks / commodities | Dated prediction markets | Sports |
+|---|---|---|---|---|
+| Max leverage | 1000× | 1000× | 10× | 5× |
+| Minimum distance to each line | n/a | n/a | 5 ticks | 10 ticks |
+| Slow-price averaging | 60 s | 120 s | 300 s | 300 s |
+| Capacity per side | 0.5 × persistent depth | 0.5 × persistent depth | 0.25 × persistent depth × 2·min(p, 1−p), at most $1,000 | same |
+| Depth band | ±10 bps on Hyperliquid | ±10 bps on Hyperliquid | ±5 ticks on Gemini | same |
+| Opens paused when mid−slow gap exceeds | 20 bps | 25 bps | 5 points | 5 points |
+| Profit share | 5% | 5% | 10% | 10% |
+| Crowding fee | 0.05% of size per day at full imbalance | same | off | off |
+| Boost | n/a | n/a | scale 2.5 | off |
+| Profit cap | 10× margin or a 100% move | same | min(stake, outright payoff); outright at 1× | same |
+| Stops trading | never | never | at the result time | 5 minutes before kickoff |
+
+Liquidation at 20% of margin left, liquidator reward 5% of margin, signed price valid for 20
+seconds, LP shares unlock 10 minutes after a deposit.
 
 **Assumptions these rest on, and what breaks if they fail:**
 
 1. *Moving the reference price and holding it there costs more than it pays.* The slow price
    forces a push to be held for about the averaging time; the capacity limit bounds the size it
-   can be held against. If a reference book is far thinner than the reported depth, or κ is set
-   too high, this fails. κ = 2 on event markets is a demo setting for books with only a few
-   hundred dollars near the mid; the 5-minute slow price is the main defence there.
+   can be held against. If a reference book is far thinner than the reported depth this fails.
+   The stress test showed resting orders that never trade can inflate reported depth.
 2. *The keeper's price is honest and fresh.* One signer in this build. A dishonest or compromised
    signer can misprice every market. Production needs several independent signers and a median.
 3. *Prices move continuously enough to liquidate.* Losses are capped at margin, so a gap through
    the liquidation price is a loss the vault does not collect. The profit cap bounds the matching
    win.
-4. *Binary jumps.* An event market can jump to 0 or 1 on news before leverage has compressed. A
-   leveraged Yes plus a leveraged No held through such a jump profits at the vault's expense. This
-   is bounded by the profit cap, the capacity limit and the tick-bounded leverage, and priced by
-   the borrow fee, but it is not eliminated. Holding 1× on both sides through resolution loses the
-   fee (tested).
+4. *Jumps on prediction markets.* A position that cannot lose more than its stake always has some
+   pattern of jumps that pays it. The cap, the minimum distance and the event clock choose which
+   patterns are fair. News that moves the odds a little one way with high probability and a lot
+   the other way with low probability is not covered at unscheduled times.
 5. *Latency and price choice.* A trader may submit any signed price from the last 20 seconds that
-   is newer than the one on-chain, so they can pick the best of those. Worse-of fills delay that
-   gain on entry; on exit it is immediate. The window was cut from 60 seconds to 20 and the keeper
-   posts any 5 bp move on-chain, which bounds it without removing it.
+   is newer than the one on-chain, so they can pick the best of those. On a 10× prediction-market
+   position one tick is 20% of the stake. This is the largest open item.
 
 A review raised five specific objections (the averaging formula, the liquidation price, the
 validity window, LP solvency, and the cost to informed traders). Each is answered in
-[Objections and answers](docs/whitepaper/12-objections.md).
+[Objections and answers](docs/whitepaper/12-objections.md). One page sets the design beside
+Papertrade: [Compared with Papertrade](docs/whitepaper/13-compared-with-papertrade.md).
 
 **Honest cost to traders.** In a trending market the mid and the slow price differ, and every fill
 takes the worse one. At 100× a 3 bp gap costs about 3% of margin on entry; at 1000× it would be
 30%, which is where the entry guard starts refusing. "No slippage" is true when the market is calm
-and is not true when it is moving fast.
+and is not true when it is moving fast. On prediction markets the stress test measured what a
+trader with no information loses at maximum leverage: 7% to 16% of the stake per position.
+
+## What we are still working on
+
+Leverage on prediction markets is new and parts of the mechanics are not finished. The open items,
+each with its measured size and the intended fix, are in
+[What we are still working on](docs/whitepaper/09-risks.md). In short:
+
+- **Choosing among recent prices.** Fix: two-step fills, order now and fill at the next signed price.
+- **Selective feeding of the slow price.** Fix: the keeper signs its own average over every sample.
+- **Thin reference books.** Spoofed depth, and push and release. Fix: an absolute capacity ceiling,
+  capacity counted in contracts, a minimum holding time.
+- **News-driven "by a date" markets.** Not listed. The crowding fee clock and scale need settling first.
+- **A flicker in the mid can liquidate.** Fix: confirm against two signed prices.
+- **One keeper key, no price limit on orders, voided matches.**
+
+The changed rules have not been through a second full round of the stress test.
 
 ## Keeper: decision loop and limits
 
@@ -307,7 +382,7 @@ Every second (`keeper/src/index.js`):
    transaction every 10 s, on a 5 bps move or a 120 s heartbeat, while someone has the app open
    or a position is live; otherwise at most one a minute, on a 15 bps move or a 30 minute
    heartbeat.
-5. Scan open positions against the live price; liquidate, force-close or settle what is due. Each
+5. Scan open positions against the live price; liquidate, pay out at the win line, force-close or settle what is due. Each
    of those calls carries its own fresh signed price, so upkeep does not wait for a relay.
 
 Limits on the keeper:
@@ -329,7 +404,7 @@ Requires Node 20+.
 
 ```bash
 npm run setup          # install contracts, keeper and web dependencies
-npm test               # 30 contract tests, including the exploit replay
+npm test               # 56 contract tests, including the exploit replay
 ```
 
 Then, each in its own terminal:
@@ -396,18 +471,31 @@ while it sleeps, which is acceptable on a testnet and not anywhere else.
 ## Tests
 
 ```
-PerpEngine: crypto / equity / commodity markets   14 passing
-PriceOracle                                         3 passing
-PerpEngine: event (prediction) markets              7 passing
-Replay: the reference-price push attack              6 passing
+cd contracts && npx hardhat test
 ```
+
+The suite covers:
+
+- **Crypto, stock and commodity markets.** Worse-of fills, the dislocation and entry guards,
+  depth-backed capacity, reserved payouts, the crowding fee, liquidation and the profit cap.
+- **The oracle.** Signatures, the exact time average, and depth that has to persist.
+- **Prediction markets.** The win and stop lines, the cap on a leveraged win, 1× positions,
+  Boost, the leverage limits, the event clock, forced closes, the close of trading at expiry
+  and settlement.
+- **The vault and staking.** The share price bounds, the withdrawal delay, fee distribution.
+- **The replay.** The reference-price push attack against the engine configured both ways.
+- **Capacity.** Prediction-market capacity sized in shares, and its ceiling.
+
+56 tests. The agents' mechanism simulations are separate, in [stress-test/](stress-test/README.md), and
+the reproductions the review agents wrote against the earlier contracts are kept in
+[stress-test/code-review/](stress-test/code-review/README.md).
 
 ## Where each requirement is met
 
 | Requirement | Where |
 |---|---|
 | DeFi track: interacts with smart contracts | `contracts/src/`, deployed on Arc testnet |
-| DeFi track: economic design and risk assumptions | [Economic design and risk assumptions](#economic-design-and-risk-assumptions) |
+| DeFi track: economic design and risk assumptions | [Economic design and risk assumptions](#economic-design-and-risk-assumptions), [What we are still working on](#what-we-are-still-working-on), [stress-test/](stress-test/README.md) |
 | DeFi track: contract addresses | [Live on Arc testnet](#live-on-arc-testnet) |
 | Arc: core on-chain functionality on Arc | All positions, the vault, the oracle and the token live on Arc testnet |
 | Arc: addresses and how the project uses Arc | [Live on Arc testnet](#live-on-arc-testnet), [How it uses Arc](#how-it-uses-arc) |
@@ -420,14 +508,14 @@ Replay: the reference-price push attack              6 passing
 
 ## What we would build next
 
-- Several independent price signers with a median, and a second reference venue per market.
+- Two-step fills, so no trader can choose their price.
+- A keeper-signed average price, several independent signers with a median, and a second
+  reference venue per market.
+- A second full round of the agent stress test against the changed rules, then an audit.
 - Arc's own USDC as the only collateral, so a CCTP transfer is a deposit.
 - Circle Wallets passkey accounts with Gas Station in place of the demo key and the gas drip.
-- Leverage that compresses outside the underlying's trading hours for stocks and commodities,
-  when reference books are thinnest.
 - Hedging the vault's net exposure on the reference venues (Hyperliquid, Gemini's trading API).
-- Jump-aware margin for event markets, so the borrow fee tracks how close resolution is.
-- Partial closes, limit and stop orders, an audit.
+- Partial closes, limit and stop orders.
 
 ## Credits
 

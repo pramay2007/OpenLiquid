@@ -1,0 +1,58 @@
+======================================================================================================================
+SOCCER, YES = 'A wins in 90 min' (lambda_A=1.53, lambda_B=1.20): kick-off YES price 0.45 (fair 0.4500), dt=15s, 300000 matches
+  YES 1x frozen to the whistle        trader -0.0550 (se 0.0019)   house +0.0550 (se 0.0019)   theory house = 0.10*(1-s0) = +0.0550
+  YES 1x with R4 liquidation at 20%   trader -0.0820 (se 0.0018)   house +0.0528 (se 0.0017)   liquidated 0.595 of bets
+  NO  1x frozen to the whistle        trader -0.0450 (se 0.0016)   house +0.0450 (se 0.0016)   theory house = 0.10*(1-s0) = +0.0450
+  NO  1x with R4 liquidation at 20%   trader -0.0668 (se 0.0015)   house +0.0432 (se 0.0015)   liquidated 0.490 of bets
+  R6 last look on closes (phi = share of adverse scores dodged at the pre-score price):
+    phi=0.25  YES 1x   trader +0.0698 (se 0.0017)   house -0.0698 (se 0.0017)   exits by last look 0.227, losing bets 0.514
+    phi=0.25  NO  1x   trader +0.0966 (se 0.0013)   house -0.0966 (se 0.0013)   exits by last look 0.287, losing bets 0.318
+    phi=0.25  BOX (YES+NO, equal shares, $1 total)  trader +0.0845 (se 0.0005)   house -0.0845 (se 0.0005)   matches with a loss 0.642
+    phi=0.50  YES 1x   trader +0.1754 (se 0.0016)   house -0.1754 (se 0.0016)   exits by last look 0.410, losing bets 0.483
+    phi=0.50  NO  1x   trader +0.2048 (se 0.0011)   house -0.2048 (se 0.0011)   exits by last look 0.497, losing bets 0.199
+    phi=0.50  BOX (YES+NO, equal shares, $1 total)  trader +0.1915 (se 0.0005)   house -0.1915 (se 0.0005)   matches with a loss 0.385
+    phi=0.75  YES 1x   trader +0.2605 (se 0.0014)   house -0.2605 (se 0.0014)   exits by last look 0.555, losing bets 0.456
+    phi=0.75  NO  1x   trader +0.2829 (se 0.0008)   house -0.2829 (se 0.0008)   exits by last look 0.645, losing bets 0.095
+    phi=0.75  BOX (YES+NO, equal shares, $1 total)  trader +0.2728 (se 0.0005)   house -0.2728 (se 0.0005)   matches with a loss 0.201
+    phi=1.00  YES 1x   trader +0.3326 (se 0.0012)   house -0.3326 (se 0.0012)   exits by last look 0.668, losing bets 0.431
+    phi=1.00  NO  1x   trader +0.3382 (se 0.0006)   house -0.3382 (se 0.0006)   exits by last look 0.745, losing bets 0.000
+    phi=1.00  BOX (YES+NO, equal shares, $1 total)  trader +0.3357 (se 0.0003)   house -0.3357 (se 0.0003)   matches with a loss 0.070
+======================================================================================================================
+SOCCER strong favourite (lambda_A=2.37, lambda_B=0.90): kick-off YES price 0.70 (fair 0.7000), dt=15s, 300000 matches
+  YES 1x frozen to the whistle        trader -0.0310 (se 0.0012)   house +0.0310 (se 0.0012)   theory house = 0.10*(1-s0) = +0.0300
+  YES 1x with R4 liquidation at 20%   trader -0.0474 (se 0.0011)   house +0.0306 (se 0.0011)   liquidated 0.341 of bets
+  NO  1x frozen to the whistle        trader -0.0678 (se 0.0026)   house +0.0678 (se 0.0026)   theory house = 0.10*(1-s0) = +0.0700
+  NO  1x with R4 liquidation at 20%   trader -0.0977 (se 0.0025)   house +0.0635 (se 0.0024)   liquidated 0.722 of bets
+  R6 last look on closes (phi = share of adverse scores dodged at the pre-score price):
+    phi=0.25  YES 1x   trader +0.0311 (se 0.0010)   house -0.0311 (se 0.0010)   exits by last look 0.173, losing bets 0.296
+    phi=0.25  NO  1x   trader +0.1938 (se 0.0023)   house -0.1938 (se 0.0023)   exits by last look 0.373, losing bets 0.489
+    phi=0.25  BOX (YES+NO, equal shares, $1 total)  trader +0.0799 (se 0.0005)   house -0.0799 (se 0.0005)   matches with a loss 0.602
+    phi=0.50  YES 1x   trader +0.0814 (se 0.0009)   house -0.0814 (se 0.0009)   exits by last look 0.314, losing bets 0.294
+    phi=0.50  NO  1x   trader +0.3833 (se 0.0020)   house -0.3833 (se 0.0020)   exits by last look 0.632, losing bets 0.305
+    phi=0.50  BOX (YES+NO, equal shares, $1 total)  trader +0.1720 (se 0.0005)   house -0.1720 (se 0.0005)   matches with a loss 0.331
+    phi=0.75  YES 1x   trader +0.1224 (se 0.0007)   house -0.1224 (se 0.0007)   exits by last look 0.428, losing bets 0.293
+    phi=0.75  NO  1x   trader +0.5179 (se 0.0016)   house -0.5179 (se 0.0016)   exits by last look 0.801, losing bets 0.144
+    phi=0.75  BOX (YES+NO, equal shares, $1 total)  trader +0.2411 (se 0.0004)   house -0.2411 (se 0.0004)   matches with a loss 0.149
+    phi=1.00  YES 1x   trader +0.1546 (se 0.0006)   house -0.1546 (se 0.0006)   exits by last look 0.521, losing bets 0.292
+    phi=1.00  NO  1x   trader +0.6053 (se 0.0013)   house -0.6053 (se 0.0013)   exits by last look 0.893, losing bets 0.000
+    phi=1.00  BOX (YES+NO, equal shares, $1 total)  trader +0.2898 (se 0.0003)   house -0.2898 (se 0.0003)   matches with a loss 0.042
+======================================================================================================================
+NFL-like two-way moneyline (favourite scale k=1.158): kick-off YES price 0.65 (fair 0.6500), dt=30s, 300000 matches
+  YES 1x frozen to the whistle        trader -0.0377 (se 0.0013)   house +0.0377 (se 0.0013)   theory house = 0.10*(1-s0) = +0.0350
+  YES 1x with R4 liquidation at 20%   trader -0.0551 (se 0.0012)   house +0.0367 (se 0.0012)   liquidated 0.374 of bets
+  NO  1x frozen to the whistle        trader -0.0601 (se 0.0023)   house +0.0601 (se 0.0023)   theory house = 0.10*(1-s0) = +0.0650
+  NO  1x with R4 liquidation at 20%   trader -0.0885 (se 0.0022)   house +0.0555 (se 0.0021)   liquidated 0.670 of bets
+  R6 last look on closes (phi = share of adverse scores dodged at the pre-score price):
+    phi=0.25  YES 1x   trader +0.0762 (se 0.0009)   house -0.0762 (se 0.0009)   exits by last look 0.477, losing bets 0.331
+    phi=0.25  NO  1x   trader +0.1692 (se 0.0017)   house -0.1692 (se 0.0017)   exits by last look 0.576, losing bets 0.410
+    phi=0.25  BOX (YES+NO, equal shares, $1 total)  trader +0.1087 (se 0.0005)   house -0.1087 (se 0.0005)   matches with a loss 0.417
+    phi=0.50  YES 1x   trader +0.1250 (se 0.0006)   house -0.1250 (se 0.0006)   exits by last look 0.707, losing bets 0.306
+    phi=0.50  NO  1x   trader +0.2604 (se 0.0013)   house -0.2604 (se 0.0013)   exits by last look 0.831, losing bets 0.245
+    phi=0.50  BOX (YES+NO, equal shares, $1 total)  trader +0.1724 (se 0.0004)   house -0.1724 (se 0.0004)   matches with a loss 0.184
+    phi=0.75  YES 1x   trader +0.1448 (se 0.0004)   house -0.1448 (se 0.0004)   exits by last look 0.817, losing bets 0.278
+    phi=0.75  NO  1x   trader +0.2934 (se 0.0010)   house -0.2934 (se 0.0010)   exits by last look 0.936, losing bets 0.113
+    phi=0.75  BOX (YES+NO, equal shares, $1 total)  trader +0.1968 (se 0.0003)   house -0.1968 (se 0.0003)   matches with a loss 0.066
+    phi=1.00  YES 1x   trader +0.1514 (se 0.0003)   house -0.1514 (se 0.0003)   exits by last look 0.872, losing bets 0.248
+    phi=1.00  NO  1x   trader +0.3027 (se 0.0008)   house -0.3027 (se 0.0008)   exits by last look 0.972, losing bets 0.000
+    phi=1.00  BOX (YES+NO, equal shares, $1 total)  trader +0.2044 (se 0.0002)   house -0.2044 (se 0.0002)   matches with a loss 0.000
+python3 -u c_lastlook_1x.py  24.83s user 10.86s system 22% cpu 2:35.69 total

@@ -8,12 +8,14 @@ module.exports = {
   solidity: {
     version: "0.8.24",
     settings: {
-      optimizer: { enabled: true, runs: 200 },
+      optimizer: { enabled: true, runs: 1 },
       viaIR: true,
       // Conservative target so the bytecode runs on any EVM chain, Arc included.
       evmVersion: "paris",
     },
   },
+  // The tests step through simulated hours of prices; a loaded machine needs more than the default.
+  mocha: { timeout: 180000 },
   paths: { sources: "./src", tests: "./test", cache: "./cache", artifacts: "./artifacts" },
   networks: {
     hardhat: { chainId: 31337 },

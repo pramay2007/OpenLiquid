@@ -1,0 +1,196 @@
+======================================================================================================================================================
+A. TIGHT WINDOW (open 60 s before, close 900 s after), tau at the news = 30 days, 200,000 paths
+======================================================================================================================================================
+p0=.50 +-0.02 L=25 brief fc=off | YES leg                  trader -0.0768 (se 0.0021)  HOUSE +0.0768 (se 0.0021)  prem 0.004 share 0.047 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.02 L=25 brief fc=off | STRADDLE                 trader -0.0767 (se 0.0000)  HOUSE +0.0767 (se 0.0000)  prem 0.004 share 0.047 liqfee 0.000  P(win) 0.000  [close=1.000, liquidated=1.000]  P(straddle>0)=0.000 min=-0.08
+p0=.50 +-0.02 L=25 brief fc=on  | YES leg                  trader -0.0781 (se 0.0021)  HOUSE +0.0781 (se 0.0021)  prem 0.004 share 0.047 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=.50 +-0.02 L=25 brief fc=on  | STRADDLE                 trader -0.0767 (se 0.0000)  HOUSE +0.0767 (se 0.0000)  prem 0.004 share 0.047 liqfee 0.000  P(win) 0.000  [close=1.000, liquidated=1.000]  P(straddle>0)=0.000 min=-0.08
+p0=.50 +-0.03 L=25 brief fc=off | YES leg                  trader +0.1340 (se 0.0025)  HOUSE -0.1340 (se 0.0025)  prem 0.004 share 0.071 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=.50 +-0.03 L=25 brief fc=off | STRADDLE                 trader +0.1369 (se 0.0000)  HOUSE -0.1369 (se 0.0000)  prem 0.004 share 0.071 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+0.14
+p0=.50 +-0.03 L=25 brief fc=on  | YES leg                  trader +0.1345 (se 0.0025)  HOUSE -0.1345 (se 0.0025)  prem 0.004 share 0.071 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=.50 +-0.03 L=25 brief fc=on  | STRADDLE                 trader +0.1369 (se 0.0000)  HOUSE -0.1369 (se 0.0000)  prem 0.004 share 0.071 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+0.14
+p0=.50 +-0.05 L=25 brief fc=off | YES leg                  trader +0.5642 (se 0.0035)  HOUSE -0.5642 (se 0.0035)  prem 0.004 share 0.118 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.05 L=25 brief fc=off | STRADDLE                 trader +0.5642 (se 0.0000)  HOUSE -0.5642 (se 0.0000)  prem 0.004 share 0.118 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+0.56
+p0=.50 +-0.05 L=25 brief fc=on  | YES leg                  trader +0.5631 (se 0.0035)  HOUSE -0.5631 (se 0.0035)  prem 0.004 share 0.118 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.05 L=25 brief fc=on  | STRADDLE                 trader +0.5642 (se 0.0000)  HOUSE -0.5642 (se 0.0000)  prem 0.004 share 0.118 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+0.56
+p0=.50 +-0.10 L=25 brief fc=off | YES leg                  trader +1.6334 (se 0.0059)  HOUSE -1.6334 (se 0.0059)  prem 0.004 share 0.237 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.10 L=25 brief fc=off | STRADDLE                 trader +1.6325 (se 0.0000)  HOUSE -1.6325 (se 0.0000)  prem 0.004 share 0.237 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+1.63
+p0=.50 +-0.10 L=25 brief fc=on  | YES leg                  trader +1.6215 (se 0.0059)  HOUSE -1.6215 (se 0.0059)  prem 0.004 share 0.236 liqfee 0.000  P(win) 0.498  [close=0.498, liquidated=0.502]
+p0=.50 +-0.10 L=25 brief fc=on  | STRADDLE                 trader +1.6325 (se 0.0000)  HOUSE -1.6325 (se 0.0000)  prem 0.004 share 0.237 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+1.63
+p0=.50 +-0.20 L=25 brief fc=off | YES leg                  trader +3.7483 (se 0.0107)  HOUSE -3.7483 (se 0.0107)  prem 0.003 share 0.472 liqfee 0.000  P(win) 0.498  [close=0.498, liquidated=0.502]
+p0=.50 +-0.20 L=25 brief fc=off | STRADDLE                 trader +3.7690 (se 0.0000)  HOUSE -3.7690 (se 0.0000)  prem 0.003 share 0.474 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+3.77
+p0=.50 +-0.20 L=25 brief fc=on  | YES leg                  trader +3.7689 (se 0.0107)  HOUSE -3.7689 (se 0.0107)  prem 0.003 share 0.474 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.20 L=25 brief fc=on  | STRADDLE                 trader +3.7690 (se 0.0000)  HOUSE -3.7690 (se 0.0000)  prem 0.003 share 0.474 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+3.77
+p0=.50 +-0.30 L=25 brief fc=off | YES leg                  trader +3.9964 (se 0.0112)  HOUSE -3.9964 (se 0.0112)  prem 0.001 share 0.500 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+p0=.50 +-0.30 L=25 brief fc=off | STRADDLE                 trader +3.9992 (se 0.0000)  HOUSE -3.9992 (se 0.0000)  prem 0.001 share 0.500 liqfee 0.000  P(win) 1.000  [liquidated=1.000, collected=1.000]  P(straddle>0)=1.000 min=+4.00
+p0=.50 +-0.30 L=25 brief fc=on  | YES leg                  trader -0.5003 (se 0.0011)  HOUSE +0.5003 (se 0.0011)  prem 0.000 share 0.000 liqfee 0.000  P(win) 0.000  [liquidated=0.500, force-closed=0.500]
+p0=.50 +-0.30 L=25 brief fc=on  | STRADDLE                 trader -0.5003 (se 0.0000)  HOUSE +0.5003 (se 0.0000)  prem 0.000 share 0.000 liqfee 0.000  P(win) 0.000  [liquidated=1.000, force-closed=1.000]  P(straddle>0)=0.000 min=-0.50
+p0=.50 +-0.30 L=24 (sized under post-jump Ltime) fc=on | YES leg trader +3.9913 (se 0.0112)  HOUSE -3.9913 (se 0.0112)  prem 0.001 share 0.499 liqfee 0.000  P(win) 0.499  [liquidated=0.501, collected=0.499]
+p0=.50 +-0.30 L=24 (sized under post-jump Ltime) fc=on | STRADDLE trader +3.9992 (se 0.0000)  HOUSE -3.9992 (se 0.0000)  prem 0.001 share 0.500 liqfee 0.000  P(win) 1.000  [liquidated=1.000, collected=1.000]  P(straddle>0)=1.000 min=+4.00
+p0=.50 +-0.10 L=25 CODE premium fc=off | YES leg           trader +1.6361 (se 0.0059)  HOUSE -1.6361 (se 0.0059)  prem 0.002 share 0.237 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 +-0.10 L=25 CODE premium fc=off | STRADDLE          trader +1.6338 (se 0.0000)  HOUSE -1.6338 (se 0.0000)  prem 0.002 share 0.237 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]
+
+-- jump to (near) resolution 0.99 / 0.01, expiry still 30 days away
+p0=.50 resolution L=25 brief fc=off | YES leg              trader +3.9957 (se 0.0112)  HOUSE -3.9957 (se 0.0112)  prem 0.000 share 0.500 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+p0=.50 resolution L=25 brief fc=off | STRADDLE             trader +3.9997 (se 0.0000)  HOUSE -3.9997 (se 0.0000)  prem 0.000 share 0.500 liqfee 0.000  P(win) 1.000  [liquidated=1.000, collected=1.000]  P(straddle>0)=1.000 min=+4.00
+p0=.50 resolution L=10 brief fc=off | YES leg              trader +3.7103 (se 0.0105)  HOUSE -3.7103 (se 0.0105)  prem 0.000 share 0.468 liqfee 0.000  P(win) 0.503  [close=0.503, liquidated=0.497]
+p0=.50 resolution L=10 brief fc=off | STRADDLE             trader +3.6859 (se 0.0000)  HOUSE -3.6859 (se 0.0000)  prem 0.000 share 0.465 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+3.69
+p0=.50 resolution L=25 brief fc=on  | YES leg              trader -0.5007 (se 0.0011)  HOUSE +0.5007 (se 0.0011)  prem 0.000 share 0.000 liqfee 0.000  P(win) 0.000  [liquidated=0.500, force-closed=0.500]
+p0=.50 resolution L=25 brief fc=on  | STRADDLE             trader -0.5003 (se 0.0000)  HOUSE +0.5003 (se 0.0000)  prem 0.000 share 0.000 liqfee 0.000  P(win) 0.000  [liquidated=1.000, force-closed=1.000]  P(straddle>0)=0.000 min=-0.50
+p0=.50 resolution L=4 brief fc=on  | YES leg               trader +1.1754 (se 0.0049)  HOUSE -1.1754 (se 0.0049)  prem 0.000 share 0.186 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+p0=.50 resolution L=4 brief fc=on  | STRADDLE              trader +1.1744 (se 0.0000)  HOUSE -1.1744 (se 0.0000)  prem 0.000 share 0.186 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000 min=+1.17
+
+-- asymmetric laws (mean 0.50)
+p0=.50 law{0.70:71%, 0.01:29%} L=25 fc=off | YES leg       trader +5.8025 (se 0.0096)  HOUSE -5.8025 (se 0.0096)  prem 0.004 share 0.677 liqfee 0.000  P(win) 0.713  [close=0.713, liquidated=0.287]
+p0=.50 law{0.70:71%, 0.01:29%} L=25 fc=off | NO leg        trader +1.8678 (se 0.0101)  HOUSE -1.8678 (se 0.0101)  prem 0.000 share 0.287 liqfee 0.000  P(win) 0.287  [liquidated=0.713, collected=0.287]
+p0=.50 law{0.70:71%, 0.01:29%} L=25 fc=off | STRADDLE      trader +3.8352 (se 0.0002)  HOUSE -3.8352 (se 0.0002)  prem 0.002 share 0.482 liqfee 0.000  P(win) 1.000  [close=0.713, liquidated=1.000, collected=0.287]
+p0=.50 law{0.70:71%, 0.01:29%} L=24 fc=on | YES leg        trader +5.5334 (se 0.0093)  HOUSE -5.5334 (se 0.0093)  prem 0.004 share 0.647 liqfee 0.000  P(win) 0.710  [close=0.710, liquidated=0.290]
+p0=.50 law{0.70:71%, 0.01:29%} L=24 fc=on | NO leg         trader -0.7106 (se 0.0010)  HOUSE +0.7106 (se 0.0010)  prem 0.000 share 0.000 liqfee 0.000  P(win) 0.000  [liquidated=0.710, force-closed=0.290]
+p0=.50 law{0.70:71%, 0.01:29%} L=24 fc=on | STRADDLE       trader +2.4114 (se 0.0042)  HOUSE -2.4114 (se 0.0042)  prem 0.002 share 0.323 liqfee 0.000  P(win) 0.710  [close=0.710, liquidated=1.000, force-closed=0.290]
+p0=.50 law{0.53:80%, 0.38:20%} L=25 fc=on | YES leg        trader +0.8199 (se 0.0020)  HOUSE -0.8199 (se 0.0020)  prem 0.007 share 0.113 liqfee 0.000  P(win) 0.800  [close=0.800, liquidated=0.200]
+p0=.50 law{0.53:80%, 0.38:20%} L=25 fc=on | NO leg         trader +0.2218 (se 0.0055)  HOUSE -0.2218 (se 0.0055)  prem 0.001 share 0.114 liqfee 0.000  P(win) 0.200  [close=0.200, liquidated=0.800]
+p0=.50 law{0.53:80%, 0.38:20%} L=25 fc=on | STRADDLE       trader +0.5208 (se 0.0017)  HOUSE -0.5208 (se 0.0017)  prem 0.004 share 0.113 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]
+p0=.50 jump ~ N(0,0.03) L=25 fc=on | YES leg               trader +0.1310 (se 0.0024)  HOUSE -0.1310 (se 0.0024)  prem 0.006 share 0.056 liqfee 0.000  P(win) 0.434  [close=0.690, liquidated=0.310]
+p0=.50 jump ~ N(0,0.03) L=25 fc=on | STRADDLE              trader +0.1326 (se 0.0006)  HOUSE -0.1326 (se 0.0006)  prem 0.006 share 0.056 liqfee 0.000  P(win) 0.406  [close=1.381, liquidated=0.619]  P(straddle>0)=0.406 min=-0.08
+p0=.50 jump ~ N(0,0.03) L=15 fc=on | YES leg               trader -0.0023 (se 0.0016)  HOUSE -0.0018 (se 0.0016)  prem 0.004 share 0.034 liqfee 0.004  P(win) 0.432  [close=0.795, liquidated=0.205]
+p0=.50 jump ~ N(0,0.03) L=15 fc=on | STRADDLE              trader +0.0017 (se 0.0003)  HOUSE -0.0058 (se 0.0003)  prem 0.004 share 0.034 liqfee 0.004  P(win) 0.244  [close=1.594, liquidated=0.406]  P(straddle>0)=0.244 min=-0.09
+p0=.50 jump ~ N(0,0.08) L=25 fc=on | YES leg               trader +0.9013 (se 0.0052)  HOUSE -0.9013 (se 0.0052)  prem 0.005 share 0.150 liqfee 0.000  P(win) 0.475  [close=0.571, liquidated=0.426, force-closed=0.000, collected=0.003]
+p0=.50 jump ~ N(0,0.08) L=25 fc=on | STRADDLE              trader +0.9044 (se 0.0022)  HOUSE -0.9044 (se 0.0022)  prem 0.005 share 0.151 liqfee 0.000  P(win) 0.754  [close=1.141, liquidated=0.851, force-closed=0.000, collected=0.007]  P(straddle>0)=0.754 min=-0.50
+p0=.50 jump ~ N(0,0.08) L=15 fc=on | YES leg               trader +0.3887 (se 0.0034)  HOUSE -0.3910 (se 0.0034)  prem 0.003 share 0.090 liqfee 0.002  P(win) 0.473  [close=0.620, liquidated=0.380]
+p0=.50 jump ~ N(0,0.08) L=15 fc=on | STRADDLE              trader +0.3965 (se 0.0012)  HOUSE -0.3988 (se 0.0012)  prem 0.003 share 0.091 liqfee 0.002  P(win) 0.662  [close=1.245, liquidated=0.755]  P(straddle>0)=0.662 min=-0.09
+
+-- other price levels (tick limit: L = min(p,1-p)/0.02)
+p0=0.30 +-0.05 L=15 brief fc=on | YES leg                  trader +0.5582 (se 0.0035)  HOUSE -0.5582 (se 0.0035)  prem 0.006 share 0.118 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=0.30 +-0.05 L=15 brief fc=on | NO leg                   trader -0.0404 (se 0.0021)  HOUSE +0.0404 (se 0.0021)  prem 0.001 share 0.051 liqfee 0.000  P(win) 0.501  [close=0.501, liquidated=0.499]
+p0=0.30 +-0.05 L=15 brief fc=on | STRADDLE                 trader +0.2589 (se 0.0007)  HOUSE -0.2589 (se 0.0007)  prem 0.003 share 0.084 liqfee 0.000  P(win) 0.499  [close=1.000, liquidated=1.000]  P(straddle>0)=0.499
+p0=0.30 +-0.10 L=15 brief fc=on | YES leg                  trader +1.6265 (se 0.0059)  HOUSE -1.6265 (se 0.0059)  prem 0.005 share 0.236 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=0.30 +-0.10 L=15 brief fc=on | NO leg                   trader +0.4170 (se 0.0032)  HOUSE -0.4170 (se 0.0032)  prem 0.001 share 0.102 liqfee 0.000  P(win) 0.501  [close=0.501, liquidated=0.499]
+p0=0.30 +-0.10 L=15 brief fc=on | STRADDLE                 trader +1.0218 (se 0.0014)  HOUSE -1.0218 (se 0.0014)  prem 0.003 share 0.169 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+p0=0.80 +-0.05 L=10 brief fc=on | YES leg                  trader -0.0473 (se 0.0013)  HOUSE +0.0473 (se 0.0013)  prem 0.001 share 0.030 liqfee 0.000  P(win) 0.499  [close=1.000]
+p0=0.80 +-0.05 L=10 brief fc=on | NO leg                   trader +0.5649 (se 0.0035)  HOUSE -0.5649 (se 0.0035)  prem 0.006 share 0.118 liqfee 0.000  P(win) 0.501  [close=0.501, liquidated=0.499]
+p0=0.80 +-0.05 L=10 brief fc=on | STRADDLE                 trader +0.2588 (se 0.0011)  HOUSE -0.2588 (se 0.0011)  prem 0.004 share 0.074 liqfee 0.000  P(win) 0.501  [close=1.501, liquidated=0.499]  P(straddle>0)=0.501
+p0=0.80 +-0.10 L=10 brief fc=on | YES leg                  trader +0.0349 (se 0.0023)  HOUSE -0.0349 (se 0.0023)  prem 0.000 share 0.059 liqfee 0.000  P(win) 0.501  [close=0.501, liquidated=0.499]
+p0=0.80 +-0.10 L=10 brief fc=on | NO leg                   trader +1.6274 (se 0.0059)  HOUSE -1.6274 (se 0.0059)  prem 0.006 share 0.236 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=0.80 +-0.10 L=10 brief fc=on | STRADDLE                 trader +0.8312 (se 0.0018)  HOUSE -0.8312 (se 0.0018)  prem 0.003 share 0.148 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+p0=0.15 +-0.05 L=7 brief fc=on | YES leg                   trader +0.4883 (se 0.0033)  HOUSE -0.4883 (se 0.0033)  prem 0.006 share 0.110 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+p0=0.15 +-0.05 L=7 brief fc=on | NO leg                    trader -0.0296 (se 0.0009)  HOUSE +0.0296 (se 0.0009)  prem 0.000 share 0.020 liqfee 0.000  P(win) 0.501  [close=1.000]
+p0=0.15 +-0.05 L=7 brief fc=on | STRADDLE                  trader +0.2294 (se 0.0012)  HOUSE -0.2294 (se 0.0012)  prem 0.003 share 0.065 liqfee 0.000  P(win) 0.499  [close=1.499, liquidated=0.501]  P(straddle>0)=0.499
+
+-- shorter time to expiry at the news (E3 time limit binds); +-10 points
+tau=12d p0=.50 +-0.10 L=25 brief fc=on | STRADDLE          trader +1.6276 (se 0.0000)  HOUSE -1.6276 (se 0.0000)  prem 0.009 share 0.236 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+tau=5d p0=.50 +-0.10 L=16 brief fc=on | STRADDLE           trader +0.8547 (se 0.0000)  HOUSE -0.8547 (se 0.0000)  prem 0.014 share 0.151 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+tau=2d p0=.50 +-0.10 L=10 brief fc=on | STRADDLE           trader +0.3360 (se 0.0000)  HOUSE -0.3360 (se 0.0000)  prem 0.020 share 0.093 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+tau=1d p0=.50 +-0.10 L=7 brief fc=on | STRADDLE            trader +0.0735 (se 0.0000)  HOUSE -0.0735 (se 0.0000)  prem 0.027 share 0.064 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]  P(straddle>0)=1.000
+
+======================================================================================================================================================
+D. CONTROL: FREE MODE through the same scheduled jump (cap C = M(1-p0)/p0), tight window, fc=on
+======================================================================================================================================================
+FREE p0=0.50 +-0.05 L=25 | YES leg                         trader -0.0503 (se 0.0021)  HOUSE +0.0503 (se 0.0021)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+FREE p0=0.50 +-0.05 L=25 | NO leg                          trader -0.0497 (se 0.0021)  HOUSE +0.0497 (se 0.0021)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+FREE p0=0.50 +-0.05 L=25 | STRADDLE                        trader -0.0500 (se 0.0000)  HOUSE +0.0500 (se 0.0000)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.000  [liquidated=1.000, collected=1.000]
+FREE p0=0.50 +-0.10 L=25 | YES leg                         trader -0.0483 (se 0.0021)  HOUSE +0.0483 (se 0.0021)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.501  [liquidated=0.499, collected=0.501]
+FREE p0=0.50 +-0.10 L=25 | NO leg                          trader -0.0517 (se 0.0021)  HOUSE +0.0517 (se 0.0021)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.499  [liquidated=0.501, collected=0.499]
+FREE p0=0.50 +-0.10 L=25 | STRADDLE                        trader -0.0500 (se 0.0000)  HOUSE +0.0500 (se 0.0000)  prem 0.000 share 0.050 liqfee 0.000  P(win) 0.000  [liquidated=1.000, collected=1.000]
+FREE p0=0.40 +-0.05 L=20 | YES leg                         trader +0.1714 (se 0.0026)  HOUSE -0.1714 (se 0.0026)  prem 0.000 share 0.075 liqfee 0.000  P(win) 0.498  [liquidated=0.502, collected=0.498]
+FREE p0=0.40 +-0.05 L=20 | NO leg                          trader -0.1975 (se 0.0018)  HOUSE +0.1975 (se 0.0018)  prem 0.000 share 0.033 liqfee 0.000  P(win) 0.502  [liquidated=0.498, collected=0.502]
+FREE p0=0.40 +-0.05 L=20 | STRADDLE                        trader -0.0131 (se 0.0004)  HOUSE +0.0131 (se 0.0004)  prem 0.000 share 0.054 liqfee 0.000  P(win) 0.498  [liquidated=1.000, collected=1.000]
+FREE p0=0.30 +-0.05 L=15 | YES leg                         trader +0.5527 (se 0.0035)  HOUSE -0.5527 (se 0.0035)  prem 0.000 share 0.117 liqfee 0.000  P(win) 0.501  [liquidated=0.499, collected=0.501]
+FREE p0=0.30 +-0.05 L=15 | NO leg                          trader -0.3083 (se 0.0015)  HOUSE +0.3083 (se 0.0015)  prem 0.000 share 0.021 liqfee 0.000  P(win) 0.499  [liquidated=0.501, collected=0.499]
+FREE p0=0.30 +-0.05 L=15 | STRADDLE                        trader +0.1222 (se 0.0010)  HOUSE -0.1222 (se 0.0010)  prem 0.000 share 0.069 liqfee 0.000  P(win) 0.501  [liquidated=1.000, collected=1.000]
+FREE p0=0.30 +-0.10 L=15 | YES leg                         trader +0.5492 (se 0.0035)  HOUSE -0.5492 (se 0.0035)  prem 0.000 share 0.117 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+FREE p0=0.30 +-0.10 L=15 | NO leg                          trader -0.3068 (se 0.0015)  HOUSE +0.3068 (se 0.0015)  prem 0.000 share 0.021 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+FREE p0=0.30 +-0.10 L=15 | STRADDLE                        trader +0.1212 (se 0.0010)  HOUSE -0.1212 (se 0.0010)  prem 0.000 share 0.069 liqfee 0.000  P(win) 0.500  [liquidated=1.000, collected=1.000]
+FREE p0=0.20 +-0.08 L=10 | YES leg                         trader +1.2079 (se 0.0049)  HOUSE -1.2079 (se 0.0049)  prem 0.000 share 0.190 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=0.500]
+FREE p0=0.20 +-0.08 L=10 | NO leg                          trader -0.3873 (se 0.0014)  HOUSE +0.3873 (se 0.0014)  prem 0.000 share 0.013 liqfee 0.000  P(win) 0.500  [liquidated=0.500, collected=0.500]
+FREE p0=0.20 +-0.08 L=10 | STRADDLE                        trader +0.4103 (se 0.0018)  HOUSE -0.4103 (se 0.0018)  prem 0.000 share 0.101 liqfee 0.000  P(win) 0.500  [close=0.500, liquidated=1.000, collected=0.500]
+FREE p0=0.20 +-0.10 L=10 | YES leg                         trader +1.3049 (se 0.0051)  HOUSE -1.3049 (se 0.0051)  prem 0.000 share 0.200 liqfee 0.000  P(win) 0.501  [liquidated=0.499, collected=0.501]
+FREE p0=0.20 +-0.10 L=10 | NO leg                          trader -0.3888 (se 0.0014)  HOUSE +0.3888 (se 0.0014)  prem 0.000 share 0.012 liqfee 0.000  P(win) 0.499  [liquidated=0.501, collected=0.499]
+FREE p0=0.20 +-0.10 L=10 | STRADDLE                        trader +0.4580 (se 0.0019)  HOUSE -0.4580 (se 0.0019)  prem 0.000 share 0.106 liqfee 0.000  P(win) 0.501  [liquidated=1.000, collected=1.000]
+
+======================================================================================================================================================
+B. THE BRIEF'S WINDOW: open 24 h before, close 24 h after. Exact (two outcomes), best integer leverage for the booster
+======================================================================================================================================================
+
+ premium variant = brief, keeper force-close = on
+   tau at news         jump | best L  YES-leg EV/$  straddle EV/$ | L=5 leg, L=10 leg, L=25 leg
+           2 d       +-0.05 |      1        -0.005         -0.005 | -0.851, -0.851,   n/a 
+           2 d       +-0.10 |      1        -0.010         -0.010 | -0.851, -0.851,   n/a 
+           2 d       +-0.20 |      1        -0.020         -0.020 | -0.851, -0.851,   n/a 
+           2 d to 0.99/0.01 |      1        -0.059         -0.059 | -0.851, -0.851,   n/a 
+           7 d       +-0.05 |      1        -0.005         -0.005 | -0.795, -0.850, -0.571
+           7 d       +-0.10 |      1        -0.010         -0.010 | -0.514, -0.850, -0.571
+           7 d       +-0.20 |      6        +0.071         +0.071 | -0.007, -0.850, -0.571
+           7 d to 0.99/0.01 |      2        +0.321         +0.321 | -0.767, -0.850, -0.571
+          30 d       +-0.05 |      1        -0.005         -0.005 | -0.279, -0.306, -0.059
+          30 d       +-0.10 |     25        +1.103         +1.103 | -0.158, +0.157, +1.103
+          30 d       +-0.20 |     25        +3.621         +3.621 | +0.304, +1.085, +3.621
+          30 d to 0.99/0.01 |      4        +1.219         +1.219 | -0.566, -0.648, -0.893
+          75 d       +-0.05 |     25        +0.351         +0.351 | -0.127, -0.153, +0.351
+          75 d       +-0.10 |     25        +1.491         +1.491 | -0.093, +0.303, +1.491
+          75 d       +-0.20 |     25        +3.847         +3.847 | +0.362, +1.214, +3.847
+          75 d to 0.99/0.01 |      7        +2.551         +2.551 | +1.681, -0.560, -0.659
+
+ premium variant = brief, keeper force-close = off
+   tau at news         jump | best L  YES-leg EV/$  straddle EV/$ | L=5 leg, L=10 leg, L=25 leg
+           2 d       +-0.05 |      1        -0.005         -0.005 | -0.851, -0.851,   n/a 
+           2 d       +-0.10 |      1        -0.010         -0.010 | -0.851, -0.851,   n/a 
+           2 d       +-0.20 |      1        -0.020         -0.020 | -0.851, -0.851,   n/a 
+           2 d to 0.99/0.01 |      2        +0.193         +0.193 | -0.851, -0.851,   n/a 
+           7 d       +-0.05 |      1        -0.005         -0.005 | -0.795, -0.850, -0.851
+           7 d       +-0.10 |      1        -0.010         -0.010 | -0.514, -0.850, -0.851
+           7 d       +-0.20 |      6        +0.071         +0.071 | -0.007, -0.850, -0.851
+           7 d to 0.99/0.01 |      6        +1.839         +1.839 | +1.459, -0.850, -0.851
+          30 d       +-0.05 |      1        -0.005         -0.005 | -0.279, -0.306, -0.059
+          30 d       +-0.10 |     25        +1.103         +1.103 | -0.158, +0.157, +1.103
+          30 d       +-0.20 |     25        +3.621         +3.621 | +0.304, +1.085, +3.621
+          30 d to 0.99/0.01 |     11        +3.852         +3.852 | +1.645, +3.774, +3.646
+          75 d       +-0.05 |     25        +0.351         +0.351 | -0.127, -0.153, +0.351
+          75 d       +-0.10 |     25        +1.491         +1.491 | -0.093, +0.303, +1.491
+          75 d       +-0.20 |     25        +3.847         +3.847 | +0.362, +1.214, +3.847
+          75 d to 0.99/0.01 |     11        +3.940         +3.940 | +1.681, +3.855, +3.857
+
+ premium variant = code, keeper force-close = on
+   tau at news         jump | best L  YES-leg EV/$  straddle EV/$ | L=5 leg, L=10 leg, L=25 leg
+           2 d       +-0.05 |      1        -0.005         -0.005 | -0.851, -0.850,   n/a 
+           2 d       +-0.10 |      1        -0.010         -0.010 | -0.851, -0.850,   n/a 
+           2 d       +-0.20 |      1        -0.020         -0.020 | -0.851, -0.850,   n/a 
+           2 d to 0.99/0.01 |      1        -0.059         -0.059 | -0.851, -0.850,   n/a 
+           7 d       +-0.05 |      1        -0.005         -0.005 | -0.461, -0.644, -0.286
+           7 d       +-0.10 |      1        -0.010         -0.010 | -0.303, -0.170, -0.286
+           7 d       +-0.20 |     12        +1.009         +1.009 | +0.163, +0.767, -0.286
+           7 d to 0.99/0.01 |      2        +0.351         +0.351 | -0.634, -0.800, -0.286
+          30 d       +-0.05 |     25        +0.267         +0.267 | -0.151, -0.184, +0.267
+          30 d       +-0.10 |     25        +1.397         +1.397 | -0.109, +0.268, +1.397
+          30 d       +-0.20 |     25        +3.806         +3.806 | +0.345, +1.176, +3.806
+          30 d to 0.99/0.01 |      4        +1.241         +1.241 | -0.533, -0.574, -0.697
+          75 d       +-0.05 |     25        +0.482         +0.482 | -0.075, -0.104, +0.482
+          75 d       +-0.10 |     25        +1.609         +1.609 | -0.074, +0.347, +1.609
+          75 d       +-0.20 |     25        +3.922         +3.922 | +0.378, +1.250, +3.922
+          75 d to 0.99/0.01 |      7        +2.568         +2.568 | +1.693, -0.530, -0.579
+
+ premium variant = code, keeper force-close = off
+   tau at news         jump | best L  YES-leg EV/$  straddle EV/$ | L=5 leg, L=10 leg, L=25 leg
+           2 d       +-0.05 |      1        -0.005         -0.005 | -0.851, -0.850,   n/a 
+           2 d       +-0.10 |      1        -0.010         -0.010 | -0.851, -0.850,   n/a 
+           2 d       +-0.20 |      1        -0.020         -0.020 | -0.851, -0.850,   n/a 
+           2 d to 0.99/0.01 |      4        +0.972         +0.972 | -0.851, -0.850,   n/a 
+           7 d       +-0.05 |      1        -0.005         -0.005 | -0.461, -0.644, -0.850
+           7 d       +-0.10 |      1        -0.010         -0.010 | -0.303, -0.170, -0.850
+           7 d       +-0.20 |     12        +1.009         +1.009 | +0.163, +0.767, -0.850
+           7 d to 0.99/0.01 |     11        +3.699         +3.699 | +1.579, +3.627, -0.850
+          30 d       +-0.05 |     25        +0.267         +0.267 | -0.151, -0.184, +0.267
+          30 d       +-0.10 |     25        +1.397         +1.397 | -0.109, +0.268, +1.397
+          30 d       +-0.20 |     25        +3.806         +3.806 | +0.345, +1.176, +3.806
+          30 d to 0.99/0.01 |     11        +3.926         +3.926 | +1.674, +3.841, +3.823
+          75 d       +-0.05 |     25        +0.482         +0.482 | -0.075, -0.104, +0.482
+          75 d       +-0.10 |     25        +1.609         +1.609 | -0.074, +0.347, +1.609
+          75 d       +-0.20 |     25        +3.922         +3.922 | +0.378, +1.250, +3.922
+          75 d to 0.99/0.01 |     11        +3.970         +3.970 | +1.693, +3.882, +3.928
+
+ MC confirmation (200,000 paths) of two table-B cells, brief premium, fc=on:
+  day-before/day-after tau=30d +-0.10 L=24 YES leg           trader +1.0354 (se 0.0046)  HOUSE -1.0354 (se 0.0046)  prem 0.687 share 0.171 liqfee 0.000  P(win) 0.499  [close=0.499, liquidated=0.501]
+  day-before/day-after tau=30d +-0.10 L=24 STRADDLE          trader +1.0399 (se 0.0000)  HOUSE -1.0399 (se 0.0000)  prem 0.689 share 0.171 liqfee 0.000  P(win) 1.000  [close=1.000, liquidated=1.000]
+  day-before/day-after tau=30d +-0.05 L=10 YES leg           trader -0.3048 (se 0.0016)  HOUSE +0.3048 (se 0.0016)  prem 0.285 share 0.022 liqfee 0.000  P(win) 0.501  [close=0.501, liquidated=0.499]
+  day-before/day-after tau=30d +-0.05 L=10 STRADDLE          trader -0.3064 (se 0.0000)  HOUSE +0.3064 (se 0.0000)  prem 0.285 share 0.022 liqfee 0.000  P(win) 0.000  [close=1.000, liquidated=1.000]
+
+elapsed 182s

@@ -1,0 +1,8 @@
+
+======================================================================================================================================================
+debate as diffusion: 15% of information in 90 min, expiry 30 days later
+======================================================================================================================================================
+debate 90m L=25 boost fc=on  | one leg                     trader -0.2732 (se 0.0055)  HOUSE +0.2732 (se 0.0055)  prem 0.003 share 0.071 liqfee 0.000  P(win) 0.089  [close=0.041, liquidated=0.910, force-closed=0.000, collected=0.049]
+debate 90m L=25 boost fc=on  | STRADDLE                    trader -0.2754 (se 0.0037)  HOUSE +0.2754 (se 0.0037)  prem 0.003 share 0.071 liqfee 0.000  P(win) 0.174  [close=0.082, liquidated=1.821, force-closed=0.000, collected=0.098]  P(straddle>0)=0.174
+debate 90m L=10 boost fc=on  | one leg                     trader -0.1507 (se 0.0037)  HOUSE +0.1104 (se 0.0036)  prem 0.006 share 0.060 liqfee 0.040  P(win) 0.182  [close=0.188, liquidated=0.812, force-closed=0.000]
+debate 90m L=10 boost fc=on  | STRADDLE                    trader -0.1484 (se 0.0023)  HOUSE +0.1081 (se 0.0023)  prem 0.006 share 0.061 liqfee 0.040  P(win) 0.334  [close=0.378, liquidated=1.622, force-closed=0.000]  P(straddle>0)=0.334

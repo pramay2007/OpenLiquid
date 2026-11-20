@@ -1,62 +1,79 @@
-# Risks and assumptions
+# What we are still working on
 
-The design rests on a small number of assumptions. This page states each one, what protects it, and what happens if it fails.
+OpenLiquid is an unaudited prototype on a test network, with test funds. This page lists what we know is unfinished. We would rather a reader find it here than find it out.
 
-## 1. Moving a price and holding it costs more than it pays
+## How this list was made
 
-The slow price forces a pushed price to be held for about the averaging time before it can be traded against. The capacity limit bounds the size that can be held against it.
+Before deploying the current contracts we gave the rules to a group of AI agents and told them to break them. Eleven agents each took one line of attack on the mechanism, modelled the rules, and measured the best strategy against the vault with exact enumeration and Monte Carlo at 200,000 to 1,000,000 paths. Six more reviewed the contract code and wrote failing tests for what they found.
 
-**If it fails.** If a reference book is much thinner than the depth the keeper reports, or the capacity multiple is set too high, a held push could pay. The multiple of 2 on prediction markets is a demonstration setting for books with only a few hundred dollars near the mid. The five-minute slow price is the main defence there.
+They found a lot. Most of it is fixed, and several rules on the other pages exist because of it. What follows is what is not fixed. The full record, including the scripts, is in the repository: [stress-test/README.md](../../stress-test/README.md).
 
-## 2. The keeper's price is honest and fresh
+The sizes below were measured against the draft rules. Where a rule has since changed, the line says so.
 
-One key signs every price in this build.
+## Open
 
-**If it fails.** A dishonest or compromised signer can misprice every market, and the vault would pay for it. A stalled signer stops trading, because prices expire after 20 seconds; it does not let anyone trade on a stale price. A production version needs several independent signers and a median, and a second reference venue for each market.
+### A trader can choose among recent prices
 
-## 3. Prices move continuously enough to liquidate
+The keeper signs a price every second. The contracts accept any signed price that is newer than the one on-chain and at most 20 seconds old. A trader can hold several and submit the one that suits them.
 
-Losses are capped at margin. If a price gaps through a position's liquidation level, the part of the loss beyond the margin is never collected, and the vault bears it. The profit cap limits the matching win on the other side.
+On a prediction market one tick is a large part of a leveraged position. At 10×, with lines five ticks away, one tick is 20% of the stake. An agent measured a one-tick head start at +$0.15 to +$0.17 per dollar staked per trade at 10×. Before team news on a sports market the same edge was +$0.16 to +$0.46 at 5×.
 
-**If it fails.** Liquidity providers lose money in fast, gapping markets. This is most acute at 1000×, where 0.08% is the whole distance to liquidation.
+The fix is two-step fills: the order is recorded first, and filled at the first price signed a few seconds later. The trader's own price becomes only a limit. This is designed and not built. Shortening the window alone does not work on Arc, for the reason given in [Objections and answers](12-objections.md).
 
-## 4. Binary markets jump
+### The slow price can be fed selectively
 
-A prediction market can go straight to 0 or 1 on news while leverage is still high. A trader holding leveraged Yes and leveraged No through the jump wins on one side and loses only margin on the other, at the vault's expense.
+The slow price is computed on-chain from the samples that reach the chain. It treats the newest sample as held until the next one arrives, and the caller chooses which samples arrive. A reviewer showed that one hand-picked sample turns the replay's +$187 into about +$4,300.
 
-**What bounds it.** The profit cap, the capacity limit, tick-bounded leverage, compression to 1× before the outcome, and the borrow fee. Holding 1× on both sides through resolution loses the fee; this is tested.
+Making that one print on the reference venue is estimated to cost about $52,000, and capacity is tied to the depth that has to be bought through to make it. So the attack still loses money. It is a thinner margin than we claimed. The fix is for the keeper to sign its own average over every sample it sees.
 
-**What does not.** A surprise before compression begins. This is priced and bounded. It is not eliminated.
+### The reference book can be manipulated on thin markets
 
-## 5. Latency
+One agent attacked the Gemini reference books directly. Three findings matter.
 
-The keeper signs a price every second, and a trader may submit any signed price that is inside the 20 second validity window and newer than the one on-chain. A trader can therefore pick the best price of the last few seconds. On the way in, worse-of fills delay the gain but do not remove it. On the way out it is immediate: after a move against them, a trader can close at a price from just before it, if no newer price has reached the chain.
+- **Resting orders that never trade raise capacity.** Depth has to persist to count, but it does not have to trade. Under the draft rules, quoting for five minutes inflated capacity and the house lost about 3.3% of the spoofed depth per cycle: $3,079 on a $99,000 spoof. Each side of a prediction market now has a ceiling of $1,000 that does not come from the book, which bounds this. It does not remove it.
+- **Push and release.** Pushing the price, waiting for the slow price to follow, and releasing harvests the lag twice. Measured at $37.80 of house loss per $1,000 of depth per cycle.
+- **Cheap shares at extreme prices.** Capacity used to be counted in dollars, so near 0 or 1 it bought many shares. It is now sized in shares, which was the fix the agent proposed. This has not been re-attacked.
 
-**What bounds it.** The window, which was cut from 60 seconds to 20. The keeper posting a new price on-chain whenever one has moved 5 basis points, which closes the window early. At 1000× a single basis point is 10% of margin, so what is left still matters. A shorter window, posting every price, and several signers are the next steps.
+On the books listed today this is small, because they hold $660 to $1,800 near the mid and capacity is half of that. It would not be small on a deep book. The fixes are an absolute ceiling per market that does not come from the signed book, capacity counted in contracts, and a minimum holding time before a win is paid.
 
-## 6. Liquidity providers are short the traders
+### News-driven markets
 
-If traders as a group win, providers lose. That includes the plain case where traders are right about a real move.
+On a "will it happen by a date" market, one side gains slowly and loses all at once. A leveraged position on that side collects the gain and risks only its stake. With no fee an agent measured +$0.48 per dollar per day.
 
-Two things should be kept apart. Whether winners get paid is settled by construction: every position's maximum payout is locked before it opens, so the vault cannot owe more than it holds. Whether providers make money is not settled at all. Their worst case at any moment is the total reserve, a number anyone can read from the vault contract. The profit cap, the depth-backed capacity (which moves with the real book on every price update) and funding bound how large and how one-sided that gets. Nothing hedges it. Hedging the vault's net exposure on the reference venues is future work, and whether fees, funding and trader losses pay providers enough for this risk is something only live trading can show.
+The crowding fee is built for this and is now taken from the stake, so it cannot be shed. Two gaps remain. It is priced off the contract date, so a market whose decision comes early is under-charged: +$0.76 per day when the real window is a third of the contract. And low-leverage positions on the other side switch the fee off without protecting the vault: −$0.62 per dollar over five days in one test.
 
-## 7. Administration
+No market of this kind is listed. We would not list one with leverage until this is settled.
 
-The contracts have an owner that can list markets, change market parameters and set the signer. On testnet the owner is a single key. The owner cannot move user funds, change the token's minter or its supply curve, or withdraw from the vault. A production version needs a timelock and a multisig.
+### A flicker in the mid can liquidate a position
 
-## 8. Software
+Liquidation is judged at the live mid. On a thin book the mid can jump when one order is placed or pulled. With lines five ticks away, a four-tick flicker liquidates a position at maximum leverage. The trader gets the remaining equity back, and the position is gone. Requiring two signed prices a few seconds apart would stop it. Not built.
 
-The contracts are unaudited. They have 30 tests, including the price-push attack, and have been exercised on Arc testnet. That is not an audit.
+### Smaller items
 
-## What the tests cover
+- **One keeper key.** One key signs every price. A dishonest or compromised signer could misprice every market.
+- **No price limit on orders.** `open` and `close` fill at whatever signed price lands. A newer price can arrive between clicking and filling.
+- **Free occupation.** A balanced long and short pair, or a 1× position on a cheap contract, holds capacity and vault reserve at no cost. Bounded by each market's capacity.
+- **Voided matches.** A void is settled as whatever the reference venue reports.
+- **No pass-through of the reference venue's funding.** A long here against a short on the reference venue can earn that venue's funding. The scenario that was to size this was cut off before it reported.
+- **The market list only grows**, so vault deposits and withdrawals get more expensive as markets are added.
+- **The share price nets positions on the same side of a market.** It no longer nets across sides or markets.
 
-| Suite | Tests |
-|---|---|
-| Crypto, stock and commodity markets | 14 |
-| Prediction markets | 7 |
-| Price oracle | 3 |
-| The price-push attack | 6 |
+## Reduced
 
-A review of the design raised five specific objections. They are answered one by one in [Objections and answers](12-objections.md).
+- **Boost through news.** A boosted Yes and No pair through an anticipated jump took $1.44 to $3.40 per dollar under the draft rules. Scheduled news now forces 1×, and the premium is 2.5 times the base rate. An unscheduled jump a little larger than the stop distance still favours the pair.
+- **The cost to an honest trader.** 15% to 27% of the stake per position at maximum leverage under the draft rules, 7% to 16% with lines five ticks away.
+- **The kickoff hand-over.** From expiry on, a leveraged position cannot win. If the keeper is late, one that was losing can still get back to its stake.
+
+## What does not change
+
+Some risks are part of the design and will stay.
+
+- **Liquidity providers are short the traders.** If traders correctly call a real move, the vault loses. The rules stop a manufactured move from paying. They do nothing about a real one.
+- **A fast real move is treated like a pushed one.** A trader who is right about sudden news has to wait for the slow price to collect most of it.
+- **A funded vault is needed before the first trade**, and its size limits what can be traded.
+
+## What has not been tested
+
+The changed rules have not been through a second full round of the stress test. Four of the eleven scenarios were cut off by a usage limit before they reported, and so were the second-agent checks of the mechanism findings and the re-run against the changed rules. No part of this has been audited, and none of it has met real money.
 
 Next: [Parameters and contracts](10-parameters-and-contracts.md)

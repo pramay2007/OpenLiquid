@@ -191,12 +191,19 @@ const REASONS: Record<string, string> = {
   StalePrice: "No fresh price for this market right now. Try again in a moment.",
   FutureTimestamp: "The price is ahead of the network's clock. Try again in a moment.",
   BadLeverage: "Leverage is above this market's current limit.",
+  BoostUnavailable: "Boost is not offered here. It needs a market that prices it and leverage of 2× or more.",
+  NotCollectable: "This position has not reached its maximum win yet.",
   BadMargin: "Margin is below the minimum.",
   PositionTooLarge: "Position is above the per-position limit.",
   InsufficientLiquidity: "The vault cannot reserve the full payout for a position this large.",
   MarketResolved: "This market has resolved.",
   MarketDisabled: "This market is not open for trading.",
-  EventPriceOutOfRange: "This market is within a tick of 0 or 1; new positions are closed.",
+  EventPriceOutOfRange: "This market is within three cents of 0 or 100. Nothing new opens that close to the result.",
+  MarketClosed: "Trading on this market has closed. Positions settle at the result.",
+  NotLiquidatable: "This position is not at its liquidation level.",
+  NotForceClosable: "This position is within its leverage limit.",
+  SharesLocked: "Withdrawals open 10 minutes after a deposit. Try again shortly.",
+  DepositForSelfOnly: "A deposit can only be made for the account that sends it.",
   NotOwner: "This position belongs to another account.",
   NoPosition: "This position is already closed.",
   ERC20InsufficientBalance: "Not enough USDC.",
@@ -291,18 +298,20 @@ async function run(title: string, action: () => Promise<{ title: string; body?: 
   }
 }
 
-export function openPosition(marketId: number, isLong: boolean, margin: number, leverage: number) {
+/** @param boost Event markets: keep the full leveraged win and pay the premium out of margin. */
+export function openPosition(marketId: number, isLong: boolean, margin: number, leverage: number, boost = false) {
   const meta = marketMeta.get(marketId)!;
   return run("Order not placed", async () => {
     const amount = parseUnits(margin.toFixed(6), 6);
     await ensureAllowance(addresses.USDC, abis.usdc, addresses.Vault, amount);
-    const receipt = await send(addresses.PerpEngine, abis.engine, "open", [marketId, isLong, amount, leverage, priceDataFor(marketId)]);
+    const receipt = await send(addresses.PerpEngine, abis.engine, "open", [marketId, isLong, amount, leverage, boost, priceDataFor(marketId)]);
     const [log] = parseEventLogs({ abi: abis.engine, logs: receipt.logs, eventName: "PositionOpened" }) as unknown as {
       args: { entryPrice: bigint; notional: bigint };
     }[];
     const entry = log ? Number(log.args.entryPrice) / 1e18 : NaN;
     const side = meta.kind === "event" ? (isLong ? "Yes" : "No") : isLong ? "Long" : "Short";
-    return { title: `${side} ${meta.symbol.split("-")[0]} opened`, body: `${leverage}× at ${fmtPrice(entry, meta)}` };
+    const what = meta.kind === "event" ? side : `${side} ${meta.symbol}`;
+    return { title: `${what} opened`, body: `${leverage}×${boost ? " Boost" : ""} at ${fmtPrice(entry, meta)}` };
   });
 }
 
@@ -311,10 +320,11 @@ export function closePosition(id: bigint, marketId: number) {
   return run("Close failed", async () => {
     const receipt = await send(addresses.PerpEngine, abis.engine, "close", [id, priceDataFor(marketId)]);
     const [log] = parseEventLogs({ abi: abis.engine, logs: receipt.logs, eventName: "PositionClosed" }) as unknown as {
-      args: { pnl: bigint; fee: bigint; payout: bigint; olqMinted: bigint; exitPrice: bigint };
+      args: { pnl: bigint; fee: bigint; payout: bigint; olqMinted: bigint; exitPrice: bigint; crowdingFee: bigint };
     }[];
     if (!log) return { title: "Position closed" };
-    const fee = Number(log.args.fee) / 1e6;
+    // `pnl` is the result after any Boost premium; the crowding fee and the profit share come off a win.
+    const fee = Number(log.args.fee) / 1e6 + Number(log.args.crowdingFee) / 1e6;
     const net = Number(log.args.pnl) / 1e6 - fee;
     const minted = Number(log.args.olqMinted) / 1e18;
     const parts = [`at ${fmtPrice(Number(log.args.exitPrice) / 1e18, meta)}`];

@@ -21,12 +21,26 @@ export interface MarketState {
   id: number;
   enabled: boolean;
   isEvent: boolean;
+  /** Event markets: a position may pay a premium to keep the leveraged win (the market's Boost scale is above zero). */
+  boostEnabled: boolean;
   maxLeverage: number;
   maxProfitMult: number;
   profitFeeBps: number;
   maxGapBps: number;
+  /** Event markets: unix seconds at which trading stops and positions wait for the result. */
   expiry: number;
-  compressWindow: number;
+  /** Event markets: unix seconds of the next scheduled information event; 0 means the expiry. */
+  nextEvent: number;
+  /** Event markets: past expiry and waiting for the result. Nothing opens or closes at a price. */
+  closed: boolean;
+  /** Event markets: reaction time, in seconds, in the time-based leverage limit. */
+  reactionSeconds: number;
+  /** Event markets: the least distance from entry to either line, as a price (0.05 = 5 cents). */
+  minDistance: number;
+  /** Event markets: multiple of the implied hazard charged to the crowded side. Zero means no crowding fee. */
+  crowdingScale: number;
+  /** Event markets: multiple of the implied hazard charged for Boost. Zero means no Boost. */
+  boostScale: number;
   maxPositionNotional: number;
   longOI: number;
   shortOI: number;
@@ -35,9 +49,17 @@ export interface MarketState {
   timestamp: number;
   resolved: boolean;
   sideCap: number;
+  /** The most leverage a new position may take right now (the same on both sides). */
   maxLevLong: number;
   maxLevShort: number;
-  fundingPerDay: number;
+  /**
+   * Crowding fee the next day would add at the current state, per side. Zero on the uncrowded side.
+   * Event markets: USDC per borrowed share. Other markets: a fraction of notional.
+   */
+  feePerDayLong: number;
+  feePerDayShort: number;
+  /** Event markets: Boost premium per borrowed share per day, in USDC. The same for Yes and No. */
+  boostPerDay: number;
 }
 
 export interface PositionRow {
@@ -48,11 +70,19 @@ export interface PositionRow {
   margin: number;
   notional: number;
   entryPrice: number;
+  /** The most this position can be paid in profit. */
   reserve: number;
+  boosted: boolean;
   liquidationPrice: number;
-  /** Funding and borrow accrued so far, in USD. Positive means the trader pays. */
-  carry: number;
+  /** Price at which the position reaches its maximum profit. */
+  winPrice: number;
+  /** Crowding fee accrued so far, in USD. It comes out of the stake. */
+  crowdingFee: number;
+  /** Boost premium accrued so far, in USD. It comes out of the stake. */
+  boostPremium: number;
   liquidatable: boolean;
+  /** At its maximum profit: closing now pays it in full. */
+  collectable: boolean;
 }
 
 export interface Account {
@@ -77,6 +107,10 @@ export interface VaultState {
   myShares: bigint;
   myAssets: number;
   myMaxWithdraw: number;
+  /** Seconds after a deposit before the depositor's shares can be withdrawn. */
+  withdrawDelay: number;
+  /** Unix seconds at which the connected account's shares unlock; 0 if they are not locked. */
+  lockedUntil: number;
 }
 
 export interface StakingState {
@@ -103,7 +137,7 @@ export interface Toast {
   body?: string;
 }
 
-export type Page = "home" | "trade" | "earn" | "bridge" | "mechanics" | "docs";
+export type Page = "home" | "trade" | "predict" | "earn" | "bridge" | "mechanics" | "docs";
 
 interface Store {
   page: Page;
@@ -139,7 +173,9 @@ function fromHash(): { page: Page; selected: number; doc: string } {
   const first = deployment.markets[0]?.id ?? 1;
   const hash = typeof location === "undefined" ? "" : location.hash.slice(1);
   if (!hash) return { page: "home", selected: first, doc: "" };
-  if (hash === "earn" || hash === "mechanics" || hash === "bridge") return { page: hash, selected: first, doc: "" };
+  if (hash === "earn" || hash === "mechanics" || hash === "bridge" || hash === "predict") {
+    return { page: hash, selected: first, doc: "" };
+  }
   const doc = /^docs(?:\/([\w-]+))?$/.exec(hash);
   if (doc) return { page: "docs", selected: first, doc: doc[1] ?? "" };
   const id = Number(/^m\/(\d+)$/.exec(hash)?.[1]);

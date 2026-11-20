@@ -9,17 +9,17 @@ The oracle keeps two numbers for each market.
 | Price | What it is | How fast it moves |
 |---|---|---|
 | `mid` | The latest signed mid from the reference venue (Hyperliquid for crypto, stocks and commodities; Gemini for prediction markets). | Instantly. |
-| `slow` | A time-weighted average of the mid. | Only as time passes. |
+| `slow` | An exponential time average of the mid. | Only as time passes. |
 
-When a new price arrives, `slow` moves toward the price that was in force since the last update, in proportion to how long it was in force:
+When a new price arrives, `slow` moves toward the price that was in force since the last update, by an amount that depends only on how long it was in force:
 
 ```
-slow  ←  slow + (held − slow) × dt / (τ + dt)
+slow  ←  held + (slow − held) × e^(−dt / τ)
 ```
 
 `held` is the previous mid, `dt` is the seconds it was held for, and `τ` is the averaging time of the market (60 seconds for crypto, 120 for stocks and commodities, 300 for prediction markets).
 
-The point of this form is that a price which has only just appeared has `dt = 0`. It changes `mid` at once and does not change `slow` at all. A price has to be held to count.
+Two properties matter. A price which has only just appeared has `dt = 0`: it changes `mid` at once and does not change `slow` at all, so a price has to be held to count. And the average is exact: after a price has been held for a given time, `slow` is the same number whether the oracle was updated once or a thousand times in between. Nobody can speed it up or slow it down by choosing when prices are delivered.
 
 ## The fill rule
 
@@ -42,10 +42,10 @@ Take ETH at $3,000 with a 60 second averaging time. Someone pushes the reference
 |---|---|---|---|
 | Before the push | 3,000.00 | 3,000.00 | 3,000.00 |
 | The instant after | 3,003.60 | 3,000.00 | 3,000.00 |
-| Push held for 60 s | 3,003.60 | 3,001.80 to 3,002.28 | 3,001.80 to 3,002.28 |
+| Push held for 60 s | 3,003.60 | 3,002.28 | 3,002.28 |
 | Push released | 3,000.00 | above 3,000 and falling | 3,000.00 |
 
-A trader who opened a long before the push and closes into it gets the slow price, which has not moved. To be paid for the push, they have to keep the reference price there. After a full averaging time, `slow` has covered between 50% and 63% of the gap: 50% if the oracle was updated once in that minute, 63% if it was updated every second. Anyone can deliver a signed price, so the faster path is the one to plan for, and it is the one our tests use. [Objections and answers](12-objections.md) explains the range. Holding a price on a real venue for a minute means trading against everyone who sees it is wrong, which costs far more than touching it once.
+A trader who opened a long before the push and closes into it gets the slow price, which has not moved. To be paid for the push, they have to keep the reference price there. After a full averaging time, `slow` has covered 63% of the gap. Holding a price on a real venue for a minute means trading against everyone who sees it is wrong, which costs far more than touching it once.
 
 The other direction fails the same way. Shorting the pushed price is a sell, so it fills at `min(mid, slow)`, which is the old price. When the push is released there is nothing to collect.
 
@@ -74,6 +74,8 @@ So "no slippage" is true when the market is calm and is not true when it is movi
 ## Price freshness
 
 A signed price is usable for 20 seconds on Arc. Every trade carries its own freshly signed price in the same transaction, so a trade never depends on someone else having updated the oracle first. A price stamped in the future or older than the last one on-chain is ignored.
+
+On prediction markets, where one tick is a large share of a leveraged position's range, the keeper also posts every change of price on-chain at once. An older signed price is then no longer accepted, so the window in practice is a few seconds.
 
 The window is short on purpose. The keeper signs a new price every second, and a trader may submit any of them that is still inside the window and newer than the one on-chain. The window is therefore the most a trader can gain by choosing which price to use. It was 60 seconds in the first deployment and was cut to 20 after review. It cannot usefully go below about 15: Arc's nodes estimate a transaction's gas against a block stamped 12 seconds ahead, so a shorter window makes a perfectly fresh price look expired before the order is sent. We tried 10 and orders failed for exactly that reason.
 

@@ -1,0 +1,62 @@
+All figures per attack cycle on a book with $1,000 within 5 ticks ($200 per level), 1-tick spread, mid 49.5c,
+30 days to expiry, kappa 0.5, Gemini taker fee on.  n = 200000 paths per row; ± is one standard error.
+
+0. Honest baseline (no push): a free-mode long held T seconds then closed.  House 'loss' should be <= 0.
+   L= 1 hold  600s                              house loss     -1.62 ± 0.01 | ref cost    -0.00 ± 0.00 | attacker net     -1.62 ± 0.01 | margin   500.00 | EV per $ margin  -0.003 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 hold 3600s                              house loss     -2.24 ± 0.04 | ref cost    -0.00 ± 0.00 | attacker net     -2.24 ± 0.04 | margin   500.00 | EV per $ margin  -0.004 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 hold  600s                              house loss     -1.62 ± 0.01 | ref cost    -0.00 ± 0.00 | attacker net     -1.62 ± 0.01 | margin    50.00 | EV per $ margin  -0.032 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 hold 3600s                              house loss     -2.60 ± 0.04 | ref cost    -0.00 ± 0.00 | attacker net     -2.60 ± 0.04 | margin    50.00 | EV per $ margin  -0.052 ±0.001 | liquidated  4.16% collected  0.16%
+   L=24 hold  600s                              house loss     -1.66 ± 0.01 | ref cost    -0.00 ± 0.00 | attacker net     -1.66 ± 0.01 | margin    20.83 | EV per $ margin  -0.080 ±0.001 | liquidated  1.92% collected  0.00%
+   L=24 hold 3600s                              house loss     -3.45 ± 0.03 | ref cost    -0.00 ± 0.00 | attacker net     -3.45 ± 0.03 | margin    20.83 | EV per $ margin  -0.165 ±0.002 | liquidated 33.76% collected 12.60%
+
+1. Attack 1, stale book (no refill), one leg: leverage x push size x hold time
+   L= 1 push 1 ticks hold 150s                  house loss      3.48 ± 0.00 | ref cost     9.46 ± 0.01 | attacker net     -5.98 ± 0.01 | margin   500.00 | EV per $ margin  -0.012 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 1 ticks hold 300s                  house loss      6.04 ± 0.00 | ref cost    10.77 ± 0.01 | attacker net     -4.73 ± 0.01 | margin   500.00 | EV per $ margin  -0.009 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 1 ticks hold 600s                  house loss      9.28 ± 0.01 | ref cost    12.99 ± 0.02 | attacker net     -3.71 ± 0.02 | margin   500.00 | EV per $ margin  -0.007 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 1 ticks hold 900s                  house loss     11.19 ± 0.01 | ref cost    14.83 ± 0.03 | attacker net     -3.64 ± 0.03 | margin   500.00 | EV per $ margin  -0.007 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 2 ticks hold 150s                  house loss      6.93 ± 0.00 | ref cost    22.33 ± 0.01 | attacker net    -15.39 ± 0.01 | margin   500.00 | EV per $ margin  -0.031 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 2 ticks hold 300s                  house loss     11.72 ± 0.00 | ref cost    24.04 ± 0.02 | attacker net    -12.32 ± 0.02 | margin   500.00 | EV per $ margin  -0.025 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 2 ticks hold 600s                  house loss     17.17 ± 0.01 | ref cost    26.86 ± 0.03 | attacker net     -9.69 ± 0.03 | margin   500.00 | EV per $ margin  -0.019 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 2 ticks hold 900s                  house loss     19.87 ± 0.01 | ref cost    29.26 ± 0.04 | attacker net     -9.40 ± 0.04 | margin   500.00 | EV per $ margin  -0.019 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 3 ticks hold 150s                  house loss     10.38 ± 0.00 | ref cost    38.82 ± 0.02 | attacker net    -28.44 ± 0.02 | margin   500.00 | EV per $ margin  -0.057 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 3 ticks hold 300s                  house loss     17.40 ± 0.00 | ref cost    40.85 ± 0.03 | attacker net    -23.45 ± 0.03 | margin   500.00 | EV per $ margin  -0.047 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 3 ticks hold 600s                  house loss     25.04 ± 0.01 | ref cost    44.35 ± 0.04 | attacker net    -19.31 ± 0.04 | margin   500.00 | EV per $ margin  -0.039 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 3 ticks hold 900s                  house loss     28.55 ± 0.01 | ref cost    47.15 ± 0.05 | attacker net    -18.61 ± 0.06 | margin   500.00 | EV per $ margin  -0.037 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 5 ticks hold 150s                  house loss     17.27 ± 0.00 | ref cost    81.96 ± 0.02 | attacker net    -64.69 ± 0.02 | margin   500.00 | EV per $ margin  -0.129 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 5 ticks hold 300s                  house loss     28.76 ± 0.00 | ref cost    84.73 ± 0.04 | attacker net    -55.97 ± 0.04 | margin   500.00 | EV per $ margin  -0.112 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 5 ticks hold 600s                  house loss     40.70 ± 0.01 | ref cost    89.45 ± 0.06 | attacker net    -48.75 ± 0.06 | margin   500.00 | EV per $ margin  -0.097 ±0.000 | liquidated  0.00% collected  0.00%
+   L= 1 push 5 ticks hold 900s                  house loss     45.86 ± 0.01 | ref cost    93.06 ± 0.07 | attacker net    -47.20 ± 0.08 | margin   500.00 | EV per $ margin  -0.094 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 1 ticks hold 150s                  house loss      3.46 ± 0.00 | ref cost     9.45 ± 0.01 | attacker net     -5.99 ± 0.01 | margin    50.00 | EV per $ margin  -0.120 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 1 ticks hold 300s                  house loss      5.99 ± 0.00 | ref cost    10.77 ± 0.01 | attacker net     -4.78 ± 0.01 | margin    50.00 | EV per $ margin  -0.096 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 1 ticks hold 600s                  house loss      9.20 ± 0.01 | ref cost    12.96 ± 0.02 | attacker net     -3.76 ± 0.02 | margin    50.00 | EV per $ margin  -0.075 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 1 ticks hold 900s                  house loss     11.03 ± 0.01 | ref cost    14.78 ± 0.03 | attacker net     -3.75 ± 0.03 | margin    50.00 | EV per $ margin  -0.075 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 2 ticks hold 150s                  house loss      6.91 ± 0.00 | ref cost    22.33 ± 0.01 | attacker net    -15.42 ± 0.01 | margin    50.00 | EV per $ margin  -0.308 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 2 ticks hold 300s                  house loss     11.67 ± 0.00 | ref cost    24.07 ± 0.02 | attacker net    -12.40 ± 0.02 | margin    50.00 | EV per $ margin  -0.248 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 2 ticks hold 600s                  house loss     17.08 ± 0.01 | ref cost    26.87 ± 0.03 | attacker net     -9.80 ± 0.03 | margin    50.00 | EV per $ margin  -0.196 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 2 ticks hold 900s                  house loss     19.74 ± 0.01 | ref cost    29.19 ± 0.04 | attacker net     -9.45 ± 0.04 | margin    50.00 | EV per $ margin  -0.189 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 3 ticks hold 150s                  house loss     10.36 ± 0.00 | ref cost    38.79 ± 0.02 | attacker net    -28.44 ± 0.02 | margin    50.00 | EV per $ margin  -0.569 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 3 ticks hold 300s                  house loss     17.36 ± 0.00 | ref cost    40.94 ± 0.03 | attacker net    -23.58 ± 0.03 | margin    50.00 | EV per $ margin  -0.472 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 3 ticks hold 600s                  house loss     24.95 ± 0.01 | ref cost    44.37 ± 0.04 | attacker net    -19.42 ± 0.04 | margin    50.00 | EV per $ margin  -0.388 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 3 ticks hold 900s                  house loss     28.40 ± 0.01 | ref cost    47.17 ± 0.05 | attacker net    -18.77 ± 0.05 | margin    50.00 | EV per $ margin  -0.375 ±0.001 | liquidated  0.00% collected  0.06%
+   L=10 push 5 ticks hold 150s                  house loss     17.25 ± 0.00 | ref cost    82.00 ± 0.02 | attacker net    -64.75 ± 0.02 | margin    50.00 | EV per $ margin  -1.295 ±0.000 | liquidated  0.00% collected  0.00%
+   L=10 push 5 ticks hold 300s                  house loss     28.71 ± 0.00 | ref cost    84.84 ± 0.04 | attacker net    -56.12 ± 0.04 | margin    50.00 | EV per $ margin  -1.122 ±0.001 | liquidated  0.00% collected  0.00%
+   L=10 push 5 ticks hold 600s                  house loss     40.57 ± 0.01 | ref cost    89.34 ± 0.06 | attacker net    -48.77 ± 0.06 | margin    50.00 | EV per $ margin  -0.975 ±0.001 | liquidated  0.00% collected  4.84%
+   L=10 push 5 ticks hold 900s                  house loss     44.30 ± 0.00 | ref cost    93.20 ± 0.07 | attacker net    -48.89 ± 0.08 | margin    50.00 | EV per $ margin  -0.978 ±0.002 | liquidated  0.00% collected 39.58%
+   L=24 push 1 ticks hold 150s                  house loss      3.46 ± 0.00 | ref cost     9.47 ± 0.01 | attacker net     -6.01 ± 0.01 | margin    20.83 | EV per $ margin  -0.288 ±0.000 | liquidated  0.00% collected  0.00%
+   L=24 push 1 ticks hold 300s                  house loss      5.99 ± 0.00 | ref cost    10.80 ± 0.01 | attacker net     -4.81 ± 0.01 | margin    20.83 | EV per $ margin  -0.231 ±0.001 | liquidated  0.00% collected  0.00%
+   L=24 push 1 ticks hold 600s                  house loss      9.18 ± 0.01 | ref cost    12.94 ± 0.02 | attacker net     -3.75 ± 0.02 | margin    20.83 | EV per $ margin  -0.180 ±0.001 | liquidated  0.00% collected  0.31%
+   L=24 push 1 ticks hold 900s                  house loss     10.94 ± 0.01 | ref cost    14.79 ± 0.03 | attacker net     -3.85 ± 0.03 | margin    20.83 | EV per $ margin  -0.185 ±0.001 | liquidated  0.00% collected  3.95%
+   L=24 push 2 ticks hold 150s                  house loss      6.91 ± 0.00 | ref cost    22.35 ± 0.01 | attacker net    -15.44 ± 0.01 | margin    20.83 | EV per $ margin  -0.741 ±0.001 | liquidated  0.00% collected  0.00%
+   L=24 push 2 ticks hold 300s                  house loss     11.68 ± 0.00 | ref cost    24.02 ± 0.02 | attacker net    -12.35 ± 0.02 | margin    20.83 | EV per $ margin  -0.593 ±0.001 | liquidated  0.00% collected  0.00%
+   L=24 push 2 ticks hold 600s                  house loss     16.61 ± 0.00 | ref cost    26.93 ± 0.03 | attacker net    -10.31 ± 0.03 | margin    20.83 | EV per $ margin  -0.495 ±0.002 | liquidated  0.00% collected 22.28%
+   L=24 push 2 ticks hold 900s                  house loss     18.05 ± 0.00 | ref cost    29.17 ± 0.04 | attacker net    -11.12 ± 0.04 | margin    20.83 | EV per $ margin  -0.534 ±0.002 | liquidated  0.00% collected 45.73%
+   L=24 push 3 ticks hold 150s                  house loss     10.36 ± 0.00 | ref cost    38.80 ± 0.02 | attacker net    -28.44 ± 0.02 | margin    20.83 | EV per $ margin  -1.365 ±0.001 | liquidated  0.00% collected  0.00%
+   L=24 push 3 ticks hold 300s                  house loss     17.25 ± 0.00 | ref cost    40.89 ± 0.03 | attacker net    -23.64 ± 0.03 | margin    20.83 | EV per $ margin  -1.135 ±0.001 | liquidated  0.00% collected  8.60%
+   L=24 push 3 ticks hold 600s                  house loss     19.07 ± 0.00 | ref cost    41.86 ± 0.03 | attacker net    -22.78 ± 0.03 | margin    20.83 | EV per $ margin  -1.094 ±0.002 | liquidated  0.00% collected 100.00%
+   L=24 push 3 ticks hold 900s                  house loss     19.07 ± 0.00 | ref cost    41.71 ± 0.04 | attacker net    -22.64 ± 0.04 | margin    20.83 | EV per $ margin  -1.087 ±0.002 | liquidated  0.00% collected 100.00%
+   L=24 push 5 ticks hold 150s                  house loss     17.25 ± 0.00 | ref cost    81.94 ± 0.02 | attacker net    -64.69 ± 0.02 | margin    20.83 | EV per $ margin  -3.105 ±0.001 | liquidated  0.00% collected  0.40%
+   L=24 push 5 ticks hold 300s                  house loss     19.10 ± 0.00 | ref cost    82.35 ± 0.03 | attacker net    -63.25 ± 0.03 | margin    20.83 | EV per $ margin  -3.036 ±0.001 | liquidated  0.00% collected 100.00%
+   L=24 push 5 ticks hold 600s                  house loss     19.10 ± 0.00 | ref cost    82.41 ± 0.04 | attacker net    -63.30 ± 0.04 | margin    20.83 | EV per $ margin  -3.039 ±0.002 | liquidated  0.00% collected 100.00%
+   L=24 push 5 ticks hold 900s                  house loss     19.10 ± 0.00 | ref cost    82.30 ± 0.04 | attacker net    -63.20 ± 0.04 | margin    20.83 | EV per $ margin  -3.033 ±0.002 | liquidated  0.00% collected 100.00%
+
+[276s]

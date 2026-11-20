@@ -1,0 +1,97 @@
+============================================================================================================================
+SOCCER, YES = 'A wins in 90 min' (lambda_A=1.53, lambda_B=1.20): kick-off YES price 0.45, dt=15s, 200000 matches
+  YES L=2 | K5       | skew 0                                trader -0.0705 (se 0.0006)  house +0.0705 (se 0.0006)  win 0.073 | collect 0.000 liq 0.060 fclose 0.940 settle 0.000
+  YES L=2 | K15      | skew 0                                trader -0.0700 (se 0.0012)  house +0.0700 (se 0.0012)  win 0.184 | collect 0.017 liq 0.144 fclose 0.839 settle 0.000
+  YES L=2 | K45      | skew 0                                trader -0.0516 (se 0.0019)  house +0.0516 (se 0.0019)  win 0.359 | collect 0.266 liq 0.257 fclose 0.477 settle 0.000
+  YES L=2 | LIQ-ONLY | skew 0                                trader -0.1118 (se 0.0023)  house +0.1025 (se 0.0022)  win 0.410 | collect 0.410 liq 0.590 fclose 0.000 settle 0.000
+  YES L=2 | THIRD    | skew 0                                trader +0.0026 (se 0.0023)  house -0.0171 (se 0.0022)  win 0.457 | collect 0.454 liq 0.294 fclose 0.000 settle 0.251
+  YES L=2 | NONE     | skew 0                                trader +0.1396 (se 0.0023)  house -0.1396 (se 0.0023)  win 0.543 | collect 0.523 liq 0.000 fclose 0.000 settle 0.477
+  YES L=2 | LIQ-ONLY | skew 1 in-play only                   trader -0.3657 (se 0.0016)  house +0.3564 (se 0.0016)  win 0.371 | collect 0.410 liq 0.590 fclose 0.000 settle 0.000
+  YES L=2 | NONE     | skew 1 in-play only                   trader -0.2549 (se 0.0016)  house +0.2549 (se 0.0016)  win 0.392 | collect 0.523 liq 0.000 fclose 0.000 settle 0.477
+  YES L=2 | LIQ-ONLY | skew 1 with pre-game (1.38 C accrued) trader -0.5626 (se 0.0011)  house +0.5533 (se 0.0010)  win 0.000 | collect 0.410 liq 0.590 fclose 0.000 settle 0.000
+  YES L=5 | K5       | skew 0                                trader -0.0954 (se 0.0008)  house +0.0954 (se 0.0008)  win 0.073 | collect 0.033 liq 0.060 fclose 0.908 settle 0.000
+  YES L=5 | K15      | skew 0                                trader -0.0978 (se 0.0014)  house +0.0978 (se 0.0014)  win 0.194 | collect 0.166 liq 0.144 fclose 0.690 settle 0.000
+  YES L=5 | K45      | skew 0                                trader -0.1239 (se 0.0023)  house +0.1239 (se 0.0023)  win 0.419 | collect 0.406 liq 0.574 fclose 0.020 settle 0.000
+  YES L=5 | LIQ-ONLY | skew 0                                trader -0.1861 (se 0.0022)  house +0.1706 (se 0.0022)  win 0.379 | collect 0.379 liq 0.621 fclose 0.000 settle 0.000
+  YES L=5 | THIRD    | skew 0                                trader -0.0945 (se 0.0023)  house +0.0756 (se 0.0022)  win 0.420 | collect 0.417 liq 0.377 fclose 0.000 settle 0.206
+  YES L=5 | NONE     | skew 0                                trader +0.2414 (se 0.0023)  house -0.2414 (se 0.0023)  win 0.591 | collect 0.580 liq 0.000 fclose 0.000 settle 0.420
+  YES L=5 | LIQ-ONLY | skew 1 in-play only                   trader -0.5099 (se 0.0014)  house +0.4944 (se 0.0014)  win 0.177 | collect 0.379 liq 0.621 fclose 0.000 settle 0.000
+  YES L=5 | NONE     | skew 1 in-play only                   trader -0.3161 (se 0.0014)  house +0.3161 (se 0.0014)  win 0.178 | collect 0.580 liq 0.000 fclose 0.000 settle 0.420
+  YES L=5 | LIQ-ONLY | skew 1 with pre-game (12.86 C accrued) trader -0.6025 (se 0.0011)  house +0.5870 (se 0.0010)  win 0.000 | collect 0.379 liq 0.621 fclose 0.000 settle 0.000
+  NO  L=2 | K5       | skew 0                                trader -0.0514 (se 0.0006)  house +0.0478 (se 0.0006)  win 0.921 | collect 0.000 liq 0.077 fclose 0.923 settle 0.000
+  NO  L=2 | K15      | skew 0                                trader -0.0786 (se 0.0011)  house +0.0702 (se 0.0011)  win 0.797 | collect 0.036 liq 0.190 fclose 0.774 settle 0.000
+  NO  L=2 | K45      | skew 0                                trader -0.0499 (se 0.0016)  house +0.0499 (se 0.0016)  win 0.634 | collect 0.290 liq 0.347 fclose 0.364 settle 0.000
+  NO  L=2 | LIQ-ONLY | skew 0                                trader -0.1687 (se 0.0019)  house +0.1532 (se 0.0019)  win 0.476 | collect 0.476 liq 0.524 fclose 0.000 settle 0.000
+  NO  L=2 | THIRD    | skew 0                                trader -0.0953 (se 0.0019)  house +0.0797 (se 0.0019)  win 0.518 | collect 0.511 liq 0.361 fclose 0.000 settle 0.128
+  NO  L=2 | NONE     | skew 0                                trader +0.1031 (se 0.0019)  house -0.1031 (se 0.0019)  win 0.635 | collect 0.618 liq 0.000 fclose 0.000 settle 0.382
+  NO  L=2 | LIQ-ONLY | skew 1 in-play only                   trader -0.3690 (se 0.0015)  house +0.3535 (se 0.0015)  win 0.372 | collect 0.476 liq 0.524 fclose 0.000 settle 0.000
+  NO  L=2 | NONE     | skew 1 in-play only                   trader -0.2098 (se 0.0014)  house +0.2098 (se 0.0014)  win 0.397 | collect 0.618 liq 0.000 fclose 0.000 settle 0.382
+  NO  L=2 | LIQ-ONLY | skew 1 with pre-game (1.38 C accrued) trader -0.5191 (se 0.0011)  house +0.5035 (se 0.0011)  win 0.000 | collect 0.476 liq 0.524 fclose 0.000 settle 0.000
+  NO  L=5 | K5       | skew 0                                trader -0.0283 (se 0.0007)  house +0.0283 (se 0.0007)  win 0.921 | collect 0.031 liq 0.077 fclose 0.892 settle 0.000
+  NO  L=5 | K15      | skew 0                                trader -0.0098 (se 0.0012)  house +0.0098 (se 0.0012)  win 0.798 | collect 0.139 liq 0.189 fclose 0.672 settle 0.000
+  NO  L=5 | K45      | skew 0                                trader +0.0852 (se 0.0018)  house -0.0852 (se 0.0018)  win 0.643 | collect 0.335 liq 0.338 fclose 0.326 settle 0.000
+  NO  L=5 | LIQ-ONLY | skew 0                                trader -0.0224 (se 0.0019)  house +0.0224 (se 0.0019)  win 0.563 | collect 0.563 liq 0.437 fclose 0.000 settle 0.000
+  NO  L=5 | THIRD    | skew 0                                trader +0.2539 (se 0.0017)  house -0.2539 (se 0.0017)  win 0.722 | collect 0.715 liq 0.000 fclose 0.000 settle 0.285
+  NO  L=5 | NONE     | skew 0                                trader +0.2539 (se 0.0017)  house -0.2539 (se 0.0017)  win 0.722 | collect 0.715 liq 0.000 fclose 0.000 settle 0.285
+  NO  L=5 | LIQ-ONLY | skew 1 in-play only                   trader -0.3839 (se 0.0013)  house +0.3839 (se 0.0013)  win 0.149 | collect 0.563 liq 0.437 fclose 0.000 settle 0.000
+  NO  L=5 | NONE     | skew 1 in-play only                   trader -0.2247 (se 0.0011)  house +0.2247 (se 0.0011)  win 0.150 | collect 0.715 liq 0.000 fclose 0.000 settle 0.285
+  NO  L=5 | LIQ-ONLY | skew 1 with pre-game (12.86 C accrued) trader -0.4370 (se 0.0011)  house +0.4370 (se 0.0011)  win 0.000 | collect 0.563 liq 0.437 fclose 0.000 settle 0.000
+  Two-sided book with equal borrowed shares on YES and NO (skew 0 for both), house P&L per $1 of total margin:
+    L=2 K15     : house +0.0701 (se 0.0002)
+    L=2 LIQ-ONLY: house +0.1303 (se 0.0006)
+    L=2 THIRD   : house +0.0361 (se 0.0007)
+    L=2 NONE    : house -0.1195 (se 0.0008)
+    L=5 K15     : house +0.0494 (se 0.0002)
+    L=5 LIQ-ONLY: house +0.0891 (se 0.0005)
+    L=5 THIRD   : house -0.1056 (se 0.0009)
+    L=5 NONE    : house -0.2483 (se 0.0010)
+
+============================================================================================================================
+NFL-like two-way moneyline (favourite scale k=1.158): kick-off YES price 0.65, dt=30s, 200000 matches
+  YES L=2 | K5       | skew 0                                trader -0.0228 (se 0.0003)  house +0.0228 (se 0.0003)  win 0.097 | collect 0.000 liq 0.001 fclose 0.999 settle 0.000
+  YES L=2 | K15      | skew 0                                trader -0.0504 (se 0.0006)  house +0.0504 (se 0.0006)  win 0.249 | collect 0.012 liq 0.010 fclose 0.978 settle 0.000
+  YES L=2 | K45      | skew 0                                trader -0.0647 (se 0.0010)  house +0.0632 (se 0.0010)  win 0.445 | collect 0.157 liq 0.083 fclose 0.760 settle 0.000
+  YES L=2 | LIQ-ONLY | skew 0                                trader -0.1211 (se 0.0016)  house +0.1098 (se 0.0016)  win 0.578 | collect 0.576 liq 0.420 fclose 0.000 settle 0.004
+  YES L=2 | THIRD    | skew 0                                trader -0.0794 (se 0.0016)  house +0.0652 (se 0.0015)  win 0.603 | collect 0.596 liq 0.303 fclose 0.000 settle 0.101
+  YES L=2 | NONE     | skew 0                                trader +0.0752 (se 0.0015)  house -0.0752 (se 0.0015)  win 0.724 | collect 0.699 liq 0.000 fclose 0.000 settle 0.301
+  YES L=2 | LIQ-ONLY | skew 1 in-play only                   trader -0.3388 (se 0.0012)  house +0.3275 (se 0.0012)  win 0.287 | collect 0.576 liq 0.420 fclose 0.000 settle 0.004
+  YES L=2 | NONE     | skew 1 in-play only                   trader -0.2132 (se 0.0011)  house +0.2132 (se 0.0011)  win 0.287 | collect 0.699 liq 0.000 fclose 0.000 settle 0.301
+  YES L=2 | LIQ-ONLY | skew 1 with pre-game (1.80 C accrued) trader -0.4013 (se 0.0011)  house +0.3901 (se 0.0010)  win 0.000 | collect 0.576 liq 0.420 fclose 0.000 settle 0.004
+  YES L=5 | K5       | skew 0                                trader -0.0387 (se 0.0006)  house +0.0387 (se 0.0006)  win 0.097 | collect 0.022 liq 0.048 fclose 0.930 settle 0.000
+  YES L=5 | K15      | skew 0                                trader -0.1071 (se 0.0010)  house +0.1065 (se 0.0010)  win 0.255 | collect 0.145 liq 0.126 fclose 0.729 settle 0.000
+  YES L=5 | K45      | skew 0                                trader -0.1028 (se 0.0014)  house +0.1028 (se 0.0014)  win 0.488 | collect 0.394 liq 0.226 fclose 0.381 settle 0.000
+  YES L=5 | LIQ-ONLY | skew 0                                trader -0.1944 (se 0.0016)  house +0.1905 (se 0.0016)  win 0.538 | collect 0.538 liq 0.462 fclose 0.000 settle 0.000
+  YES L=5 | THIRD    | skew 0                                trader +0.0404 (se 0.0015)  house -0.0484 (se 0.0015)  win 0.692 | collect 0.687 liq 0.160 fclose 0.000 settle 0.153
+  YES L=5 | NONE     | skew 0                                trader +0.1798 (se 0.0013)  house -0.1798 (se 0.0013)  win 0.795 | collect 0.782 liq 0.000 fclose 0.000 settle 0.218
+  YES L=5 | LIQ-ONLY | skew 1 in-play only                   trader -0.4208 (se 0.0012)  house +0.4169 (se 0.0012)  win 0.157 | collect 0.538 liq 0.462 fclose 0.000 settle 0.000
+  YES L=5 | NONE     | skew 1 in-play only                   trader -0.1709 (se 0.0010)  house +0.1709 (se 0.0010)  win 0.158 | collect 0.782 liq 0.000 fclose 0.000 settle 0.218
+  YES L=5 | LIQ-ONLY | skew 1 with pre-game (14.54 C accrued) trader -0.4551 (se 0.0011)  house +0.4512 (se 0.0011)  win 0.000 | collect 0.538 liq 0.462 fclose 0.000 settle 0.000
+  NO  L=2 | K5       | skew 0                                trader -0.0561 (se 0.0006)  house +0.0531 (se 0.0005)  win 0.072 | collect 0.000 liq 0.065 fclose 0.935 settle 0.000
+  NO  L=2 | K15      | skew 0                                trader -0.0793 (se 0.0011)  house +0.0733 (se 0.0010)  win 0.727 | collect 0.001 liq 0.157 fclose 0.842 settle 0.000
+  NO  L=2 | K45      | skew 0                                trader -0.0514 (se 0.0018)  house +0.0449 (se 0.0018)  win 0.521 | collect 0.043 liq 0.297 fclose 0.661 settle 0.000
+  NO  L=2 | LIQ-ONLY | skew 0                                trader -0.1667 (se 0.0027)  house +0.1435 (se 0.0026)  win 0.296 | collect 0.294 liq 0.702 fclose 0.000 settle 0.003
+  NO  L=2 | THIRD    | skew 0                                trader -0.1042 (se 0.0027)  house +0.0781 (se 0.0027)  win 0.317 | collect 0.313 liq 0.534 fclose 0.000 settle 0.154
+  NO  L=2 | NONE     | skew 0                                trader +0.1988 (se 0.0030)  house -0.1988 (se 0.0030)  win 0.449 | collect 0.431 liq 0.000 fclose 0.000 settle 0.569
+  NO  L=2 | LIQ-ONLY | skew 1 in-play only                   trader -0.5923 (se 0.0013)  house +0.5691 (se 0.0013)  win 0.120 | collect 0.294 liq 0.702 fclose 0.000 settle 0.003
+  NO  L=2 | NONE     | skew 1 in-play only                   trader -0.4806 (se 0.0014)  house +0.4806 (se 0.0014)  win 0.124 | collect 0.431 liq 0.000 fclose 0.000 settle 0.569
+  NO  L=2 | LIQ-ONLY | skew 1 with pre-game (1.80 C accrued) trader -0.6617 (se 0.0010)  house +0.6385 (se 0.0009)  win 0.000 | collect 0.294 liq 0.702 fclose 0.000 settle 0.003
+  NO  L=5 | K5       | skew 0                                trader -0.0574 (se 0.0008)  house +0.0554 (se 0.0008)  win 0.072 | collect 0.001 liq 0.108 fclose 0.891 settle 0.000
+  NO  L=5 | K15      | skew 0                                trader -0.0167 (se 0.0017)  house +0.0126 (se 0.0016)  win 0.727 | collect 0.074 liq 0.257 fclose 0.669 settle 0.000
+  NO  L=5 | K45      | skew 0                                trader +0.1367 (se 0.0025)  house -0.1367 (se 0.0025)  win 0.538 | collect 0.258 liq 0.349 fclose 0.394 settle 0.000
+  NO  L=5 | LIQ-ONLY | skew 0                                trader -0.0554 (se 0.0028)  house +0.0450 (se 0.0028)  win 0.346 | collect 0.346 liq 0.654 fclose 0.000 settle 0.000
+  NO  L=5 | THIRD    | skew 0                                trader +0.2842 (se 0.0029)  house -0.2966 (se 0.0029)  win 0.472 | collect 0.469 liq 0.253 fclose 0.000 settle 0.278
+  NO  L=5 | NONE     | skew 0                                trader +0.5803 (se 0.0029)  house -0.5803 (se 0.0029)  win 0.592 | collect 0.587 liq 0.000 fclose 0.000 settle 0.413
+  NO  L=5 | LIQ-ONLY | skew 1 in-play only                   trader -0.5842 (se 0.0013)  house +0.5738 (se 0.0012)  win 0.088 | collect 0.346 liq 0.654 fclose 0.000 settle 0.000
+  NO  L=5 | NONE     | skew 1 in-play only                   trader -0.3580 (se 0.0013)  house +0.3580 (se 0.0013)  win 0.088 | collect 0.587 liq 0.000 fclose 0.000 settle 0.413
+  NO  L=5 | LIQ-ONLY | skew 1 with pre-game (14.54 C accrued) trader -0.6344 (se 0.0010)  house +0.6240 (se 0.0010)  win 0.000 | collect 0.346 liq 0.654 fclose 0.000 settle 0.000
+  Two-sided book with equal borrowed shares on YES and NO (skew 0 for both), house P&L per $1 of total margin:
+    L=2 K15     : house +0.0584 (se 0.0002)
+    L=2 LIQ-ONLY: house +0.1216 (se 0.0007)
+    L=2 THIRD   : house +0.0697 (se 0.0007)
+    L=2 NONE    : house -0.1184 (se 0.0008)
+    L=5 K15     : house +0.0736 (se 0.0002)
+    L=5 LIQ-ONLY: house +0.1396 (se 0.0006)
+    L=5 THIRD   : house -0.1353 (se 0.0010)
+    L=5 NONE    : house -0.3200 (se 0.0010)
+
+python3 -u b_survivors.py  44.55s user 13.34s system 38% cpu 2:28.54 total

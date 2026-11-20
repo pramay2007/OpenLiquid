@@ -1,0 +1,16 @@
+model speed: 0.0094 half-cent changes per second = 2.81 per slow time constant
+YES at own price 0.665, 16x: stop 4.16 ticks, win 2.09 ticks; exact lattice (no lag) EV -0.1072, P(win) 0.5833 (claim 0.665)
+   lam*tau=0.30 passive (collect only)      EV -0.1109 +-0.0015 | P(paid a profit) 0.5806 P(liq) 0.4194 | hold 9.85 h
+   lam*tau=0.30 active (best manual close)  EV -0.0648 +-0.0010 | P(paid a profit) 0.7636 P(liq) 0.2364 | hold 4.24 h
+   lam*tau=1.00 passive (collect only)      EV -0.1261 +-0.0015 | P(paid a profit) 0.5693 P(liq) 0.4307 | hold 3.10 h
+   lam*tau=1.00 active (best manual close)  EV -0.0663 +-0.0011 | P(paid a profit) 0.7324 P(liq) 0.2676 | hold 1.55 h
+   lam*tau=2.81 passive (collect only)      EV -0.1637 +-0.0015 | P(paid a profit) 0.5413 P(liq) 0.4587 | hold 1.24 h
+   lam*tau=2.81 active (best manual close)  EV -0.0853 +-0.0012 | P(paid a profit) 0.6832 P(liq) 0.3168 | hold 0.73 h
+NO  at own price 0.335, 16x: stop 2.09 ticks, win 4.16 ticks; exact lattice (no lag) EV -0.1426, P(win) 0.3077 (claim 0.335)
+   lam*tau=0.30 passive (collect only)      EV -0.1451 +-0.0029 | P(paid a profit) 0.3068 P(liq) 0.6932 | hold 10.09 h
+   lam*tau=0.30 active (best manual close)  EV -0.1016 +-0.0015 | P(paid a profit) 0.6507 P(liq) 0.3493 | hold 2.44 h
+   lam*tau=1.00 passive (collect only)      EV -0.1654 +-0.0029 | P(paid a profit) 0.2995 P(liq) 0.7005 | hold 3.14 h
+   lam*tau=1.00 active (best manual close)  EV -0.0962 +-0.0017 | P(paid a profit) 0.6108 P(liq) 0.3892 | hold 0.90 h
+   lam*tau=2.81 passive (collect only)      EV -0.2053 +-0.0028 | P(paid a profit) 0.2852 P(liq) 0.7148 | hold 1.20 h
+   lam*tau=2.81 active (best manual close)  EV -0.0910 +-0.0019 | P(paid a profit) 0.5552 P(liq) 0.4448 | hold 0.44 h
+python3 -u e11_live_geometry.py  34.59s user 10.97s system 24% cpu 3:04.05 total

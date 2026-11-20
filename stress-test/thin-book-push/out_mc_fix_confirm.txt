@@ -1,0 +1,12 @@
+MC confirmation of the capacity fix under book noise (share-based capacity, kappa_sh 0.1, absolute share cap 500 contracts).
+Compared with the current rule (USD capacity, kappa 0.5) on the same paths/scenarios.
+
+--- current rules (kappa 0.5 USD depth) ---
+   base two-leg L10 push2 h900+900              house loss     37.78 ± 0.02 | ref cost    29.16 ± 0.04 | attacker net     +8.62 ± 0.03 | margin   100.00 | EV per $ margin  +0.086 ±0.000 | liquidated  0.00% collected  0.00%
+   spoof100x two-leg L10 push2 h600+900         house loss   3079.49 ± 1.86 | ref cost    26.86 ± 0.03 | attacker net  +3052.63 ± 1.85 | margin  9505.00 | EV per $ margin  +0.321 ±0.000 | liquidated  0.00% collected  0.00%
+--- recommended capacity fix (share cap kappa_sh 0.1, abs 500 contracts) ---
+   base two-leg L10 push2 h900+900              house loss      7.12 ± 0.00 | ref cost    29.16 ± 0.04 | attacker net    -22.05 ± 0.04 | margin    18.82 | EV per $ margin  -1.169 ±0.002 | liquidated  0.00% collected  0.00%
+   spoof100x two-leg L10 push2 h600+900         house loss     16.04 ± 0.01 | ref cost    26.86 ± 0.03 | attacker net    -10.82 ± 0.03 | margin    49.50 | EV per $ margin  -0.219 ±0.001 | liquidated  0.00% collected  0.00%
+
+Honest-trader baseline on the fixed capacity (should still be <= 0 house loss): L10 hold 3600 no push
+   honest L10 h3600                             house loss     -0.49 ± 0.01 | ref cost    -0.00 ± 0.00 | attacker net     -0.49 ± 0.01 | margin     9.53 | EV per $ margin  -0.051 ±0.001 | liquidated  4.16% collected  0.14%

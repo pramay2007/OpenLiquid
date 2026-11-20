@@ -1,0 +1,1 @@
+python3 e1_crowding_1000x.py 200000 > e1_out.txt 2>&1  56.39s user 4.80s system 131% cpu 46.461 total

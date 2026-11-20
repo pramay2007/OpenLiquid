@@ -104,18 +104,6 @@
     },
     {
       "id": 102,
-      "symbol": "NCAAF-2611211930-IOW-ILL-M-IOW",
-      "name": "Iowa vs Illinois",
-      "outcome": "Iowa",
-      "category": "Sports",
-      "kind": "event",
-      "source": "gemini",
-      "ref": "GEMI-NCAAF-2611211930-IOW-ILL-M-IOW",
-      "eventTicker": "NCAAF-2611211930-IOW-ILL-M",
-      "expiry": 1795289400
-    },
-    {
-      "id": 103,
       "symbol": "BTC2611302200-HI60000",
       "name": "BTC price on November 30",
       "outcome": "$60,000 or above",
@@ -127,16 +115,40 @@
       "expiry": 1796076000
     },
     {
-      "id": 104,
-      "symbol": "ZEC2611302200-HI1040",
-      "name": "ZEC price on November 30",
-      "outcome": "$1,040 or above",
-      "category": "Crypto",
+      "id": 103,
+      "symbol": "NFL-2611261800-CHI-DET-M-CHI",
+      "name": "Chicago vs Detroit",
+      "outcome": "Chicago",
+      "category": "Sports",
       "kind": "event",
       "source": "gemini",
-      "ref": "GEMI-ZEC2611302200-HI1040",
-      "eventTicker": "ZEC2611302200",
-      "expiry": 1796076000
+      "ref": "GEMI-NFL-2611261800-CHI-DET-M-CHI",
+      "eventTicker": "NFL-2611261800-CHI-DET-M",
+      "expiry": 1795716000
+    },
+    {
+      "id": 104,
+      "symbol": "NFL-2611260100-GB-LAR-M-LAR",
+      "name": "Green Bay vs Los Angeles R",
+      "outcome": "Los Angeles R",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-NFL-2611260100-GB-LAR-M-LAR",
+      "eventTicker": "NFL-2611260100-GB-LAR-M",
+      "expiry": 1795654800
+    },
+    {
+      "id": 105,
+      "symbol": "NFL-2611262130-PHI-DAL-M-DAL",
+      "name": "Philadelphia vs Dallas",
+      "outcome": "Dallas",
+      "category": "Sports",
+      "kind": "event",
+      "source": "gemini",
+      "ref": "GEMI-NFL-2611262130-PHI-DAL-M-DAL",
+      "eventTicker": "NFL-2611262130-PHI-DAL-M",
+      "expiry": 1795728600
     }
   ]
 }

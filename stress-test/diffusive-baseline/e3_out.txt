@@ -1,0 +1,59 @@
+(1) half-cent lattice, share q of mid changes are whole-cent steps: best EV over all (price, integer L)
+     q   best EV (optimal stop)       at (p0, L, stop ticks)   best EV (plain hold)
+  0.50                  -0.0013   (0.6, 2, np.float64(30.0))                -0.0417
+  0.70                  -0.0014   (0.6, 2, np.float64(30.0))                -0.0342
+  0.80                  -0.0015   (0.6, 2, np.float64(30.0))                -0.0340
+  0.85                  -0.0004 (0.555, 22, np.float64(2.523))                -0.0358
+  0.90                  +0.0052 (0.555, 22, np.float64(2.523))                -0.0279
+  0.95                  +0.0158 (0.38, 15, np.float64(2.533))                -0.0105
+  0.98                  +0.0275 (0.33, 13, np.float64(2.538))                +0.0070
+  1.00                  +0.0412 (0.255, 10, np.float64(2.55))                +0.0362
+
+(2a) intent (a) check: ONE symmetric jump of +-J cents hits a fresh max-leverage position (no other moves).
+     Unleveraged bookmaker: EV 0 to the bettor.  Free mode, per $1 margin, after the 10% share:
+   p0   L   J  win if up  loss if down  EV per jump  1x outright EV
+ 0.20  10   4     +1.800        -1.000       +0.400          -0.010
+ 0.20  10   8     +3.600        -1.000       +1.300          -0.020
+ 0.20  10  15     +3.600        -1.000       +1.300          -0.037
+ 0.35  17   5     +1.671        -1.000       +0.336          -0.007
+ 0.50  25   5     +0.900        -1.000       -0.050          -0.005
+ 0.50  25  20     +0.900        -1.000       -0.050          -0.020
+ 0.65  17   5     +0.485        -1.000       -0.258          -0.004
+ 0.80  10   8     +0.225        -1.000       -0.388          -0.005
+
+(2b) mostly-diffusive market: whole-cent walk, a share mu of mid changes are +-J cent jumps.
+     EV per $1 margin of the plain max-leverage hold bet; mu* = share at which it turns positive.
+   p0   L   J | mu=0      mu=0.005  mu=0.01   mu=0.02   mu=0.05   mu=0.1    | mu* (hold)  mu* (optimal stop)
+ 0.20  10   3 |   -0.0800   -0.0746   -0.0694   -0.0595   -0.0334   +0.0010 |     0.0983     0.0608
+ 0.20  10   5 |   -0.0800   -0.0622   -0.0455   -0.0149   +0.0592   +0.1452 |     0.0253     0.0172
+ 0.20  10  10 |   -0.0800   -0.0439   -0.0093   +0.0561   +0.2256   +0.4432 |     0.0114     0.0083
+ 0.30  15   3 |   -0.1143   -0.1105   -0.1069   -0.1000   -0.0815   -0.0569 |     0.3083     0.0608
+ 0.30  15   5 |   -0.1143   -0.1043   -0.0945   -0.0755   -0.0229   +0.0524 |     0.0642     0.0235
+ 0.30  15  10 |   -0.1143   -0.1033   -0.0925   -0.0715   -0.0128   +0.0729 |     0.0570     0.0220
+ 0.50  25   3 |   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500 |        nan     0.1505
+ 0.50  25   5 |   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500 |        nan     0.1505
+ 0.50  25  10 |   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500   -0.0500 |        nan     0.1505
+
+(2c) same with the minimum stop distance raised to 5 ticks (L <= min(p,1-p)/0.05)
+   p0=0.2 L=4 J=3: EV(mu=0.02) -0.1062, mu* nan
+   p0=0.2 L=4 J=5: EV(mu=0.02) -0.0893, mu* nan
+   p0=0.2 L=4 J=10: EV(mu=0.02) +0.0257, mu* 0.0147
+   p0=0.3 L=6 J=3: EV(mu=0.02) -0.1120, mu* nan
+   p0=0.3 L=6 J=5: EV(mu=0.02) -0.1013, mu* nan
+   p0=0.3 L=6 J=10: EV(mu=0.02) -0.0169, mu* 0.0248
+   p0=0.5 L=10 J=3: EV(mu=0.02) -0.0752, mu* nan
+   p0=0.5 L=10 J=5: EV(mu=0.02) -0.0780, mu* nan
+   p0=0.5 L=10 J=10: EV(mu=0.02) -0.0829, mu* nan
+
+(3) next-tick information on the whole-cent walk.  V(k) = value of a position k ticks in profit
+    (optimal stopping, close-at-mid bound).  pi* = P(next change is favourable) needed for EV > 0.
+   p0   L  stop   win |    V(+1)    V(-1)     pi* | hold: V(+1)    V(-1)     pi*
+0.500  25  2.00  2.00 |  +0.4500  -0.5000  0.5263 |     +0.4250  -0.5250  0.5526
+0.500  10  5.00  5.00 |  +0.1800  -0.2000  0.5263 |     +0.1222  -0.2667  0.6857
+0.500   5 10.00 10.00 |  +0.0900  -0.1000  0.5263 |     +0.0250  -0.1694  0.8714
+0.665  16  4.16  2.09 |  +0.2165  -0.2406  0.5263 |     +0.0381  -0.3771  0.9082
+0.665   8  8.31  4.19 |  +0.1083  -0.1203  0.5263 |     +0.0049  -0.2194  0.9782
+0.350  17  2.06  3.82 |  +0.4371  -0.4857  0.5263 |     +0.3357  -0.5548  0.6230
+0.200  10  2.00  8.00 |  +0.4500  -0.5000  0.5263 |     +0.3800  -0.5400  0.5870
+0.800  10  8.00  2.00 |  +0.1125  -0.1250  0.5263 |     +0.0972  -0.1583  0.6196
+python3 -u e3_sensitivity.py  8.00s user 0.25s system 54% cpu 15.215 total

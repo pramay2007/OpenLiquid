@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { claimFees, connectDemo, stake, unstake, vaultDeposit, vaultWithdraw } from "../data/wallet";
 import { fmtCompactUsd, fmtNumber, fmtPct, fmtUsd } from "../lib/format";
 import { useStore } from "../state/store";
@@ -9,7 +9,14 @@ function AmountForm({
   actions,
 }: {
   unit: string;
-  actions: { label: string; primary?: boolean; max: number; run: (amount: number) => Promise<boolean> }[];
+  actions: {
+    label: string;
+    primary?: boolean;
+    max: number;
+    run: (amount: number) => Promise<boolean>;
+    /** Shown on the button, which is disabled, while the action is not available yet. */
+    locked?: string | null;
+  }[];
 }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -32,8 +39,8 @@ function AmountForm({
         <button
           key={a.label}
           className={`btn ${a.primary ? "btn-primary" : "btn-ghost"}`}
-          disabled={!account || !!busy || amount <= 0 || amount > a.max + 1e-9}
-          title={amount > a.max ? `At most ${fmtNumber(a.max, 2)} ${unit}` : undefined}
+          disabled={!account || !!busy || !!a.locked || amount <= 0 || amount > a.max + 1e-9}
+          title={a.locked ? "Withdrawals open a few minutes after a deposit" : amount > a.max ? `At most ${fmtNumber(a.max, 2)} ${unit}` : undefined}
           onClick={async () => {
             setBusy(a.label);
             if (await a.run(amount)) setText("");
@@ -41,11 +48,24 @@ function AmountForm({
           }}
         >
           {busy === a.label ? <Spinner /> : null}
-          {a.label}
+          {a.locked ?? a.label}
         </button>
       ))}
     </div>
   );
+}
+
+/** "9:32" until the given unix second; null once it has passed. */
+function useCountdown(until: number): string | null {
+  const [now, setNow] = useState(() => Date.now() / 1000);
+  useEffect(() => {
+    if (until <= Date.now() / 1000) return;
+    const t = setInterval(() => setNow(Date.now() / 1000), 1000);
+    return () => clearInterval(t);
+  }, [until]);
+  const left = Math.ceil(until - now);
+  if (!(left > 0)) return null;
+  return `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
 }
 
 export function EarnPage() {
@@ -58,6 +78,9 @@ export function EarnPage() {
 
   const cash = vault?.cash ?? 0;
   const part = (v: number) => `${cash ? (v / cash) * 100 : 0}%`;
+  // Shares cannot be withdrawn for a short time after a deposit.
+  const unlockIn = useCountdown(vault?.lockedUntil ?? 0);
+  const delayMinutes = Math.round((vault?.withdrawDelay || 600) / 60);
 
   return (
     <main className="page">
@@ -107,7 +130,7 @@ export function EarnPage() {
               </div>
               <div className="metric">
                 <label>Withdrawable now</label>
-                <div className="v">{fmtUsd(vault?.myMaxWithdraw ?? 0)}</div>
+                <div className="v">{unlockIn ? `in ${unlockIn}` : fmtUsd(vault?.myMaxWithdraw ?? 0)}</div>
               </div>
             </div>
 
@@ -115,9 +138,18 @@ export function EarnPage() {
               unit="USDC"
               actions={[
                 { label: "Deposit", primary: true, max: balances.usdc, run: vaultDeposit },
-                { label: "Withdraw", max: vault?.myMaxWithdraw ?? 0, run: vaultWithdraw },
+                {
+                  label: "Withdraw",
+                  max: vault?.myMaxWithdraw ?? 0,
+                  run: vaultWithdraw,
+                  locked: unlockIn ? `Withdraw in ${unlockIn}` : null,
+                },
               ]}
             />
+            <p>
+              Withdrawals open {delayMinutes} minutes after a deposit, so nobody can deposit just before the share price
+              steps up and leave just after.
+            </p>
             <p>
               Every open position's maximum payout is locked here when it opens, so a winner is paid the moment they
               close. Locked USDC cannot be withdrawn; the share price marks open positions at the oracle price.

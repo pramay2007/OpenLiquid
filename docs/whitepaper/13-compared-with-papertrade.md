@@ -36,7 +36,7 @@ This is the change that addresses the launch-day trade directly. See [How a trad
 
 | | Papertrade | OpenLiquid |
 |---|---|---|
-| Open-interest limit | Set by a keeper, at launch about $1B of headroom per side | Half of the dollars resting within 10 basis points of the mid on the reference venue, per side |
+| Open-interest limit | Set by a keeper, at launch about $1B of headroom per side | Half of the dollars resting within 10 basis points of the mid on the reference venue, per side, once they have stayed there |
 | Follows the real book | No | Yes, on every price update |
 
 A limit that is not tied to the book can be larger than what it costs to move the price. Ours cannot be, by construction.
@@ -48,17 +48,18 @@ A limit that is not tied to the book can be larger than what it costs to move th
 | Pool at launch | Empty; it takes no deposits and grows only from trader losses | A funded ERC-4626 vault that anyone can deposit into |
 | When a trader wins | Profit joins a first-in-first-out queue and is paid as other traders lose | Paid in full when the position closes |
 | How that is guaranteed | It is not; the pool can be in deficit by design | The position's maximum profit is locked in the vault before it opens |
-| Maximum profit | Not stated | Ten times margin, which is what makes it lockable |
+| Maximum profit | Not stated | Ten times margin or a 100% move, which is what makes it lockable |
+| Deposits and withdrawals | None; the pool takes no deposits | Shares can be withdrawn ten minutes after a deposit |
 
 ### 4. What a winner keeps
 
 After launch, Papertrade's second contract set added a holdback and a size-dependent scale that are taken off every winning close, before a 2% fee. Its documentation gives the share of the raw gain a trader keeps as about 88% on a 1% move in BTC and about 74% on a 0.1% move.
 
-OpenLiquid takes 5% of profit and nothing else. The cost of protection is paid only by trades made while the price is moving, through the worse-of fill, and not by every winner all the time.
+OpenLiquid takes 5% of profit. The larger side of a lopsided market also pays a crowding fee while it is open. The cost of protection against a pushed price is paid only by trades made while the price is moving, through the worse-of fill, and not by every winner all the time.
 
-### 5. Funding
+### 5. Leaning against the pool
 
-Papertrade charges no funding, so nothing discourages every trader from leaning the same way against the pool. OpenLiquid charges the crowded side and pays the other, in proportion to the imbalance.
+Neither venue charges a funding rate. On Papertrade nothing discourages every trader from leaning the same way against the pool. On OpenLiquid the larger side of a lopsided market pays a crowding fee to the vault, up to 0.05% of its size per day. The smaller side pays nothing.
 
 ### 6. Liquidation
 
@@ -81,7 +82,7 @@ Minting on losses pays a trader for losing, and pays two wallets for trading aga
 
 ### 8. Markets
 
-Papertrade lists BTC and ETH. OpenLiquid lists four crypto assets, four stocks and indices, three commodities, and four live prediction markets from Gemini, the last with [rules of their own](05-prediction-markets.md).
+Papertrade lists BTC and ETH. OpenLiquid lists four crypto assets, four stocks and indices, three commodities, and five live prediction markets from Gemini. Prediction markets get [rules of their own](05-prediction-markets.md), which is where most of the new work is.
 
 ## The same trade, replayed
 
@@ -90,8 +91,8 @@ The contract tests replay the launch-day sequence against the engine configured 
 | Engine | Size it accepted | Attacker's result on one leg | Cost of the move |
 |---|---|---|---|
 | Any size, at the mid | $297.0M | +$349,272 | about $52,000 |
-| OpenLiquid | $9.9M | +$185 | about $52,000 |
-| OpenLiquid, with the push held for 60 seconds | $9.9M | +$7,135 | more than $52,000 |
+| OpenLiquid | $9.9M | +$187 | about $52,000 |
+| OpenLiquid, with the push held for 60 seconds | $9.9M | +$7,203 | more than $52,000 |
 
 The replay is a model of the reported trade and not a reconstruction of Papertrade's contracts. Press reports disagree on which positions produced the profit; the replay uses the $297M figure that appears in them. The test is `contracts/test/exploit.test.js`.
 
@@ -104,4 +105,5 @@ These changes are not free, and Papertrade does some things better.
 - **Less leverage when it is most tempting.** The entry guard refuses very high leverage while the price is moving.
 - **Capital up front.** Papertrade needed no liquidity providers. OpenLiquid needs a funded vault before the first trade, and its size limits what can be traded.
 - **Liquidity providers carry real risk.** Somebody has to be on the other side of a winning trade. Here it is a named party that chose to be.
+- **A holding cost on the crowded side.** Papertrade charges nothing for holding. OpenLiquid charges the larger side of a lopsided market.
 - **Track record.** Papertrade is live with real money. OpenLiquid is an unaudited testnet prototype.
