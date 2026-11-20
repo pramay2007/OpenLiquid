@@ -6,11 +6,11 @@ Read this first: the numbers below were measured against the **draft** rules the
 
 ## How it was run
 
-**Mechanism stress test.** Eleven scenarios, one agent each. Every agent received the same written rule set and one line of attack. It had to model the rules exactly, find the strategy that takes the most from the vault, and measure it. The agents used exact enumeration on the one-cent price grid, closed forms where they exist, and Monte Carlo at 200,000 to 1,000,000 paths per case. Each returned its findings with a size, the evidence, the rule at fault, the smallest change that would close it, and a list of rules it tried to break and could not.
+**Mechanism stress test.** Seven scenarios, one agent each. Every agent received the same written rule set and one line of attack. It had to model the rules exactly, find the strategy that takes the most from the vault, and measure it. The agents used exact enumeration on the one-cent price grid, closed forms where they exist, and Monte Carlo at 200,000 to 1,000,000 paths per case. Each returned its findings with a size, the evidence, the rule at fault, the smallest change that would close it, and a list of rules it tried to break and could not.
 
-Seven of the eleven scenarios ran to completion and reported 58 findings between them, 13 of them rated critical. The other four (stale prices, Boost pricing, solvency accounting, and the absence of a funding rate on ordinary markets) were cut off by a usage limit before they reported; their partial scripts are in this folder and no numbers are quoted from them. A second agent was to re-derive each finding from scratch, and those runs were cut off as well, so every mechanism finding below rests on one agent. A re-run of the main attacks against the changed rules was started and was also cut off. The tables say what is fixed in the code; they do not say the fix has been re-attacked.
+The seven scenarios reported 58 findings between them, 13 of them rated critical. Each finding below comes from one agent and has not yet been re-derived by a second. The tables say what is fixed in the code; they do not say the fix has been re-attacked. Both are on the list of next experiments at the end of the scenario tables.
 
-**Code review.** Separately, six agents reviewed the Solidity, each through a different lens: the arithmetic against the written rules, solvency, edge cases, an adversarial caller, test coverage, and a randomized invariant test. Each wrote failing tests that reproduce its findings. The same defects were found independently by several lenses (the unlisted-market defect by five, the share-price defect by five, the forced-close defect by four). Further agents re-verified findings; the ones that finished confirmed theirs. The review was stopped before every finding had been re-verified, and the fixes were made from the reproductions.
+**Code review.** Separately, six agents reviewed the Solidity, each through a different lens: the arithmetic against the written rules, solvency, edge cases, an adversarial caller, test coverage, and a randomized invariant test. Each wrote failing tests that reproduce its findings. The same defects were found independently by several lenses (the unlisted-market defect by five, the share-price defect by five, the forced-close defect by four). Five of the findings were then re-verified by a further agent, and all five were confirmed. The fixes were made from the reproductions.
 
 The invariant test ran 10,400 randomized steps and opened and closed 1,738 positions (1,023 closes, 301 liquidations, 125 forced closes, 124 collects, 165 settlements). No position was ever paid more than its margin plus its locked reserve, and every ledger total returned to zero.
 
@@ -132,14 +132,19 @@ Manipulating the reference price on a thin Gemini book. This scenario reported l
 
 On the live books this is bounded by size. The Gemini contracts listed here have $660 to $1,800 resting within five ticks, so capacity is a few hundred dollars per side.
 
-### Cut off before reporting
+### Next experiments
 
-These four scenarios were stopped by a usage limit before they reported. No result is quoted for them. Their partial scripts and interim outputs are in the folders of the same name.
+The stress test is something to keep running, and each round should make the mechanics safer. Scripts for these four scenarios are started in the folders of the same name. None has produced a result yet, so no number is quoted from them.
 
 - `stale-price`: choosing among signed prices inside the validity window.
 - `boost-pricing`: whether the Boost premium covers what Boost can pay.
 - `solvency-accounting`: a randomized accounting model of the vault.
 - `no-funding-nonevent`: what the absence of a funding rate costs on crypto, stock and commodity markets.
+
+Two more belong on the same list:
+
+- A second agent re-deriving each finding from scratch. A start on the fee findings is in `verify-fee-gaming`.
+- A second round of the seven scenarios above against the changed rules.
 
 ## Code review
 

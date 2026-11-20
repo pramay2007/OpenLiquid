@@ -4,7 +4,7 @@ OpenLiquid is an unaudited prototype on a test network, with test funds. This pa
 
 ## How this list was made
 
-Before deploying the current contracts we gave the rules to a group of AI agents and told them to break them. Eleven agents each took one line of attack on the mechanism, modelled the rules, and measured the best strategy against the vault with exact enumeration and Monte Carlo at 200,000 to 1,000,000 paths. Six more reviewed the contract code and wrote failing tests for what they found.
+Before deploying the current contracts we gave the rules to a group of AI agents and told them to break them. Seven agents each took one line of attack on the mechanism, modelled the rules, and measured the best strategy against the vault with exact enumeration and Monte Carlo at 200,000 to 1,000,000 paths. Six more reviewed the contract code and wrote failing tests for what they found.
 
 They found a lot. Most of it is fixed, and several rules on the other pages exist because of it. What follows is what is not fixed. The full record, including the scripts, is in the repository: [stress-test/README.md](../../stress-test/README.md).
 
@@ -54,7 +54,7 @@ Liquidation is judged at the live mid. On a thin book the mid can jump when one 
 - **No price limit on orders.** `open` and `close` fill at whatever signed price lands. A newer price can arrive between clicking and filling.
 - **Free occupation.** A balanced long and short pair, or a 1× position on a cheap contract, holds capacity and vault reserve at no cost. Bounded by each market's capacity.
 - **Voided matches.** A void is settled as whatever the reference venue reports.
-- **No pass-through of the reference venue's funding.** A long here against a short on the reference venue can earn that venue's funding. The scenario that was to size this was cut off before it reported.
+- **No pass-through of the reference venue's funding.** A long here against a short on the reference venue can earn that venue's funding. We have not sized this yet. It is one of the next experiments below.
 - **The market list only grows**, so vault deposits and withdrawals get more expensive as markets are added.
 - **The share price nets positions on the same side of a market.** It no longer nets across sides or markets.
 
@@ -72,8 +72,17 @@ Some risks are part of the design and will stay.
 - **A fast real move is treated like a pushed one.** A trader who is right about sudden news has to wait for the slow price to collect most of it.
 - **A funded vault is needed before the first trade**, and its size limits what can be traded.
 
-## What has not been tested
+## More experiments to run
 
-The changed rules have not been through a second full round of the stress test. Four of the eleven scenarios were cut off by a usage limit before they reported, and so were the second-agent checks of the mechanism findings and the re-run against the changed rules. No part of this has been audited, and none of it has met real money.
+The stress test is something we can keep running, and each round should make the mechanics safer. These are next:
+
+- Choosing among the signed prices inside the 20-second window, and how much two-step fills remove.
+- Whether the Boost premium covers what Boost can pay, across kinds of news.
+- A randomized accounting model of the vault and the share price.
+- What the absence of a funding rate costs on crypto, stock and commodity markets.
+- A second agent re-deriving each mechanism finding from scratch. So far each one comes from a single agent.
+- A second round of every scenario against the changed rules. They have not been re-attacked yet.
+
+No part of this has been audited, and none of it has met real money.
 
 Next: [Parameters and contracts](10-parameters-and-contracts.md)

@@ -70,7 +70,7 @@ No. OpenLiquid runs on Arc testnet with test funds. It is an unaudited prototype
 
 ## Has anyone tried to break it?
 
-Yes. Before deploying we set a group of AI agents to attack the rules and the contracts. Eleven attacked the mechanism with simulations and six reviewed the code. Seven of the eleven finished, along with all six reviews. They reported 58 economic findings and 51 code findings, many of them the same hole seen twice, and several rules exist because of them. The record is in [stress-test/](../../stress-test/README.md).
+Yes. Before deploying we set a group of AI agents to attack the rules and the contracts. Seven attacked the mechanism with simulations and six reviewed the code. They reported 58 economic findings and 51 code findings, many of them the same hole seen twice, and several rules exist because of them. There are more experiments we want to run, and they are listed with the open items. The record is in [stress-test/](../../stress-test/README.md).
 
 ## What are the weak points?
 

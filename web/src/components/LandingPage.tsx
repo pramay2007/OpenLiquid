@@ -542,7 +542,7 @@ export function LandingPage() {
           <div className="eyebrow">Stress-tested by a swarm of agents</div>
           <p>
             Before launch we set a swarm of AI agents on the design: seven adversarial Monte Carlo attacks and six
-            independent code reviews ran to completion. They reported 58 economic findings and 51 code findings, many
+            independent code reviews. They reported 58 economic findings and 51 code findings, many
             of them the same hole seen twice. The ones fixed are listed with the ones still open in the whitepaper.
           </p>
           <button className="link" onClick={() => openDoc("risks")}>

@@ -37,12 +37,11 @@ show as offline, wait up to a minute for it to wake. Its status is at
 ## Stress-tested by a swarm of agents
 
 Before the current contracts were deployed, the rules were handed to a group of AI agents with one
-instruction: break them. Eleven agents were each given one line of attack on the mechanism, to
-measure the best strategy against the vault with exact enumeration and Monte Carlo at 200,000 to
-1,000,000 paths. Seven finished and reported 58 findings; four were cut off by a usage limit. Six
-more reviewed the Solidity through different lenses, reported 51 findings (many of them the same
-defect seen from two sides) and wrote failing tests for them. A randomized invariant test ran
-10,400 steps over 1,738 positions.
+instruction: break them. Seven agents each took one line of attack on the mechanism and measured
+the best strategy against the vault, with exact enumeration and Monte Carlo at 200,000 to
+1,000,000 paths. They reported 58 findings. Six more reviewed the Solidity through different
+lenses, reported 51 findings (many of them the same defect seen from two sides) and wrote failing
+tests for them. A randomized invariant test ran 10,400 steps over 1,738 positions.
 
 What they found changed the design:
 

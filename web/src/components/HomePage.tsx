@@ -625,8 +625,8 @@ export function HomePage() {
       <Section index="03" label="Stress test">
         <h2 className="home-h2">Attacked by a swarm of agents before launch.</h2>
         <p className="home-p">
-          Seven adversarial Monte Carlo attacks and six independent code reviews ran to completion. They reported 58
-          economic findings and 51 code findings, many of them the same hole seen twice. Most are fixed. The rest are
+          We ran seven adversarial Monte Carlo attacks and six independent code reviews. They reported 58 economic
+          findings and 51 code findings, many of them the same hole seen twice. Most are fixed. The rest are
           published.
         </p>
         <div className="home-versus">
