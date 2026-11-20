@@ -26,12 +26,12 @@ The rules below exist so that this does not pay, so that winners are always paid
 |---|---|
 | [Worse-of fills](02-pricing.md) | Each trade fills at the worse, for the trader, of the live mid and a slow time-averaged price. Calm market: the same number, no slippage. Pushed price: it cannot be traded against. |
 | [Depth-backed capacity](03-capacity-and-vault.md) | Open interest per side is capped at half the dollars really resting near the mid on the reference venue, and that depth has to stay there to count. |
-| [Reserved payouts](03-capacity-and-vault.md) | A funded vault locks each position's maximum profit when it opens. Winners are paid at close. There is no queue. |
+| [Reserved payouts](03-capacity-and-vault.md) | A funded vault locks each position's maximum profit when it opens. Winners are paid at close. |
 | [No fee to trade](04-fees-funding-liquidation.md) | No fee to open or close, and no funding. A share of profit from winners, and a crowding fee on the larger side of a lopsided market. |
 | [Softer liquidation](04-fees-funding-liquidation.md) | Liquidation at 20% of margin left, and what remains goes back to the trader. |
 | [Leverage that zooms the odds](05-prediction-markets.md) | On prediction markets a leveraged bet wins at most what its stake would win outright, never more than the stake, and reaches it sooner. A jump cannot leave the vault short. Boost keeps the leveraged win for a daily premium. |
 | [Stress-tested by agents](09-risks.md) | A group of adversarial AI agents attacked the rules before deployment. What they broke was changed, and what is still open is listed. |
-| [Fee-minted token](06-olq-token.md) | OLQ is minted when a fee is paid, never for losing, up to a fixed maximum. |
+| [The OLQ token](06-olq-token.md) | OLQ is earned by losing, faster when the vault is drawn down, up to a fixed maximum. Stakers earn fees from winners. |
 
 ## What you can trade
 

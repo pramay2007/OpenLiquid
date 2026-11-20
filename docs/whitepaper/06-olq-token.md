@@ -1,42 +1,41 @@
 # The OLQ token
 
-OLQ is the protocol's token. It is minted by trading, there is no pre-mint, and staking it earns a share of protocol fees in USDC.
+OLQ is the protocol's token. There is no pre-mint. It is earned by trading, and staking it earns a share of protocol fees in USDC.
 
-The one design decision that matters is *what* mints it. On OpenLiquid a token is minted when a trader pays a fee. It is never minted for losing.
+> **Status.** This page describes the OLQ design. The contracts on Arc testnet today run the first version of the token, which mints OLQ on the fee a winner pays. The loss-minted version below is the next contract update.
+
+## How it works, in four lines
+
+1. **You earn OLQ by losing.** When a position closes at a loss, the loss goes to the vault and the trader receives OLQ for it. That is the only way OLQ is minted.
+2. **The rate is boosted when the vault is drawn down.** While the vault holds less than its liquidity providers put in, each dollar lost mints more OLQ.
+3. **Winners are paid first in, first out.** They are paid from the vault. If the vault is ever short, they are paid in order as losses refill it.
+4. **You stake OLQ to earn fees from winners.** Stakers receive 30% of every profit fee, in USDC.
+
+## Why it is built this way
+
+A venue with no order book needs someone on the other side of every winning trade. Here that is the vault. The question every such venue has to answer is what happens when the vault has been paying out.
+
+OLQ is the answer. Every OLQ minted corresponds to a dollar that entered the vault as a loss. When the vault is full, losing earns the base rate. When the vault has been drawn down, losing earns more, so trading that refills the vault is rewarded exactly when it is needed. That is how liquidity comes back.
+
+Staking closes the loop. A trader who earned OLQ through losses can stake it and earn a share of what winners pay from then on.
 
 ## Emission
 
-OLQ is minted in one place only: when a position closes in profit and pays the profit fee. The trader who paid the fee receives the tokens.
-
 ```
-rate(F)  =  R0 × ( H / (H + F) )²        OLQ per $1 of fee
+base rate(F)  =  R0 × ( H / (H + F) )²        OLQ per $1 lost
 ```
 
-`F` is the total of all fees paid so far. `R0` is 100. `H` is $1,000,000.
+`F` is the running total that has been paid in so far. `R0` is 100. `H` is $1,000,000. The base rate falls smoothly as the total grows. There are no epochs and no schedule to game.
 
-| Fees paid so far | OLQ minted per $1 of fee | Share of maximum supply minted |
-|---|---|---|
-| $0 | 100 | 0% |
-| $250,000 | 64 | 20% |
-| $1,000,000 | 25 | 50% |
-| $3,000,000 | 6.25 | 75% |
-| $9,000,000 | 1 | 90% |
-
-The rate falls smoothly as fees accumulate. There are no epochs and no schedule to game.
-
-## Emissions rise as the vault is drawn down
-
-OLQ is minted on the fee a winner pays, and a winner is paid by the vault. So the two move together. In a stretch where traders are winning and the vault is being drawn down, more fees are paid and more OLQ is minted. In a stretch where traders are losing, the vault is filling up and almost nothing is minted.
-
-The losses themselves go straight to the vault. That is what refills it after it has paid winners. Nobody is paid in tokens for losing, and no winner waits for the refill: every position's payout was locked before it opened.
+The boost multiplies the base rate while the vault's value is below what its liquidity providers deposited, and grows with the size of the shortfall. Boosted minting counts against the same curve, so it brings the cap closer and never raises it.
 
 ## Supply
 
-Summed over all the fees that could ever be paid, the curve mints `R0 × H` tokens. That is a hard ceiling of **100,000,000 OLQ**, enforced by the arithmetic of the curve and not by an administrator.
+Summed over everything that could ever be minted, the curve produces `R0 × H` tokens. That is a hard ceiling of **100,000,000 OLQ**, set by the arithmetic of the curve and not by an administrator.
 
 - No pre-mint, no team allocation, no investor allocation, no airdrop.
 - Transferable from the first token.
-- The only minter is the trading engine. That is set once and cannot be changed.
+- The only minter is the trading engine.
 
 ## Staking
 
@@ -44,15 +43,9 @@ Staked OLQ earns 30% of every profit fee, paid in USDC. The other 70% stays in t
 
 Stakers are paid from fees and only from fees. They do not receive trader losses and do not pay trader wins. That risk and that reward both belong to the liquidity providers.
 
-## Why not mint on losses
+## What to watch
 
-Some venues mint their token to traders in proportion to what they lose. We chose not to, for three reasons.
-
-**It pays people to trade against themselves.** With one price and no spread, a trader can open a long from one wallet and a short from another. One wallet loses what the other wins. If losing mints tokens, the pair collects tokens on the whole loss while the matching win gives most of the money back. On OpenLiquid the same pair mints OLQ only on the fee it actually pays, at the same rate as everyone else. There is no cheaper way to get the token than paying the protocol.
-
-**It ties the token to the venue losing its users' money.** Under loss emission, supply grows fastest when traders are doing worst. Under fee emission, supply grows when traders are winning and paying fees, and every token in existence corresponds to a dollar-denominated fee that was really paid.
-
-**It needs no ceiling.** A token minted on losses has to keep minting as long as people lose. OLQ has a fixed maximum and the minting rate can only go down.
+A token minted on losses can be farmed by two wallets trading against each other: one loses and earns OLQ, the other wins the same amount back less the profit fee. The fee is the cost of that farm, and the cap and the falling rate bound what it can earn. It is on the list of [what we are still working on](09-risks.md).
 
 ## What OLQ is not
 

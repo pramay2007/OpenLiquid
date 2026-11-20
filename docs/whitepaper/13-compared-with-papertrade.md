@@ -73,12 +73,12 @@ Neither venue charges a funding rate. On Papertrade nothing discourages every tr
 
 | | PAPER | OLQ |
 |---|---|---|
-| Minted when | A trader loses | A trader pays a profit fee |
-| Rate | Currently proportional to existing supply, with a boost of up to five times while the pool is in deficit | 100 per dollar of fee at the start, falling as fees accumulate |
+| Minted when | A trader loses | A trader loses |
+| Rate | Currently proportional to existing supply, with a boost of up to five times while the pool is in deficit | 100 per dollar at the start, falling as the total grows, boosted while the vault is drawn down |
 | Maximum supply | None stated | 100,000,000 |
 | Stakers earn | Half of fees, plus pool surplus above a cap, when no winner is waiting | 30% of profit fees |
 
-Minting on losses pays a trader for losing, and pays two wallets for trading against each other. Minting on fees pays a trader for paying the protocol. See [The OLQ token](06-olq-token.md).
+Both tokens are earned by losing. The differences are the fixed maximum supply, a rate that only falls, and a vault that is funded before the first trade. See [The OLQ token](06-olq-token.md).
 
 ### 8. Markets
 

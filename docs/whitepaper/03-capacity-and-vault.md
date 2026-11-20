@@ -53,7 +53,7 @@ Every position has a maximum profit, known when it opens. On crypto, stocks and 
 
 Two things follow.
 
-1. **A winner is always paid at close, in full, in the same transaction.** The money was set aside before the trade existed. There is no queue and no IOU.
+1. **A winner is always paid at close, in full, in the same transaction.** The money was set aside before the trade existed. If the vault is ever drawn down, winners are paid first in, first out as it refills, and OLQ emissions are boosted to refill it faster. See [The OLQ token](06-olq-token.md).
 2. **Liquidity providers cannot withdraw money that is locked.** Withdrawals are limited to free liquidity, so a provider cannot leave just before a winning trader closes.
 
 ## How vault shares are valued

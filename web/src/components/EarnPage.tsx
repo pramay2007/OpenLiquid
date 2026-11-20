@@ -91,8 +91,7 @@ export function EarnPage() {
           </h2>
           <p className="lede">
             Liquidity providers take the other side of every trade, so trader losses and wins belong to them. OLQ
-            stakers take none of that risk and receive {fmtPct(stakerShare, 0, false)} of the fees winners pay. Nobody
-            is paid out of anyone's losses for holding a token.
+            stakers take none of that risk and receive {fmtPct(stakerShare, 0, false)} of the fees winners pay.
           </p>
         </div>
 
@@ -223,9 +222,9 @@ export function EarnPage() {
               )}
             </div>
             <p>
-              OLQ is minted only when a fee is paid, to whoever paid it, on a curve that decays toward a fixed maximum
-              supply. Losing a trade mints nothing, so a pair of wallets trading against each other gets no more OLQ
-              per dollar of cost than anyone else.
+              OLQ is earned by losing, on a curve that decays toward a fixed maximum supply, and faster while the
+              vault is drawn down. Stake it to earn a share of the fees winners pay. The contracts on testnet today
+              run the first version, which mints on the fee a winner pays.
             </p>
           </section>
         </div>

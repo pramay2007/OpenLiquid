@@ -18,7 +18,7 @@ The profit share is split:
 - 70% stays in the vault, with the liquidity providers.
 - 30% goes to OLQ stakers, in USDC. If nobody is staking, it stays in the vault.
 
-Paying a profit share is also the only thing that mints OLQ. See [The OLQ token](06-olq-token.md).
+OLQ itself is earned on losses, and staking it earns this share. See [The OLQ token](06-olq-token.md).
 
 ## Why there is no funding rate
 

@@ -13,7 +13,7 @@ const RULES = [
   },
   {
     title: "Payouts locked up front",
-    body: "A position opens only if the vault can lock its maximum payout at that moment. Liquidity providers cannot withdraw locked funds. A winner is paid in full when they close; there is no queue and no IOU.",
+    body: "A position opens only if the vault can lock its maximum payout at that moment. Liquidity providers cannot withdraw locked funds. A winner is paid in full when they close.",
   },
   {
     title: "No funding, one crowding fee",
@@ -24,8 +24,8 @@ const RULES = [
     body: "On a prediction market a leveraged bet wins what the same stake would win outright, and never more than the stake itself. Leverage brings that win closer. The win line is never further from entry than the stop line, which is what keeps a jump across both from paying the trader. Boost keeps the leveraged win for a daily premium.",
   },
   {
-    title: "Fees mint the token",
-    body: "OLQ is minted when a fee is paid, to the account that paid it, on a decaying curve with a fixed maximum supply. Losses mint nothing. Stakers earn a share of fees; trader losses stay with the liquidity providers who underwrite trader wins.",
+    title: "OLQ refills the vault",
+    body: "OLQ is earned by losing, on a decaying curve with a fixed maximum supply, and faster while the vault is drawn down. Stakers earn a share of the fees winners pay. The contracts on testnet today run the first version, which mints on the fee a winner pays.",
   },
 ];
 
