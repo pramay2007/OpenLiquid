@@ -2,7 +2,7 @@
 
 **Trade anything with a price, at one price. No order book and no slippage in a calm market, up
 to 1000× on crypto, stocks and commodities, and leverage on live prediction markets. On Arc.**
-A position can lose its margin and nothing more, and a winner is always paid when they close.
+A winner is always paid in full when they close.
 
 ![OpenLiquid opening page](docs/home.png)
 
@@ -40,9 +40,9 @@ show as offline, wait up to a minute for it to wake. Its status is at
 the book thins when the market moves, and a larger order fills worse. OpenLiquid has no book.
 Every trade fills at a single price taken from the deepest market for that asset.
 
-**A hard limit on loss.** Margin is isolated, so a position can lose what was put in and nothing
-more. That is what makes very high leverage usable: at 1000×, $10 controls $10,000 for a short
-move, and $10 is the most it can cost.
+**Leverage up to 1000×.** A small account can take a real position: $10 controls $10,000 for a
+short move. With one price and no book to walk, the leverage on the screen is the leverage you
+get.
 
 **Anything with a price.** Crypto, stocks, commodities, and prediction markets, which until now
 have had no leverage at all.

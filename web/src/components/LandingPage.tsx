@@ -359,7 +359,7 @@ export function LandingPage() {
           </h1>
           <p>
             Up to 1000× on crypto, stocks and commodities, and leveraged positions on live prediction markets. One
-            price, no order book, and you can never lose more than you put in.
+            price, no order book, and no slippage in a calm market.
           </p>
           <div className="hero-cta">
             <button className="btn btn-primary btn-hero" onClick={start}>

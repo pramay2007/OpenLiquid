@@ -1,6 +1,6 @@
 # OpenLiquid
 
-OpenLiquid is a venue for leveraged trading on crypto, stocks, commodities and live prediction markets, in one place, on Arc. Every trade fills at one price taken from a reference venue. There is no order book. A position can lose its margin and nothing more.
+OpenLiquid is a venue for leveraged trading on crypto, stocks, commodities and live prediction markets, in one place, on Arc. Every trade fills at one price taken from a reference venue. There is no order book, and in a calm market there is no slippage.
 
 ## Why it exists
 
@@ -8,7 +8,7 @@ Trading should have one price. On an order book the price you see is not the pri
 
 OpenLiquid removes the book. Every trade fills at a single price taken from the deepest market for that asset. In a calm market that is the mid, with no spread and no slippage, at any size the market has room for.
 
-Leverage should come with a hard limit on loss. With isolated margin and one price, a position can lose what was put in and nothing more. That is what makes very high leverage usable: at 1000×, $10 controls $10,000 for a short move, and $10 is the most it can cost.
+Leverage should be real. A small account should be able to take a real position: at 1000×, $10 controls $10,000 for a short move. With one price and no book to walk, the leverage on the screen is the leverage you get.
 
 The same engine should work for anything with a price. That includes prediction markets, which until now have had no leverage at all.
 
